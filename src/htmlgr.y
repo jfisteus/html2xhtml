@@ -184,8 +184,12 @@ ref: TOK_EREF {
 }
 ;
 
-xmldecl: TOK_XMLPI_INI attributes TOK_XMLPI_END {   
-  //fprintf(stderr,"XMLDECL-: %s\n",$1);
+xmlpi_end: TOK_XMLPI_END
+| TOK_STAG_END
+;
+
+xmldecl: TOK_XMLPI_INI attributes xmlpi_end {   
+  /*fprintf(stderr,"XMLDECL-: %s\n",$1);*/
   setAttributeData(NULL);
   saxXmlProcessingInstruction($1,(xchar**)element_attributes);
   num_element_attributes = 0;

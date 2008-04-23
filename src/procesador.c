@@ -425,14 +425,15 @@ void saxReference(const xchar *name)
 {
   EPRINTF1("SAX.reference(%s)\n",name);
 
-  if (state!=ST_PARSING) EXIT("bad state");
-
-  if (!actual_element) return;
+  if (state!=ST_PARSING || !actual_element) return;
 
   /* si es una referencia a entidad, se comprueba que sea válida */
   if (name[1]!='#') 
     if (dtd_ent_search(name)==-1) {
-      INFORM("referencia a entidad desconocida");
+      if (!strcmp(name, "&percnt;")) {
+	 insert_chardata("%", 1, Node_chardata);
+      } else
+	INFORM("referencia a entidad desconocida");
       return;
     }
 
@@ -455,7 +456,7 @@ void saxCharacters(const xchar *ch, int len)
 {
   EPRINTF2("SAX.characters(%d)[%s]\n",len,ch);
 
-  if (state!=ST_PARSING) return;
+  if (state!=ST_PARSING || !actual_element) return;
 
   insert_chardata(ch, len, Node_chardata);
 }
@@ -470,7 +471,7 @@ void saxCDataSection(const xchar *ch, int len)
 
   EPRINTF2("SAX.cdatasection(%d)[%s]\n",len,ch);
 
-  if (state!=ST_PARSING) return;
+  if (state!=ST_PARSING || !actual_element) return;
 
   /* by default, mark as CDATA section */
   type = Node_cdata_sec;
@@ -1979,6 +1980,7 @@ xchar* check_and_fix_att_value(xchar* value)
 	fixed[k] = value[i];
       }
     }
+    fixed[k] = 0;
   }
 
   return fixed;

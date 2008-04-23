@@ -445,7 +445,7 @@ static void cgi_write_header()
   </head>\n");
   
   fprintf(stdout,
-" <body>\n\  
+" <body>\n\
     <table class=\"navigation\">\n\
       <tr>\n\
         <td class=\"nav-left\"><a href=\"/jaf/html2xhtml/\">back to main page</a></td>\n\

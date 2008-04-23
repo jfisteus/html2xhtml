@@ -62,7 +62,7 @@ IN_BAD_COMMENT {ALL_IN_TAG}
 IN_SCRIPT  ([^\<\]]|(\<[^\/!])|(\<![^\-\[])|(\<!\-[^\-])|(\<!\[[^C])|(\<!\[C[^D])|(\<!\[CD[^A])|(\<!\[CDA[^T])|(\<!\[CDAT[^A])|(\<!\[CDATA[^\[])|(\][^\]])|(\]\][^\>]))*
 ESP        {S}*
 
-CDATA      ([^\<\]&\x00-\x08\x0b\x0c\x0e-\x1f]|(\][^\]])|(\]\][^\>]))*
+CDATA      ([^\<\]&\x00-\x08\x0b\x0c\x0e-\x1f]|(\][^\]\<&\x00-\x08\x0b\x0c\x0e-\x1f])|(\]\][^\>\<&\x00-\x08\x0b\x0c\x0e-\x1f]))*
 BAD_CDATA  ([\x00-\x08]|\x0b|\x0c|[\x0e-\x1f])
 
 CDATASEC   ([^\]]|(\][^\]])|(\]\][^\>]))*
@@ -104,7 +104,7 @@ BOUNDARY_LINE ({S}*\-\-[\x20-\xff]*)\x0d\x0a
 
 
 
-\<{ESP}{NAME}       {yylval.cad= tree_strdup(trim(yytext+1));BEGIN(TAG);return TOK_STAG_INI;}
+\<{NAME}       {yylval.cad= tree_strdup(trim(yytext+1));BEGIN(TAG);return TOK_STAG_INI;}
 
 \<\/{ESP}{NAME}{ESP}\> {yylval.cad= tree_strdup(etag_val(yytext)); return TOK_ETAG;} 
 
@@ -123,9 +123,10 @@ BOUNDARY_LINE ({S}*\-\-[\x20-\xff]*)\x0d\x0a
 <TAG>{ESP}"?>"      {BEGIN(0);return TOK_XMLPI_END;}
 
 {CDATA}             {yylval.cad= yytext; return TOK_CDATA;}
+"]"                 {yylval.cad= yytext; return TOK_CDATA;}
 
-{ENTITY_REF}{ESP}   {yylval.cad= tree_strdup(yytext); return TOK_EREF;}
-{CHAR_REF}{ESP}     {yylval.cad= yytext; return TOK_CREF;}
+{ENTITY_REF}   {yylval.cad= tree_strdup(yytext); return TOK_EREF;}
+{CHAR_REF}     {yylval.cad= yytext; return TOK_CREF;}
 
 
 <SCRIPT>"<!--"{IN_COMMENT}"--"{ESP}\>  {yylval.cad=comm(yytext);return TOK_CDATA_SEC;}

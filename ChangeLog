@@ -1,3 +1,15 @@
+2008-04-08  Jesus Arias Fisteus <jaf@it.uc3m.es>
+
+	* html2xhtml Fixed two bugs related to incorrect memory access.
+
+2008-03-31  Jesus Arias Fisteus <jaf@it.uc3m.es>
+
+	* html2xhtml Fixed a bug when "<" and "&" follow "]" in CDATA.
+	* html2xhtml Fixed whitespace problems with entity references.
+	* html2xhtml Entity reference "percnt" is replaced by "%". 
+	* html2xhtml Flexibility added to the parser: allows closing 
+	XML PIs with ">" instead of "%>"
+	
 2008-03-03  Jesus Arias Fisteus <jaf@it.uc3m.es>
 
 	* html2xhtml Fixed a bug when an end tags appears inside
