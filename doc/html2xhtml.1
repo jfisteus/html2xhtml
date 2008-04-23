@@ -1,0 +1,110 @@
+.TH html2xhtml 1 ""
+.SH NAME
+html2xhtml \- Converts HTML files to XHTML
+.SH SYNTAX 
+
+.B html2xhtml
+[
+.I filename
+] [
+.I options
+] 
+
+.SH DESCRIPTION
+
+Html2xhtml is a command-line tool that converts HTML files to
+XHTML files. The path of the HTML input file can be provided
+as a command-line argument. If not, it is read from stdin.
+.PP
+Xhtml2xhtml tries always to generate valid XHTML files.
+It is able to correct many common errors in input HTML
+files without loose of information. However, for some errors, html2xhtml
+may decide to loose some information in order to generate a valid XHTML output.
+This can be avoided with the 
+.I -e 
+option, which allows html2xhtml to
+generate non-valid output in these cases.
+.PP
+Html2xhtml can generate the XHTML output compliant to one of
+the following document types:
+XHTML 1.0 (Transitional, Strict and Frameset), XHTML 1.1,
+XHTML Basic and XHTML Mobile Profile. 
+.SH OPTIONS
+.if n .ta 2.8i
+.if t .ta 2.1i
+
+The command line options/arguments are:
+.IP \fBfilename\fR 20
+Read the HTML input from
+.I filename
+(optional argument). If this argument is not provided, 
+the HTML input is read from standard input.
+.IP \fB-c\ \fIinput-encoding\fR 20
+Encoding of the input HTML file. Overrides automatic
+input encoding detection (please, read the note about
+input encodings bellow).
+.IP \fB-d\ \fIdefault-input-encoding\fR 20
+Default input encoding, if it is not declared
+in the input file. By default, ISO-8859-1
+(please, read the note about input encodings bellow).
+.IP \fB-e\fR 20
+Instructs the program to propagate input chunks to 
+the output even if it is unable to adapt them to
+the output XHTML doctype. Using this option, 
+the XHTML output may be non-valid. Not using this
+option, some input data could be removed from the
+output in some [rare] cases.
+.IP \fB-t\ \fIoutput-doctype\fR 20
+Doctype of the output XHTML file. If not specified,
+the program selects automatically either 
+XHTML 1.0 Transitional or XHTML 1.0 Frameset 
+depending on the input. Current available
+doctypes are:
+.br
+ o \fItransitional\fR
+XHTML 1.0 Transitional
+.br
+ o \fIframeset\fR
+XHTML 1.0 Frameset
+.br 
+ o \fIstrict\fR
+XHTML 1.0 Strict
+.br 
+ o \fI1.1\fR
+XHTML 1.1
+.br 
+ o \fIbasic\fR
+XHTML Basic
+.br 
+ o \fImp\fR
+XHTML Mobile Profile
+.SH NOTE ON CHARACTER ENCODINGS
+
+Html2xhtml does not perform any character encoding conversion.
+The character encoding of the input is propagated to the
+output. The options that set character encodings only declare
+them in the output XHTML file.
+.PP
+This program only works for input encodings that code every ASCI
+character (0-127) only with one byte. This includes, for example,
+ISO-8859-1, ISO-8859-15, UTF-8. However, the program does not work
+for encoding UTF-16. For converting UTF-16 files, please convert it 
+first to UTF-8.
+.SH ACKNOWLEDGMENTS
+.na 
+.nf
+
+Program developer up to current version:
+Jesus Arias Fisteus <jaf@it.uc3m.es>
+.PP
+The first working version of this program has been developed as 
+a Master Thesis at the University of Vigo (Spain) [http://www.uvigo.es],
+advised by:
+.PP
+Rebeca Diaz Redondo
+Ana Fernandez Vilas
+.PP
+Copyright 2000-2007 by Jesus Arias Fisteus, Rebeca Diaz Redondo, Ana
+Fernandez Vilas.
+
+

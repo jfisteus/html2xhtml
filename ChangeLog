@@ -1,0 +1,28 @@
+2007-09-16  Jesus Arias Fisteus <jaf@it.uc3m.es>
+
+	* html2xhtml Added support for XHTML Print 1.0
+
+	* html2xhtml Bug fixes and help message improved
+
+	* html2xhtml Now converts from XHTML to XHTML
+
+	* html2xhtml Released as 1.1b3
+	
+2007-09-15  Jesus Arias Fisteus <jaf@it.uc3m.es>
+
+	* html2xhtml Added support for XHTML Basic 1.1 and updated DTDs
+
+	* html2xhtml Released as 1.1b2
+	
+2007-05-19  Jesus Arias Fisteus <jaf@it.uc3m.es>
+
+	* html2xhtml First release under the GNU GPL license (1.1b1)
+	
+	* html2xhtml First version with autotools-based build system
+	
+	* html2xhtml Removed from the source tree the CGI and DLL
+	versions, dtd_test and xhtmlpedia.
+
+	
+	
+
