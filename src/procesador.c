@@ -392,13 +392,13 @@ void saxEndElement(const xchar *name)
   for (nodo=actual_element; (nodo) && (ELM_ID(nodo)!=elm_ptr); 
        nodo=nodo->padre);
   /*elm_close(nodo);*/
- 
+
   /* nodo= tree_search_elm_up(actual_element, elm_ptr); */
 
   if (!nodo) DEBUG("cerrado elemento no abierto")
   else {
     tree_node_t *p;
-    
+
     /* se cierran todos los nodos hasta llegar a este */
     for (p=actual_element; p != nodo; p=p->padre) elm_close(p);
 
@@ -435,7 +435,7 @@ void saxReference(const xchar *name)
       INFORM("referencia a entidad desconocida");
       return;
     }
-  
+
   /* en este punto, o es una referencia a caracter o es
    * una referencia a entidad conocida:
    * se introduce en el documento xhtml
@@ -1999,6 +1999,7 @@ static int inline_on;
 static int indent;
 static int chars_in_line;
 static int whitespace_needed;
+static int inside_cdata_sec;
 
 /*
  * Writes to output the document
@@ -2013,6 +2014,7 @@ static void write_document(document_t *doc)
 
   indent = 0;
   xml_space_on = 0;
+  inside_cdata_sec = 0;
 
   /* write <?xml... */
   fprintf(outputf,"%s?xml version=\"1.0\"", lt);
@@ -2194,26 +2196,39 @@ static int write_cdata_sec(tree_node_t *node)
     len += write_indent(indent, 1);
   }
 
-  /* write the opening markup (with // if xml_space_on <- (script|style) */
-  if (param_protect_cdata && xml_space_on) {
-    len += fprintf(outputf, "//%s![CDATA[", lt);
-    chars_in_line += 11;
-  } else {
-    write_whitespace_or_newline_if_needed(9);
-    len += fprintf(outputf, "%s![CDATA[", lt);
-    chars_in_line += 9;
+  /* write opening markup only if previous node was not
+   * another CDATA section 
+   */
+  if (!inside_cdata_sec) {
+    /* write the opening markup (with // if xml_space_on <- (script|style) */
+    if (param_protect_cdata && xml_space_on) {
+      len += fprintf(outputf, "//%s![CDATA[", lt);
+      chars_in_line += 11;
+    } else {
+      write_whitespace_or_newline_if_needed(9);
+      len += fprintf(outputf, "%s![CDATA[", lt);
+      chars_in_line += 9;
+    }
   }
 
   /* write the data node itself */
   len += write_chardata_space_preserve(node);
 
-  /* write the closing markup */
-  if (param_protect_cdata && xml_space_on) {
-    len += fprintf(outputf, "//]]%s", gt);
-    chars_in_line += 5;
+  /* write the closing markup if next node is not a CDATA
+   * section 
+   */
+  if (!node->sig || node->sig->tipo != Node_cdata_sec) {
+    /* write the closing markup */
+    if (param_protect_cdata && xml_space_on) {
+      len += fprintf(outputf, "//]]%s", gt);
+      chars_in_line += 5;
+    } else {
+      len += fprintf(outputf, "]]%s", gt);
+      chars_in_line += 3;
+    }
+    inside_cdata_sec = 0;
   } else {
-    len += fprintf(outputf, "]]%s", gt);
-    chars_in_line += 3;
+    inside_cdata_sec = 1;
   }
 }
 
@@ -2242,11 +2257,11 @@ static int write_comment(tree_node_t *comm)
   write_whitespace_or_newline_if_needed(4); /* strlen("<!--") */
 
   if (param_pre_comments) {
-    num += fprintf(outputf, "<!--");
+    num += fprintf(outputf, "%s!--", lt);
     chars_in_line += 4;
     num += write_chardata_space_preserve(comm);
   } else {
-    num += fprintf(outputf, "<!-- ");
+    num += fprintf(outputf, "%s!-- ", lt);
     chars_in_line += 5;
     prev_inline = inline_on;
     inline_on = 1;
@@ -2256,8 +2271,13 @@ static int write_comment(tree_node_t *comm)
     inline_on = prev_inline;
   }
 
-  num += fprintf(outputf, "-->");
-  chars_in_line += 3;
+  if (param_pre_comments) {
+    num += fprintf(outputf, "--%s", gt);
+    chars_in_line += 3;
+  } else {
+    num += fprintf(outputf, " --%s", gt);
+    chars_in_line += 4;
+  }
 
   return num;
 }

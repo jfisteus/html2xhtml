@@ -156,7 +156,7 @@ int main(int argc,char **argv)
 static void set_default_parameters()
 {
   param_charset = NULL;
-  param_charset_default = "iso-8859-1";
+  param_charset_default = "ISO-8859-1";
   param_strict = 1;
   param_doctype = -1;
   outputf = stdout;
@@ -441,29 +441,30 @@ static void cgi_write_header()
 "<html xmlns=\"http://www.w3.org/1999/xhtml\">\n\
   <head>\n\
     <title>html2xhtml - page translated</title>\n\
-    <link type=\"text/css\" href=\"/jaf/h2x.css\" rel=\"stylesheet\"/>\n\
+    <link type=\"text/css\" href=\"/jaf/xhtmlpedia/xhtmlpedia.css\" rel=\"stylesheet\"/>\n\
   </head>\n");
   
   fprintf(stdout,
-"  <body>\n\
-    <table>\n\
+" <body>\n\  
+    <table class=\"navigation\">\n\
       <tr>\n\
-        <td rowspan=\"2\"><a href=\"http://www.it.uc3m.es/jaf/html2xhtml\">\
-<img src=\"/jaf/h2x.png\" alt=\"html2xhtml logo\"/></a></td>\n\
-        <td>html2xhtml</td>\n\
+        <td class=\"nav-left\"><a href=\"/jaf/html2xhtml/\">back to main page</a></td>\n\
+        <td class=\"nav-center\"><a href=\"/jaf/xhtmlpedia/index.html\">go to the xhtmlpedia</a></td>\n\
+        <td class=\"nav-right\"><a href=\"/jaf/html2xhtml/download.html\">download html2xhtml</a></td>\n\
       </tr>\n\
-      <tr>\n\
-        <td><a href=\"http://www.it.uc3m.es/jaf/html2xhtml/\">\
-http://www.it.uc3m.es/jaf/html2xhtml/</a></td>\n\
-      </tr>\n\
-    </table>\n\
-    <hr/>\n");
+    </table>");
 
   fprintf(stdout,
-"    <h1>Translation completed!</h1>\n\
-    <p class=\"english\">The input document has been succesfully translated. If you want\n\
-      to save it in a file, copy and paste it in a text editor.</p>\n\
-    <hr/>\n\
+"    <div class=\"title\">\n\
+      <h1>html2xhtml</h1>\n\
+      <p>The document has been converted</p>\n\
+    </div>\n");
+
+  fprintf(stdout,
+"    <p>The input document has been succesfully converted. If you want\n\
+      to save it in a file, copy and paste it in a text editor.\n\
+      You can also <a href=\"/jaf/html2xhtml/download.html\">download\n\
+      html2xhtml</a> and run it in your computer.</p>\n\
     <pre class=\"document\" xml:space=\"preserve\">\n");
 }
 
@@ -471,25 +472,16 @@ static void cgi_write_footer()
 {
   fprintf(stdout,
 "</pre>\n\
-    <hr/>\n\
-    <table>\n\
-      <tr>\n\
-        <td rowspan=\"3\"><a href=\"http://www.it.uc3m.es/jaf/html2xhtml/\"><img src=\"/jaf/h2x.png\" alt=\"html2xhtml logo\"/></a></td>\n\
-        <td>Allocated memory: %d bytes</td>\n\
-      </tr>\n\
-      <tr>\n\
-        <td>html2xhtml %s</td>\n\
-      </tr>\n\
-      <tr>\n\
-        <td><a href=\"http://www.it.uc3m.es/jaf/html2xhtml/\">http://www.it.uc3m.es/jaf/html2xhtml/</a></td>\n\
-      </tr>\n\
-    </table>\n", tree_allocated_memory(), VERSION);
+    <p class=\"boxed\">\n\
+    <img src=\"/jaf/html2xhtml/h2x.png\" alt=\"html2xhtml logo\" />\n\
+      <i>html2xhtml %s</i>, copyright 2001-2008 <a href=\"http://www.it.uc3m.es/jaf/index.html\">Jesús Arias Fisteus</a>; 2001 Rebeca Díaz Redondo, Ana Fernández Vilas\n\
+    </p>\n", VERSION);
 
 #ifdef CGI_DEBUG
   cgi_debug_write_state();
 #endif
 
-  fprintf(stdout, "</body>\n</html>");
+  fprintf(stdout, "</body>\n</html>\n");
 }
 
 #ifdef CGI_DEBUG

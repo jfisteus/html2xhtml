@@ -2576,7 +2576,7 @@ int lexer_end_script(void)
   } else {
     yytext[k]= car;
     yylval.cad= yytext;
-    return TOK_CDATA;
+    return TOK_CDATA_SEC;
   }
 }
 

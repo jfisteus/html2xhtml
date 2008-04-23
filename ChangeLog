@@ -1,3 +1,13 @@
+2008-03-03  Jesus Arias Fisteus <jaf@it.uc3m.es>
+
+	* html2xhtml Fixed a bug when an end tags appears inside
+	a script. The end tag was not properly wrapped inside a CDATA
+	section.
+	* html2xhtml Fixed a bug in the CGI: comments were not properly
+	escaped.
+	* html2xhtml Changed the result page of the CGI to make it
+	look closer to the other pages of the html2xhtml website.
+
 2008-01-16  Jesus Arias Fisteus <jaf@it.uc3m.es>
 
 	* html2xhtml Released as 1.1b4
