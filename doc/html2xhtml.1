@@ -39,6 +39,10 @@ Read the HTML input from
 .I filename
 (optional argument). If this argument is not provided, 
 the HTML input is read from standard input.
+.IP \fB-o\ \fIfilename\fR 20
+Output XHTML file. The file is overwritten if it
+exists. If not provided, the output is written to
+standard output.
 .IP \fB-c\ \fIinput-encoding\fR 20
 Encoding of the input HTML file. Overrides automatic
 input encoding detection (please, read the note about
@@ -73,11 +77,46 @@ XHTML 1.0 Strict
  o \fI1.1\fR
 XHTML 1.1
 .br 
- o \fIbasic\fR
-XHTML Basic
+ o \fIbasic-1.0\fR
+XHTML Basic 1.0
+.br 
+ o \fIbasic-1.1\fR
+XHTML Basic 1.1
 .br 
  o \fImp\fR
 XHTML Mobile Profile
+ o \fIprint-1.0\fR
+XHTML Print 1.0
+.br 
+.IP \fB-l\ \fIline_length\fR 20
+Number of characters per line. The default value is 80.
+It must be greater or equal to 40, otherwise the 
+parameter is ignored.
+.IP \fB-b\ \fItab_length\fR 20
+Tab length in number of characters. It must be a number
+between 0 and 16, otherwise the parameter is ignored.
+Use 0 to avoid indentation in the output.
+.IP \fB--preserve-space-comments\fR 20
+Use this option to preserve white spaces, tabs and 
+ends of lines in HTML comments. The default, if not 
+provided, is to rearrange spacing.
+.IP \fB--no-protect-cdata\fR 20
+Enclose CDATA sections in "script" and "style" following
+the XHTML 1.0 specification (using "<!CDATA[[" and
+"]]>"). It might be incompatible with some browsers.
+The default in this version is to enclose CDATA sections
+using "//<!CDATA[[" and "//]]>", because major browsers
+handle it properly. 
+.IP \fB--compact-block-elements\fR 20
+No white spaces or line breaks are written between  
+the start tag of a block element and the start tag 
+of its first enclosed inline element (or character 
+data) and between the end tag of its last enclosed 
+inline element (or character data) and the end tag 
+of the block element. By default, if this option is
+not set, a new line character and indentation is
+written between them.
+
 .SH NOTE ON CHARACTER ENCODINGS
 
 Html2xhtml does not perform any character encoding conversion.
@@ -89,7 +128,8 @@ This program only works for input encodings that code every ASCI
 character (0-127) only with one byte. This includes, for example,
 ISO-8859-1, ISO-8859-15, UTF-8. However, the program does not work
 for encoding UTF-16. For converting UTF-16 files, please convert it 
-first to UTF-8.
+first to UTF-8. UTF-8 is not guaranteed to work always properly, and
+more testing is required.
 .SH ACKNOWLEDGMENTS
 .na 
 .nf

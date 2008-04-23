@@ -1,6 +1,6 @@
 /***************************************************************************
- *   Copyright (C) 2007 by JesÃºs Arias Fisteus   *
- *   jaf@it.uc3m.es   *
+ *   Copyright (C) 2007 by Jesus Arias Fisteus                             *
+ *   jaf@it.uc3m.es                                                        *
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
@@ -64,8 +64,8 @@ void exit_on_error(char *msg);
 
 
 /* 
- * los siguientes mensajes aparecen sólo si se compila
- * con la macro MSG_DEBUG definida y NO_DEBUG sin definir.
+ * The following messages appear only if MSG_DEBUG is defined and
+ * NO_DEBUG is not defined.
  *
  */
 
@@ -109,10 +109,10 @@ void exit_on_error(char *msg);
 
 
 /*
- * imprime el total de warnings,... generados
+ * write final statistics and warnings
  *
  */
-void mensajes_fin(void);
+void write_end_messages(void);
 
 
 

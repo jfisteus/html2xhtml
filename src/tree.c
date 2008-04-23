@@ -1,6 +1,6 @@
 /***************************************************************************
- *   Copyright (C) 2007 by Jes√∫s Arias Fisteus   *
- *   jaf@it.uc3m.es   *
+ *   Copyright (C) 2007 by Jesus Arias Fisteus                             *
+ *   jaf@it.uc3m.es                                                        *
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
@@ -42,14 +42,14 @@
  *
  */
 
-#include "xchar.h"
-#include "tree.h"
-
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
 
-#include <mensajes.h>
+#include "mensajes.h"
+#include "xchar.h"
+#include "tree.h"
+
   
 
 /* buffer de datos 16384 bloques de 64 KB */
@@ -178,7 +178,7 @@ void tree_set_node_att(tree_node_t *nodo, int att_id, const xchar *value,
 	 p= p->sig);
     if (p->sig) {
       /* atributo repetido: no lo inserta */
-      INFORM("atributo repetido");
+      INFORM("repeated attribute");
       return;
     } else {
       att= (att_node_t*) tree_malloc(sizeof(att_node_t));
@@ -197,7 +197,7 @@ void tree_set_node_att(tree_node_t *nodo, int att_id, const xchar *value,
   att->es_valido= is_valid;
   att->valor= get_data_buffer(xstrsize(value), value);
 
-  if (att->valor < 0) WARNING("atributo demasiado grande");
+  if (att->valor < 0) WARNING("the attribute value is too big");
 }
 
 
@@ -209,7 +209,7 @@ void tree_set_node_att(tree_node_t *nodo, int att_id, const xchar *value,
 void tree_set_node_data(tree_node_t *nodo, const xchar *data, int len_data)
 {
   if (len_data > DATA_BUFFER_SIZE) 
-    WARNING("bloque de datos demasiado grande");
+    WARNING("the data block is too big");
 
   nodo->cont.chardata.data_len= len_data;
   nodo->cont.chardata.data= get_data_buffer(len_data, data);
@@ -260,14 +260,6 @@ void link_root_node(document_t *doc, tree_node_t *nodo)
 {
   if (!doc->inicio) doc->inicio= nodo;
 }
-
-
-
-
-
-
-
-
 
 
 
@@ -328,7 +320,7 @@ void tree_unlink_node(tree_node_t *node)
        hermano= hermano->sig);
   
   if (!hermano && (padre->cont.elemento.hijo!=node))
-    EXIT("error en la estructura del ·rbol");
+    EXIT("error in the structure of the tree");
 
   if (!hermano) padre->cont.elemento.hijo= node->sig;
   else {
@@ -473,7 +465,7 @@ void *tree_malloc(size_t size)
 
   p= tree_index_to_ptr(get_data_buffer(size, NULL));
   if (!p) {
-    EXIT("no hay memoria suficiente");
+    EXIT("out of memory in tree_malloc()");
     return NULL;
   } else return p;
 }
@@ -492,7 +484,7 @@ char *tree_strdup(const char *str)
   dup = (char*) tree_malloc(strlen(str) + 1);
 
   if (!dup) {
-    EXIT("no hay memoria suficiente - en tree_strdup()");
+    EXIT("out of memory in tree_strdup()");
   }
 
   for (i = 0; str[i]; i++) {
@@ -524,7 +516,7 @@ void tree_free(void)
   int i;
 
   if (active) {
-    EPRINTF1("Freed %d memory blocks", num_buffer + 1);
+    EPRINTF1("Memory blocks freed: %d\n", num_buffer + 1);
     
     for (i = 0; i < num_buffer; i++) {
       free(data_buffer[i]);
@@ -562,11 +554,11 @@ static buff_index_t get_data_buffer(int len, const unsigned char *data)
 
   if ((pos_buffer+len) > DATA_BUFFER_SIZE) {
     /* nuevo buffer */
-    INFORM("creando nuevo buffer");
-    EPRINTF1("reservados %d bloques de memoria\n", num_buffer + 1);
+    INFORM("creating a new memory block");
+    EPRINTF1("%d memory blocks allocated\n", num_buffer + 1);
     num_buffer++;
     if (num_buffer>=NUM_DATA_BUFFERS)
-      EXIT("get_data_buffer(), buffers agotados");
+      EXIT("get_data_buffer(), no more data buffers available");
 
     data_buffer[num_buffer]= my_malloc_internal(DATA_BUFFER_SIZE);
     pos_buffer= 0;
@@ -588,7 +580,7 @@ static void *my_malloc_internal(size_t size)
 
   p= malloc(size);
   if (!p) {
-    EXIT("no hay memoria suficiente");
+    EXIT("out of memory");
     return NULL;
   } else return p;
 }

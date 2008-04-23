@@ -1,6 +1,6 @@
 /***************************************************************************
- *   Copyright (C) 2007 by JesÃºs Arias Fisteus   *
- *   jaf@it.uc3m.es   *
+ *   Copyright (C) 2007 by Jesus Arias Fisteus                             *
+ *   jaf@it.uc3m.es                                                        *
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
@@ -94,6 +94,7 @@ typedef struct {
  */
 typedef struct {
   int data_len;
+  int is_cdata_sec;
   buff_index_t data;
 } node_chardata_t;
 
@@ -106,6 +107,7 @@ typedef struct {
 typedef enum {
   Node_element,
   Node_chardata,
+  Node_cdata_sec,
   Node_comment
 } node_type_t;
 
@@ -230,7 +232,6 @@ void link_node( tree_node_t *nodo, tree_node_t *to, int mode);
 void tree_link_data_node(node_type_t tipo, tree_node_t *actual_element,
 			 const xchar *data, int len_data);
 
-
 /**
  * desenlaza el nodo del árbol (no puede ser el nodo raíz)
  * 
@@ -239,25 +240,17 @@ void tree_link_data_node(node_type_t tipo, tree_node_t *actual_element,
  */
 void tree_unlink_node(tree_node_t *node);
 
-
-
 /*
  * enlaza un nuevo nodo de atributos en un nodo de elemento
  *
  */
 void tree_set_node_att(tree_node_t *nodo, int att_id, const xchar *value,
 		       int is_valid);
-
-
-
-
 /*
  * establece los datos de un nodo de datos (Node_chardata)
  *
  */
 void tree_set_node_data(tree_node_t *nodo, const xchar *data, int len_data);
-
-
 
 /*
  * busca el elemento con id elm_id desde el nodo src
@@ -276,9 +269,6 @@ tree_node_t *tree_search_elm_up(tree_node_t *src, int elm_id);
  *
  */
 tree_node_t *tree_search_elm_child(tree_node_t *padre, int elm_id);
-
-
-
 
 
 
@@ -310,7 +300,6 @@ tree_node_t *tree_search_elm_child(tree_node_t *padre, int elm_id);
  */
 int tree_walk(tree_node_t **src, int allow_child);
 
-
 /*
  * devuelve un puntero a la zona de datos
  * apuntada por el índice 'index' en el
@@ -318,9 +307,6 @@ int tree_walk(tree_node_t **src, int allow_child);
  *
  */
 void *tree_index_to_ptr(buff_index_t index);
-
-
-
 
 /*
  * busca en la lista de atributos de un nodo de elemento
@@ -331,13 +317,11 @@ void *tree_index_to_ptr(buff_index_t index);
  */
 att_node_t *tree_node_search_att(tree_node_t *node, int att_id);
 
-
 /*
  * Sustituto para malloc(size_t size)
  *
  */
 void *tree_malloc(size_t size);
-
 
 /*
  * Sustituto para strdup(char *str)
@@ -347,14 +331,12 @@ void *tree_malloc(size_t size);
  */
 char *tree_strdup(const char *str);
 
-
 /*
  * devuelve el número de bytes de memoria utilizados a través
  * de este módulo.
  *
  */
 unsigned int tree_allocated_memory();
-
 
 /*
  * libera la memoria reservada

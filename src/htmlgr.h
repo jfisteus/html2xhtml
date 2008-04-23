@@ -50,8 +50,16 @@
      TOK_ATT_VALUE = 266,
      TOK_EREF = 267,
      TOK_CREF = 268,
-     TOK_STAG_END = 269,
-     TOK_ATT_EQ = 270
+     TOK_CDATA_SEC = 269,
+     TOK_XMLPI_INI = 270,
+     TOK_STAG_END = 271,
+     TOK_EMPTYTAG_END = 272,
+     TOK_ATT_EQ = 273,
+     TOK_XMLPI_END = 274,
+     TOK_WHITESPACE = 275,
+     TOK_BOUNDARY = 276,
+     TOK_PARAM_HEADER = 277,
+     TOK_PARAM_CONTENT = 278
    };
 #endif
 /* Tokens.  */
@@ -66,21 +74,29 @@
 #define TOK_ATT_VALUE 266
 #define TOK_EREF 267
 #define TOK_CREF 268
-#define TOK_STAG_END 269
-#define TOK_ATT_EQ 270
+#define TOK_CDATA_SEC 269
+#define TOK_XMLPI_INI 270
+#define TOK_STAG_END 271
+#define TOK_EMPTYTAG_END 272
+#define TOK_ATT_EQ 273
+#define TOK_XMLPI_END 274
+#define TOK_WHITESPACE 275
+#define TOK_BOUNDARY 276
+#define TOK_PARAM_HEADER 277
+#define TOK_PARAM_CONTENT 278
 
 
 
 
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
 typedef union YYSTYPE
-#line 35 "htmlgr.y"
+#line 46 "htmlgr.y"
 {
   int  ent;
   char *cad;
 }
 /* Line 1489 of yacc.c.  */
-#line 84 "y.tab.h"
+#line 100 "y.tab.h"
 	YYSTYPE;
 # define yystype YYSTYPE /* obsolescent; will be withdrawn */
 # define YYSTYPE_IS_DECLARED 1

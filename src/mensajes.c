@@ -1,6 +1,6 @@
 /***************************************************************************
- *   Copyright (C) 2007 by JesÃºs Arias Fisteus   *
- *   jaf@it.uc3m.es   *
+ *   Copyright (C) 2007 by Jesus Arias Fisteus                             *
+ *   jaf@it.uc3m.es                                                        *
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
@@ -23,10 +23,7 @@
  *
  * (Jesús Arias Fisteus)
  * 
- * contiene las variables de cuenta de mensajes
- * usadas en mensajes.h y una función para
- * mostrar un resumen de estadísticas
- * de mensajes generados
+ * Functions that write messages (debug, errors, warnings, etc.)
  *
  */
 #include <stdio.h>
@@ -34,17 +31,17 @@
 #include "mensajes.h"
 
 
-int num_warning=0;
-int num_inform=0;
+int num_warning = 0;
+int num_inform = 0;
 
 extern unsigned int tree_allocated_memory();
 
-void mensajes_fin(void)
+void write_end_messages(void)
 {
   EPRINTF3("!!TOTAL: warnings(%d) informs(%d) memory(%d B)\n",
 	   num_warning, num_inform, tree_allocated_memory());
 
   if (num_warning) 
-    fprintf(stderr,"El documento generado no es válido\n");
+    fprintf(stderr, "WARNING: the output file might not be valid XHTML\n");
 }
 

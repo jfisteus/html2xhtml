@@ -1,16 +1,19 @@
-%start html
+%start input
 
 %{
 #include <stdio.h>
-#include <mensajes.h>
 #include <string.h>
-#include <xchar.h>
+#include "xchar.h"
+#include "mensajes.h"
 
-#include <procesador.h>
+#include "procesador.h"
+
+#define HTML_FIELD_NAME "html"
 
 extern char *tree_strdup(const char *str);
 extern void *tree_malloc();
-  
+extern int cgi_mode;
+
 /* lista de atributos del elemento actual */
 #define MAX_ELEMENT_ATTRIBUTES  255
 static void setAttributeData(char *data);
@@ -18,9 +21,17 @@ static void setAttributeData(char *data);
 
 static char *element_attributes[MAX_ELEMENT_ATTRIBUTES];
 static int num_element_attributes= 0;
+static char *content= NULL;
 
 /* para establecer modo script en el lexer */
-void begin_script(char *nombre);
+void lexer_begin_script(char *nombre);
+void lexer_cgi_begin_html(void);
+
+/* establece un parámetro */
+void cgi_parse_param(char *nombre, char *valor);
+
+/* busca name="nombre" y devuelve un puntero a "nombre", o NULL */
+static char *get_nombre(char *cadena);
 
 /* control de <PRE> */
 extern int pre_state;
@@ -40,10 +51,43 @@ extern int pre_state;
 
 %token <cad> TOK_DOCTYPE TOK_COMMENT TOK_BAD_COMMENT TOK_STAG_INI TOK_ETAG TOK_CDATA
 %token <cad> TOK_ATT_NAME TOK_ATT_NAMECHAR TOK_ATT_VALUE TOK_EREF TOK_CREF
-%token <ent> TOK_STAG_END TOK_ATT_EQ
+%token <cad> TOK_CDATA_SEC TOK_XMLPI_INI
+%token <ent> TOK_STAG_END TOK_EMPTYTAG_END TOK_ATT_EQ TOK_XMLPI_END
+%token <ent> TOK_WHITESPACE
+%token <cad> TOK_BOUNDARY TOK_PARAM_HEADER TOK_PARAM_CONTENT
 
+%type <cad> param_header param
  
 %%
+
+input: html
+| cgi
+;
+
+cgi: params TOK_BOUNDARY ;
+
+params: 
+| params param 
+;
+
+param: param_header TOK_PARAM_CONTENT {
+  cgi_parse_param($1, $2 +4);
+}
+| param_header html 
+;
+
+param_header: TOK_BOUNDARY TOK_PARAM_HEADER {
+  char* nombre= get_nombre($2);
+  if (!strcmp(nombre, HTML_FIELD_NAME)) {
+    lexer_cgi_begin_html();
+    /* reinitialize the converter to allow the doctype parameter to
+     * take effect.
+     */
+    saxStartDocument();
+  }
+  $$ = nombre ;
+}
+;
 
 html: 
 | html doctype 
@@ -52,7 +96,10 @@ html:
 | html stag
 | html etag
 | html cdata
+| html cdata_sec
+| html whitespace
 | html ref
+| html xmldecl
 ;
 
 doctype: TOK_DOCTYPE {
@@ -82,7 +129,7 @@ stag: TOK_STAG_INI attributes TOK_STAG_END {
 
   /* modo script del lexer (para SCRIPT y STYLE) */
   if ((!strcasecmp($1,"script")) ||(!strcasecmp($1,"style"))) 
-    begin_script($1);
+    lexer_begin_script($1);
 
   if (!strcasecmp($1,"pre")) {DEBUG("inicio de modo PRE");pre_state++;}
 
@@ -99,11 +146,32 @@ etag: TOK_ETAG {
 }
 ;
 
+stag: TOK_STAG_INI attributes TOK_EMPTYTAG_END {   
+  //fprintf(stderr,"EMTYTAG-: %s\n",$1);
+  setAttributeData(NULL);
+  saxStartElement($1,(xchar**)element_attributes);
+/*   freeAttributeData(); */
+  num_element_attributes = 0;
+/*   free($1); */
+  saxEndElement($1);
+}
+;
+
 cdata: TOK_CDATA {
   //fprintf(stderr,"CDATA: <%s>\n",$1);
   saxCharacters($1,strlen($1));
 }
 ;
+
+cdata_sec: TOK_CDATA_SEC {
+  //fprintf(stderr,"CDATA_SEC: <%s>\n",$1);
+  saxCDataSection($1,strlen($1));
+}
+;
+
+whitespace: TOK_WHITESPACE {
+  saxWhiteSpace();
+}
 
 ref: TOK_EREF {
   //fprintf(stderr,"EREF: %s\n",$1);
@@ -115,6 +183,15 @@ ref: TOK_EREF {
   saxReference($1);
 }
 ;
+
+xmldecl: TOK_XMLPI_INI attributes TOK_XMLPI_END {   
+  //fprintf(stderr,"XMLDECL-: %s\n",$1);
+  setAttributeData(NULL);
+  saxXmlProcessingInstruction($1,(xchar**)element_attributes);
+  num_element_attributes = 0;
+}
+;
+
 
 attributes: 
 | attributes attribute 
@@ -166,35 +243,20 @@ static void setAttributeData(char *data)
   element_attributes[num_element_attributes++]= data;  
 }
 
-
-
-#if 0
-/*
- * libera la memoria dinámica asignada al array
- * de datos de atributos
- *
- * PROBLEMA: en uno de los casos hay dos seguidos que referencian a
- *     la misma posición: hay que liberar sólo uno de ellos para que
- *     no casque el programa. Para solucionarlo, se tiene en cuenta
- *     siempre el anterior puntero, y se libera el actual sólo si no 
- *     coincide con el anterior.
- *
- */
-static void freeAttributeData(void)
+/* busca name="nombre" y devuelve un puntero a "nombre", o NULL */
+static char *get_nombre(char *cadena) 
 {
-  int i;
+  char *pos,*tmp;
 
-  /* se libera el primero */
-  if ((num_element_attributes > 0) && (element_attributes[0])) {
-    free(element_attributes[0]);
+  pos= strstr(cadena, "name=\"");
+
+  if (pos) {
+    pos+= 6;
+    for (tmp=pos; *tmp!='\"' && *tmp; tmp++);
+    if (*tmp=='\"') *tmp= 0;
+    else pos= NULL;
   }
 
-  /* se liberan el resto */
-  for (i=1 ; i<num_element_attributes; i++)
-    if (element_attributes[i] && (element_attributes[i]!=element_attributes[i-1])) {
-      free(element_attributes[i]);
-    }
-
-  num_element_attributes= 0;
+  return pos;
 }
-#endif
+

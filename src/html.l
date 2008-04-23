@@ -4,8 +4,8 @@
 
 #include <stdio.h>
 #include <string.h>
-#include <mensajes.h>
 
+#include "mensajes.h"
 #include "htmlgr.h"
 
 extern char *tree_strdup(const char *str);
@@ -15,8 +15,10 @@ int parser_num_linea=1;
 int is_ascii= 1;
 
 int pre_state= 0;
-char script_name[16];
+char script_name[32];
 
+void lexer_cgi_init(void);
+void lexer_cgi_begin_html(void);
 
 /* funciones internas */
 static int cuenta_lineas(char *texto);
@@ -24,10 +26,13 @@ static char *trim(char *cad);
 static char *trimf(char *cad);
 static char *filtcom(char *cad);
 static char *comm(char *cad);
+static char *cdata_sec(char *str);
 static char *etag_val(char *cad);
-void begin_script(char *nombre);
-int end_script(void);
+void lexer_begin_script(char *nombre);
+int lexer_end_script(void);
+int lexer_is_boundary(char *texto);
 
+char *cgi_boundary= NULL;
 
 
 #define YY_USER_ACTION {int i;\
@@ -54,25 +59,37 @@ NAME       ({LETTER}|\_|\:){NAMECHAR}*
 ALL_IN_TAG ([\x00-\x3d]|[\x3f-\xff])*
 IN_COMMENT ([\x00-\x2c]|[\x2e-\xff]|\-([\x00-\x2c]|[\x2e-\xff]))*
 IN_BAD_COMMENT {ALL_IN_TAG}
-IN_SCRIPT  ([^\<]|(\<[^\/!])|(\<![^\-])|(\<!\-[^\-]))*
+IN_SCRIPT  ([^\<\]]|(\<[^\/!])|(\<![^\-\[])|(\<!\-[^\-])|(\<!\[[^C])|(\<!\[C[^D])|(\<!\[CD[^A])|(\<!\[CDA[^T])|(\<!\[CDAT[^A])|(\<!\[CDATA[^\[])|(\][^\]])|(\]\][^\>]))*
 ESP        {S}*
 
-CDATA      ([^\<&\x00-\x08\x0b\x0c\x0e-\x1f])*
+CDATA      ([^\<\]&\x00-\x08\x0b\x0c\x0e-\x1f]|(\][^\]])|(\]\][^\>]))*
 BAD_CDATA  ([\x00-\x08]|\x0b|\x0c|[\x0e-\x1f])
+
+CDATASEC   ([^\]]|(\][^\]])|(\]\][^\>]))*
+CDATASEC_INI ((\/\/)?(\<!CDATA\[))
+CDATASEC_END ((\/\/)?(\]\]\>))
 
 CHAR_REF   (((&#{DIGIT}+)\;)|(&#x({DIGIT}|[a-f]|[A-F])+)\;)
 ENTITY_REF (&{NAME}\;)
 REF        ({CHAR_REF}|{ENTITY_REF})
 ATT_VAL    (\"([^\>\"]|{REF})*\")|('([^\>']|{REF}])*')
 ATT_VAL2   ([^\"'\x09\x0a\x0d\x20\>\<])*
-TAG_END    ({S}*(\/)*\>)
 
-%x TAG TAG_ATT_VAL SCRIPT SCRIPT_END
+CGI_HEADER_LINES  (([^\x0d])*|(\x0d[^\x0a])|(\x0d\x0a[^\x0d])|(\x0d\x0a\x0d[^\x0a]))*
+CGI_CONTENT_LINES  \x0d\x0a\x0d\x0a(([^\x0d])*|(\x0d[^\x0a])|(\x0d\x0a[^\-])|(\x0d\x0a\-[^\-]))*
+BOUNDARY_LINE ({S}*\-\-[\x20-\xff]*)\x0d\x0a
+
+
+
+%x TAG TAG_ATT_VAL SCRIPT SCRIPT_END CGI_CONTENT CGI_HEADER CGI_INICIO
 
 %%
 
 
-{ESP} {if (pre_state) {yylval.cad= yytext; return TOK_CDATA;}}
+{ESP} {if (pre_state) {yylval.cad= yytext; return TOK_CDATA;}
+       else {return TOK_WHITESPACE;}}
+
+<*>{BOUNDARY_LINE} {if (!lexer_is_boundary(yytext)) REJECT else {BEGIN(CGI_HEADER);return TOK_BOUNDARY;}}
 
 "<!DOCTYPE"{ALL_IN_TAG}\>{ESP} {yylval.cad=trimf(yytext);return TOK_DOCTYPE;}
 "<!doctype"{ALL_IN_TAG}\>{ESP} {yylval.cad=trimf(yytext);return TOK_DOCTYPE;}
@@ -98,7 +115,12 @@ TAG_END    ({S}*(\/)*\>)
 <TAG_ATT_VAL>{ESP}{ATT_VAL2} {BEGIN(TAG);yylval.cad= tree_strdup(trim(yytext));
                       return TOK_ATT_VALUE;}
 <TAG_ATT_VAL>{ESP}\>  {BEGIN(0);return TOK_STAG_END;}
-<TAG>{TAG_END}        {BEGIN(0);return TOK_STAG_END;}
+<TAG_ATT_VAL>{ESP}\/\>  {BEGIN(0);return TOK_EMPTYTAG_END;}
+<TAG>{ESP}\>        {BEGIN(0);return TOK_STAG_END;}
+<TAG>{ESP}\/\>      {BEGIN(0);return TOK_EMPTYTAG_END;}
+
+"<?"{NAME}          {yylval.cad= tree_strdup(trim(yytext+2));BEGIN(TAG);return TOK_XMLPI_INI;}
+<TAG>{ESP}"?>"      {BEGIN(0);return TOK_XMLPI_END;}
 
 {CDATA}             {yylval.cad= yytext; return TOK_CDATA;}
 
@@ -106,17 +128,22 @@ TAG_END    ({S}*(\/)*\>)
 {CHAR_REF}{ESP}     {yylval.cad= yytext; return TOK_CREF;}
 
 
-<SCRIPT>"<!--"{IN_COMMENT}"--"{ESP}\>  {yylval.cad=comm(yytext);return TOK_CDATA;}
-<SCRIPT>{IN_SCRIPT}                    {yylval.cad= yytext; return TOK_CDATA;}
-<SCRIPT>\<\/{ESP}{NAME}{ESP}\>         {return end_script();}
-<SCRIPT>"<!--"                         {yylval.cad= yytext; return TOK_CDATA;}
-<SCRIPT>"</"                           {yylval.cad= yytext; return TOK_CDATA;}
+<SCRIPT>"<!--"{IN_COMMENT}"--"{ESP}\>  {yylval.cad=comm(yytext);return TOK_CDATA_SEC;}
+<SCRIPT>("<![CDATA["|"//<![CDATA["){CDATASEC}("]]>"|"//]]>")  {yylval.cad=cdata_sec(yytext);return TOK_CDATA_SEC;}
+<SCRIPT>{IN_SCRIPT}                    {yylval.cad= yytext; return TOK_CDATA_SEC;}
+<SCRIPT>\<\/{ESP}{NAME}{ESP}\>         {return lexer_end_script();}
+<SCRIPT>"<!--"                         {yylval.cad= yytext; return TOK_CDATA_SEC;}
+<SCRIPT>"</"                           {yylval.cad= yytext; return TOK_CDATA_SEC;}
+<SCRIPT>"]]>"                          {yylval.cad= tree_strdup("]]&gt;"); return TOK_CDATA_SEC;}
 
+"<![CDATA["{CDATASEC}"]]>" {yylval.cad=cdata_sec(yytext);return TOK_CDATA_SEC;}
 
-
+<CGI_HEADER>{CGI_HEADER_LINES} {yylval.cad= yytext; BEGIN(CGI_CONTENT);return TOK_PARAM_HEADER;}
+<CGI_CONTENT>{CGI_CONTENT_LINES} {yylval.cad= yytext; BEGIN(CGI_INICIO);return TOK_PARAM_CONTENT;}
 
 &                   {yylval.cad= tree_strdup("&amp;"); return TOK_EREF;}
 \<                  {yylval.cad= tree_strdup("&lt;"); return TOK_EREF;}
+"]]>"               {yylval.cad= tree_strdup("]]&gt;"); return TOK_CDATA;}
 
 {BAD_CDATA}         {DEBUG("carácter descartado");}
 
@@ -224,7 +251,7 @@ static char *etag_val(char *cad)
 
 
 /*
- * devuelve el comentario sacando la marcación,
+ * devuelve el comentario sacando el marcado,
  * es decir, el texto entre <!-- y el siguiente --
  *
  */
@@ -239,10 +266,37 @@ char *comm(char *cad)
 
 
 /*
+ * returns a CDATA section without its markup,
+ * i.e. without "<![CDATA[" and "]]>"
+ * (or "//<![CDATA[" and "//]]>")
+ *
+ */
+char *cdata_sec(char *str)
+{
+   char *result;
+   int len;
+
+   if (str[0] == '/')
+      str = &str[11];
+   else
+      str = &str[9];
+
+   if ((result = strstr(str, "]]>"))) {
+      if (*(result - 1) == '/' && *(result - 2) == '/')
+         *(result - 2) = 0;
+      else
+         *(result) = 0;
+   } 
+
+   return str;
+}
+
+
+/*
  * establece el estado de SCRIPT
  *
  */
-void begin_script(char *nombre)
+void lexer_begin_script(char *nombre)
 {
    strcpy(script_name, nombre);
    DEBUG("comienza script");
@@ -250,7 +304,7 @@ void begin_script(char *nombre)
 }
 
 
-int end_script(void)
+int lexer_end_script(void)
 {
   int i,k;
   char car;
@@ -275,6 +329,35 @@ int end_script(void)
     yytext[k]= car;
     yylval.cad= yytext;
     return TOK_CDATA;
+  }
+}
+
+void lexer_cgi_begin_html(void) {
+  DEBUG("HTML mode set");
+  parser_num_linea= -1; /* reset position */
+  BEGIN(0);
+}
+
+void lexer_cgi_init(void) {
+  DEBUG("Lexer initialized in CGI mode");
+  BEGIN(CGI_INICIO);
+}
+
+int lexer_is_boundary(char *texto) {
+  int i;
+
+  DEBUG("¿es frontera?");
+
+  if (!cgi_boundary) {
+    /* primera aparición */
+    cgi_boundary= tree_strdup(trimf(texto));
+    return 1;
+  }
+  else {
+    /* se compara */
+    if (!strncmp(trim(texto), cgi_boundary, strlen(cgi_boundary))) return 1;
+    else 
+      return 0;
   }
 }
 

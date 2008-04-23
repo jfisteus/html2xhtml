@@ -1,3 +1,37 @@
+2008-01-16  Jesus Arias Fisteus <jaf@it.uc3m.es>
+
+	* html2xhtml Released as 1.1b4
+
+	* html2xhtml Fixed some bugs with Windows carriage returns.
+
+	* html2xhtml Fixed a bug when line breaks appeared inside
+	attribute values.
+
+	* html2xhtml Added the --compact-block-elements option.
+
+2008-01-04  Jesus Arias Fisteus <jaf@it.uc3m.es>
+
+	* html2xhtml New output formatting code. Now indentation 
+	length and line length are configurable. Line wrapping is 
+	now better.
+
+	* html2xhtml Integrated the code of the CGI version of the
+	program in the executable file html2xhtml. Define the
+	macro WITH_CGI to activate it at compilation time. The
+	executable will decide at run time if it works in command
+	line or as a CGI.
+
+	* html2xhtml Better support of XHTML input.
+
+	* html2xhtml Better support for CDATA sections.
+	
+	* html2xhtml Fixed several other minor issues.
+
+2007-10-30  Jesus Arias Fisteus <jaf@it.uc3m.es>
+
+	* html2xhtml Fixed a bug regarding whitespaces: spacing was
+	removed in situations like "<b>1</b> <b>2</b>"
+
 2007-09-16  Jesus Arias Fisteus <jaf@it.uc3m.es>
 
 	* html2xhtml Added support for XHTML Print 1.0

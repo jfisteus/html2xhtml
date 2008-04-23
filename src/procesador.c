@@ -1,6 +1,6 @@
 /***************************************************************************
- *   Copyright (C) 2007 by JesÃºs Arias Fisteus   *
- *   jaf@it.uc3m.es   *
+ *   Copyright (C) 2007 by Jesus Arias Fisteus                             *
+ *   jaf@it.uc3m.es                                                        *
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
@@ -48,25 +48,20 @@
  */
 
 
-
-
 #include <stdio.h>
 #include <string.h>
 
-
 #include "procesador.h"
 #include "tree.h"
-
-#include <dtd_util.h>
-#include <mensajes.h>
-#include <xchar.h>
+#include "dtd_util.h"
+#include "mensajes.h"
+#include "xchar.h"
 
 #ifdef SELLAR
-#define SELLO "translated by html2xhtml - http://www.it.uc3m.es/jaf/conversor.html"
+#define SELLO "translated by html2xhtml - http://www.it.uc3m.es/jaf/html2xhtml/"
 #endif
 
-
-#define MAX_NUM_ERRORES 20
+#define MAX_NUM_ERRORS 20
 #define ID_LIST_SIZE    8192
 
 /* estructura principal */
@@ -78,30 +73,30 @@ static enum {ST_START,ST_PARSING,ST_END} state= ST_START;
 static int doctype_mask= 0x7;
 static int doctype= -1;
 static int doctype_locked= 0;
-static int ejecutado_doctype= 0;
+static int doctype_detected= 0;
 
 static tree_node_t *actual_element= NULL;  /* elemento actual */
 
-static int num_errores= 0;
+/* new place recovery mode: variables set to non-null when this 
+mode is active */
+static int new_place_recovery_on;
+static tree_node_t *new_place_recovery_elm;
+static tree_node_t *new_place_recovery_father;
+
+static int num_errores;
 
 
 static int doctype_scan(const xchar *data);
 static int doctype_set(int type, int lock);
 
-static void volcar_salida(document_t *doc);
-static int elm_output_start_tag(tree_node_t* nodo);
-static int elm_output_end_tag(tree_node_t* nodo);
-static int data_output(tree_node_t *nodo, int nl, int ident);
-static int comment_output(tree_node_t *nodo, int nl, int ident);
-static int new_line_output(int ident);
-
 static void set_attributes(tree_node_t *elm, xchar **atts);
 static void elm_close(tree_node_t *nodo);
-static int insert_element(tree_node_t *nodo);
-static void insert_chardata(const xchar *ch, int len);
+static int  insert_element(tree_node_t *nodo);
+static void insert_chardata(const xchar *ch, int len, node_type_t type);
 static void elm_meta_scan(tree_node_t *meta);
 static int  elm_check_prohibitions(int elmid);
 static int  elm_is_father(int elmid, tree_node_t *nodo);
+static int  text_contains_special_chars(const xchar *ch, int len);
 
 #ifdef SELLAR
 static void sellar_documento(void);
@@ -122,26 +117,41 @@ static tree_node_t* err_aux_insert_elm(int elm_id, const xchar *content, int len
 
 static xchar* check_and_fix_att_value(xchar* value);
 
+/* new output functions */
+static void write_document(document_t *doc);
+static int write_node(tree_node_t *node);
+static int write_element(tree_node_t *node);
+static int write_chardata(tree_node_t *node);
+static int write_cdata_sec(tree_node_t *node);
+static int write_whitespace_or_newline_if_needed(int next_data_len);
+static int write_chardata_space_preserve(tree_node_t *node);
+static int write_comment(tree_node_t *node);
+static int write_start_tag(tree_node_t* nodo);
+static int write_end_tag(tree_node_t* nodo);
+static int write_indent(int len, int new_line);
+static int write_plain_data(xchar* text, int len);
 
-
+/* configuration parameters */
 extern char *param_charset;
 extern char *param_charset_default;
-extern int   param_estricto;
+extern int   param_strict;
 extern int   param_doctype;
 extern int   is_ascii;
 extern FILE *outputf;
+extern int   param_chars_per_line;
+extern int   param_tab_len;
+extern int   param_pre_comments; /* preserve spacing inside comments */
+extern int   param_protect_cdata;
+extern int   param_cgi_html_output;
+extern int   param_compact_block_elms;
 
-int param_chars_per_line= 80;
-int param_tab_len= 2;
-
-
-/* variables de inserción anticipada de elementos */
+/* element insertion variables */
 static tree_node_t *ins_html;
 static tree_node_t *ins_head;
 static tree_node_t *ins_body;
 
 
-/* variables para representar los caracteres especiales de HTML */
+/* special HTML parameters specification */
 static char lt_escaped[]="&lt;";
 static char amp_escaped[]="&amp;";
 static char gt_escaped[]="&gt;";
@@ -149,10 +159,11 @@ static char lt_normal[]="<";
 static char amp_normal[]="&";
 static char gt_normal[]=">";
 
-/* apuntarán a la versión escogida: escaped o normal */
+/* escaped or normal characters */
 static char* lt;
 static char* amp;
 static char* gt;
+static char eol[] = "\n";
 
 static int escape_chars;
 
@@ -172,28 +183,31 @@ void saxStartDocument(void)
 {
   EPRINTF("SAX.startDocument()\n"); 
 
-  if (state!=ST_START && state!=ST_END) EXIT("estado incorrecto");
+  if (state!=ST_START || state!=ST_END) {
 
-  state= ST_PARSING;
+    state= ST_PARSING;
+    
+    /* reset variables */
+    doctype= -1;
+    doctype_locked= 0;
+    doctype_detected= 0;
+    actual_element= NULL;
+    num_errores= 0;
+    ins_html= NULL;
+    ins_head= NULL;
+    ins_body= NULL;
+    id_list_num = 0;
+    new_place_recovery_on = 0;
 
-  /* reset variables */
-  doctype= -1;
-  doctype_locked= 0;
-  ejecutado_doctype= 0;
-  actual_element= NULL;
-  num_errores= 0;
-  ins_html= NULL;
-  ins_head= NULL;
-  ins_body= NULL;
-  id_list_num = 0;
+    tree_init();
+    
+    document= new_tree_document(doctype, -1);
+  }
 
-  /* inicia el módulo 'tree' */
-  tree_init();
-
-  document= new_tree_document(doctype, -1);
-
-  if (param_charset) strcpy(document->encoding,param_charset);
-  if (param_doctype!=-1) doctype_set(param_doctype,1);
+  if (param_charset) 
+    strcpy(document->encoding, param_charset);
+  if (param_doctype != -1) 
+    doctype_set(param_doctype, 1);
 }
 
 
@@ -207,18 +221,18 @@ void saxEndDocument(void)
 {
   EPRINTF("SAX.endDocument()\n");
 
-  if (!document) EXIT("¡no hay documento!");
-  if (!document->inicio) EXIT("documento sin elemento raíz???");
+  if (!document) EXIT("no document found!");
+  if (!document->inicio) EXIT("document without root html element");
 
   if (actual_element)
     for ( ; actual_element; actual_element= actual_element->padre)
       elm_close(actual_element);
 
-  if (!document->inicio) EXIT("documento descartado");
+  if (!document->inicio) EXIT("document discarded");
 
   if (!document->encoding[0] && !is_ascii && param_charset_default) {
     strcpy(document->encoding,param_charset_default);
-    INFORM("Se establece codificación por defecto");
+    INFORM("Default charset set");
   }
 
 #ifdef SELLAR
@@ -226,7 +240,7 @@ void saxEndDocument(void)
 #endif
 
   if (state== ST_PARSING) state= ST_END;
-  if (state!= ST_END) EXIT("estado incorrecto");
+  if (state!= ST_END) EXIT("bad state");
 }
 
 
@@ -260,7 +274,7 @@ void saxStartElement(const xchar *fullname, xchar **atts)
 #endif
 
 
-  if (state!=ST_PARSING) EXIT("estado incorrecto");
+  if (state!=ST_PARSING) EXIT("bad state");
 
 
   /* se pasa a minúsculas */
@@ -309,7 +323,7 @@ void saxStartElement(const xchar *fullname, xchar **atts)
   if (!actual_element) {
     if (elm_ptr != ELMID_HTML)
       if (!err_html_struct(document, elm_ptr))
-	EXIT("¡No empieza con elemento 'html'! Estructura incorrecta\n");
+	EXIT("Does not begin with 'html'! Incorrect structure\n");
   }
 
 
@@ -337,28 +351,14 @@ void saxStartElement(const xchar *fullname, xchar **atts)
     ins_body= NULL;
     DEBUG("insertado previamente por el conversor");
   } else 
-
-
     /* inserta el nodo */
     if (insert_element(nodo) <0 ) {
       INFORM("elemento no insertado");
       return;
   }
 
-
   /* atributos */
   set_attributes(nodo, atts);
-
-  /* si es <script> o <style>, se abre sección CDATA */
-  if ((elm_ptr== ELMID_SCRIPT)||(elm_ptr== ELMID_STYLE)) {
-
-    /* se crea un nodo para los datos */
-    nodo= new_tree_node(Node_chardata);
-    link_node(nodo, actual_element, LINK_MODE_CHILD);
-
-    /* le pasan los datos al nodo */
-    tree_set_node_data(nodo, "<![CDATA[",9);
-  }
 
   /* si es <meta>, se comprueban atributos interesantes */
   if (elm_ptr==ELMID_META) elm_meta_scan(nodo);
@@ -378,7 +378,7 @@ void saxEndElement(const xchar *name)
 
   EPRINTF1("SAX.endElement(%s)\n",name);
 
-  if (state!=ST_PARSING) EXIT("estado incorrecto");
+  if (state!=ST_PARSING) EXIT("bad state");
 
   xtolower(elm_name,name,ELM_NAME_LEN);
   if ((elm_ptr= dtd_elm_search(elm_name))<0) {
@@ -388,21 +388,7 @@ void saxEndElement(const xchar *name)
     }
   }
 
-  /* si es <script> o <style>, se cierra sección CDATA */
-  if ((elm_ptr== ELMID_SCRIPT)||(elm_ptr== ELMID_STYLE)) {
-    if (ELM_ID(actual_element)==elm_ptr) {
-
-    /* se crea un nodo para los datos */
-    nodo= new_tree_node(Node_chardata);
-    link_node(nodo, actual_element, LINK_MODE_CHILD);
-    
-    /* le pasan los datos al nodo */
-    tree_set_node_data(nodo, "]]>", 3);
-    } else INFORM("¿qué pasa con el script? No es el elemento actual");
-  } 
-
-
-  /* busca al entecesor que coincida */
+  /* busca al antecesor que coincida */
   for (nodo=actual_element; (nodo) && (ELM_ID(nodo)!=elm_ptr); 
        nodo=nodo->padre);
   /*elm_close(nodo);*/
@@ -418,10 +404,14 @@ void saxEndElement(const xchar *name)
 
     /* cierra el nodo y actualiza actual_element */
     elm_close(nodo);
-    actual_element= nodo->padre;
+    if (!new_place_recovery_on || new_place_recovery_elm != actual_element) {
+      actual_element= nodo->padre;
+    } else {
+      new_place_recovery_on = 0;
+      actual_element = new_place_recovery_father;
+    }
     if (!actual_element) state= ST_END;
   }
-
 }
 
 
@@ -435,7 +425,7 @@ void saxReference(const xchar *name)
 {
   EPRINTF1("SAX.reference(%s)\n",name);
 
-  if (state!=ST_PARSING) EXIT("estado incorrecto");
+  if (state!=ST_PARSING) EXIT("bad state");
 
   if (!actual_element) return;
 
@@ -450,7 +440,7 @@ void saxReference(const xchar *name)
    * una referencia a entidad conocida:
    * se introduce en el documento xhtml
    */
-  insert_chardata(name,xstrlen(name));
+  insert_chardata(name,xstrlen(name), Node_chardata);
 }
 
 
@@ -467,10 +457,49 @@ void saxCharacters(const xchar *ch, int len)
 
   if (state!=ST_PARSING) return;
 
-  insert_chardata(ch, len);
+  insert_chardata(ch, len, Node_chardata);
 }
 
+/**
+ * CDATA section (when input is XML)
+ *
+ */
+void saxCDataSection(const xchar *ch, int len)
+{
+  node_type_t type;
 
+  EPRINTF2("SAX.cdatasection(%d)[%s]\n",len,ch);
+
+  if (state!=ST_PARSING) return;
+
+  /* by default, mark as CDATA section */
+  type = Node_cdata_sec;
+
+  /* but if it is inside style and does not contain & or < 
+   * then insert it as normal character data 
+   */
+  if (ELM_ID(actual_element) == ELMID_STYLE
+      && !text_contains_special_chars(ch, len))
+    type = Node_chardata;
+
+  insert_chardata(ch, len, type);
+}
+
+void saxWhiteSpace()
+{
+  EPRINTF("SAX.whitespace()\n");
+
+  if (state!=ST_PARSING) return;
+
+  /* insert the whitespace only if the actual element has
+     mixed contenttype. If not, ignore it because it is irrelevant. */
+  if (actual_element 
+      && ELM_PTR(actual_element).contenttype[doctype] == CONTTYPE_MIXED) {
+    xchar *data = tree_malloc(1);
+    data[0] = 0x20; /* a whitespace */
+    insert_chardata(data, 1, Node_chardata);
+  }
+}
 
 
 /**
@@ -489,17 +518,8 @@ void saxComment(const xchar *value)
     return;
   }
   
-  if (actual_element) {
-
+  if (actual_element)
     tree_link_data_node(Node_comment, actual_element, value, strlen(value));
-
-/*     /\* se crea un nodo para el comentario *\/ */
-/*     nodo= new_tree_node(Node_comment); */
-
-/*     link_node(nodo, actual_element, LINK_MODE_CHILD); */
-/*     /\* le pasa los datos al nodo *\/ */
-/*     tree_set_node_data(nodo, value, xstrlen(value)); */
-  } 
   else
     INFORM("comentario antes de elemento raíz");
 }
@@ -521,17 +541,80 @@ void saxDoctype(const xchar *data)
   fprintf(stderr, "SAX.doctype(");
 #endif
 
-  if (state!=ST_PARSING) EXIT("estado incorrecto");
-  if (ejecutado_doctype) EXIT("DOCTYPE otra vez...");
+  if (state!=ST_PARSING) EXIT("bad state");
+  if (!doctype_detected) {
+    doctype_detected= 1;
+    /* try to guess the document type */
+    if ((doc=doctype_scan(data))!=-1) doctype_set(doc,0);
+  } else {
+    INFORM("More than one doctype found: only the first one is processed");
+  }
+}
 
-  ejecutado_doctype= 1;
 
-#if 0
-  fprintf(stderr,"%s\n",data);
+/**
+ * XML Processing Instruction
+ *
+ * e.g. <?xml version="1.0" encoding="iso-8859-1" ?>
+ *
+ */
+void saxXmlProcessingInstruction(const xchar *fullname, xchar **atts)
+{
+  xchar pi_name[ELM_NAME_LEN];
+  xchar att_name[ATT_NAME_LEN];
+  int i, j;
+  int encoding_set;
+
+#ifdef MSG_DEBUG
+#ifndef PRO_NO_DEBUG
+  EPRINTF1("SAX.xmlProcessingInstruction(%s", (char *) fullname);
+  if (atts != NULL) {
+    for (i = 0;(atts[i] != NULL);i++) {
+      EPRINTF1(", %s='", atts[i++]);
+      if (atts[i] != NULL)
+	EPRINTF1("%s'", atts[i]);
+    }
+  }
+  EPRINTF(")\n");
+#endif
 #endif
 
-  /* intenta averiguar el tipo de documento */
-  if ((doc=doctype_scan(data))!=-1) doctype_set(doc,0);
+  if (state != ST_PARSING) EXIT("XML processing instruction in bad state");
+
+  encoding_set = 0;
+
+  /* convert to lowercase the PI name */
+  xtolower(pi_name, fullname, ELM_NAME_LEN);
+
+  if (!strncmp("xml", pi_name, 4)) {
+    /* <?xml ... ?> Look for encoding */
+    if (atts) {
+      for (i=0; atts[i]; i+=2) {
+	xtolower(att_name, atts[i], ATT_NAME_LEN);
+	if (!strncmp("encoding", att_name, 9)) {
+	  if (!document->encoding[0] && xstrnlen(atts[i+1], 33) < 32) {
+	    /* convert encoding to uppercase */
+	    for (j=0; atts[i+1][j]; j++) {
+	      if ((atts[i+1][j]>='a')&&(atts[i+1][j]<='z'))
+		document->encoding[j]= atts[i+1][j] - 0x20;
+	      else 
+		document->encoding[j]= atts[i+1][j];
+	    }
+	    document->encoding[j]= 0;
+	    encoding_set = 1;
+	    DEBUG("saxXmlProcessingInstruction()");
+	    EPRINTF1("   encoding=%s\n",document->encoding);
+	  } else {
+	    INFORM("Discarded encoding in saxXmlProcessingInstruction()");
+	    EPRINTF1("   encoding=%s\n", atts[i+1]);	    
+	  }
+	}
+      } /* for */
+    } /* if (atts) */
+    if (!encoding_set) {
+      strcpy(document->encoding, "UTF-8");
+    }
+  } /* if <?xml */
 }
 
 
@@ -544,26 +627,23 @@ void saxError(xchar *data)
   INFORM("error en el documento de entrada");
   EPRINTF2("   texto '%s' [%x...] no emparejado\n",data,data[0]);
 
-  if (num_errores>MAX_NUM_ERRORES) 
-    EXIT("demasiados caracteres sin emparejar");
+  if (num_errores>MAX_NUM_ERRORS) 
+    EXIT("too many errors in the lexer");
 }
 
 
 /**
- * imprime la salida
+ * Write the output XHTML document
  *
- * mode: 0 normal
- *       1 pre (utiliza referencias a entidades)
- *
- * devuelve 0 (correcto) o <0 (error)
+ * returns 0 (OK) or < 0 (error)
  */
-int writeOutput(int mode) 
+int writeOutput() 
 {
   if (state != ST_END) return -1;
   if (!document) return -2;
   
-  escape_chars= mode;
-  if (!mode) {
+  escape_chars= param_cgi_html_output;
+  if (!param_cgi_html_output) {
     gt= gt_normal;
     lt= lt_normal;
     amp= amp_normal;
@@ -574,7 +654,7 @@ int writeOutput(int mode)
   }
 
   /* vuelca la salida */
-  volcar_salida(document);
+  write_document(document);
   return 0;
 }
 
@@ -607,12 +687,23 @@ void freeMemory()
 static int doctype_scan(const xchar *data)
 {
   char buffer[512];
+  int i;
 
-  xtolower(buffer,data,512);
-  if (xsearch(buffer,"transitional")) return XHTML_TRANSITIONAL;
-  else if (xsearch(buffer,"loose.dtd")) return XHTML_TRANSITIONAL;
-  else if (xsearch(buffer,"strict")) return XHTML_STRICT;
-  else if (xsearch(buffer,"frameset")) return XHTML_FRAMESET;
+  /* if the document is already XHTML, maintain its doctype
+   * by default 
+   */
+  strncpy(buffer, data, 512);
+  for (i = 0; i < DTD_NUM; i++) {
+    if (xsearch(buffer, dtd_string[i]))
+      return i;
+  }
+
+  /* if not, try to detect HTML doctypes */
+  xtolower(buffer, data, 512);
+  if (xsearch(buffer, "transitional")) return XHTML_TRANSITIONAL;
+  else if (xsearch(buffer, "loose.dtd")) return XHTML_TRANSITIONAL;
+  else if (xsearch(buffer, "strict")) return XHTML_STRICT;
+  else if (xsearch(buffer, "frameset")) return XHTML_FRAMESET;
   else return -1;
 }
 
@@ -786,20 +877,23 @@ int insert_element(tree_node_t *nodo)
     
 
 
-    if (insertado) {
+    if (insertado == 1) {
       link_node(nodo, actual_element, LINK_MODE_CHILD);
       DEBUG("insert_element()");
       EPRINTF1("   insertado elemento %s correctamente\n",ELM_PTR(nodo).name);
-    } else {
+    } else if (insertado == 0) {
       DEBUG("elemento descartado:");
       EPRINTF1("   %s\n",ELM_PTR(nodo).name);
     }
+    /* if (insertado == 2) -> inserted by err_child_no_valid in another place */
+
   } /* else */
 
   /* si es un elemento vacío, se cierra */
   if (insertado) {
-    if (elm_list[elm_ptr].contenttype[doctype]!=CONTTYPE_EMPTY)
+    if (elm_list[elm_ptr].contenttype[doctype]!=CONTTYPE_EMPTY) {
       actual_element= nodo;
+    }
     else elm_close(nodo);
   }
   
@@ -838,11 +932,11 @@ static void elm_close(tree_node_t *nodo)
       if (elm->tipo==Node_element) content[num++]= ELM_ID(elm);
 
     
-    if (i==16384) EXIT("desbordada la variable content");
+    if (i==16384) EXIT("internal error: variable 'i' overflow");
     if (dtd_is_child_valid(ELM_PTR(nodo).contentspec[doctype],content,num)!=1) {
       /* children no válido: a intentar corregirlo */
       if (!err_content_invalid(nodo,content,num))
-	WARNING("child no válido");
+	WARNING("invalid element content");
     }
     else DEBUG("child válido");
   }
@@ -852,13 +946,13 @@ static void elm_close(tree_node_t *nodo)
 
 
 
-static void insert_chardata(const xchar *ch, int len)
+static void insert_chardata(const xchar *ch, int len, node_type_t type)
 {
 /*   tree_node_t *nodo; */
 
   if (!actual_element) {
     num_errores++;
-    if (num_errores>MAX_NUM_ERRORES) EXIT("demasiados errores");
+    if (num_errores>MAX_NUM_ERRORS) EXIT("too many errors");
     return;
   }
 
@@ -885,7 +979,7 @@ static void insert_chardata(const xchar *ch, int len)
     }
   }
 
-  tree_link_data_node(Node_chardata, actual_element, ch, len);
+  tree_link_data_node(type, actual_element, ch, len);
 
 /*   /\* se crea un nodo para los datos *\/ */
 /*   nodo= new_tree_node(Node_chardata); */
@@ -899,8 +993,20 @@ static void insert_chardata(const xchar *ch, int len)
 
 
 
+/*
+ * Returns 1 if at least one '&' or one '<' appear in text
+ * or 0 otherwise
+ */
+static int text_contains_special_chars(const xchar *ch, int len)
+{
+  int i;
 
-
+  for (i = 0; i < len; i++) {
+    if (ch[i] == '&' || ch[i] == '<')
+      return 1;
+  }
+  return 0;
+}
 
 
 
@@ -939,7 +1045,7 @@ static void elm_meta_scan(tree_node_t *meta)
       attval= tree_index_to_ptr(content->valor);
       if (attval && ((cad=strstr(attval,"charset=")))) {
 	for ( ; *cad!='='; cad++);
-	if (!document->encoding[0] && (strlen(cad)<32)) {
+	if (!document->encoding[0] && (xstrnlen(cad, 33)<32)) {
 	  int i;
 	  cad++;
 	  /* pasa a mayúsculas */
@@ -1260,7 +1366,7 @@ static int err_content_invalid(tree_node_t* nodo, int hijos[], int num_hijos)
   }
 
 
-  if (!corregido && param_estricto) {
+  if (!corregido && param_strict) {
     /* se descarta el elemento */
     if (nodo!=document->inicio) tree_unlink_node(nodo);
     else document->inicio= NULL;
@@ -1286,6 +1392,8 @@ static int err_child_no_valid(tree_node_t* nodo)
 {
   int insertado;
   tree_node_t* actual;
+
+  EPRINTF1("err_child_no_valid(%s)\n", ELM_PTR(nodo).name);
 
   /* si el padre es <ul> o <ol>, se inserta <li> */
   if (((ELM_ID(actual_element)==ELMID_OL)||(ELM_ID(actual_element)==ELMID_UL))
@@ -1352,6 +1460,22 @@ static int err_child_no_valid(tree_node_t* nodo)
       insertado= 1;
       DEBUG("[ERR] insertado elemento p como padre");
     }
+  }
+
+  if (!insertado && ELM_ID(nodo) == ELMID_STYLE) {
+    /* si es un elemento style, lo metemos dentro de head */
+
+    /* el primer hijo de <html> es <head> */
+    tree_node_t* head = document->inicio->cont.elemento.hijo;
+    link_node(nodo, head, LINK_MODE_CHILD);
+    insertado = 2;
+    
+    /* activate the new place recovery mode */
+    new_place_recovery_on = 1;
+    new_place_recovery_elm = nodo;
+    new_place_recovery_father = actual_element;
+
+    DEBUG("Inserted style in head");
   }
 
   return insertado;
@@ -1448,7 +1572,7 @@ static int err_att_req(tree_node_t *elm, int att_id, xchar **atts)
 	valor= tree_strdup("text/javascript");
       else valor= tree_strdup(atts[i+1]);
     } 
-    else valor= tree_strdup(""); 
+    else valor= tree_strdup("text/javascript"); 
   }
 
   /* CASO 4: si el elemento es 'style' y el atributo 'type'
@@ -1534,20 +1658,18 @@ static void err_att_default(tree_node_t *elm, xchar **atts)
 	  }
 	break;
       } /* if atts */
+      break;
     }
+  case ELMID_PRE:
+  case ELMID_SCRIPT:
+  case ELMID_STYLE:
+    if (!tree_node_search_att(elm, ATTID_XML_SPACE)
+	&& dtd_att_search_list_id(ATTID_XML_SPACE, 
+				  ELM_PTR(elm).attlist[doctype]) >= 0) {
+      set_node_att(elm,ATTID_XML_SPACE, "preserve", 1); 
+    }
+    break;
   } /* switch */
-
-
-
-  
-  /* si el nodo es PRE, STYLE o SCRIPT, inserta xml:space='preserve' */
-  if (((ELM_ID(elm)==ELMID_PRE)||(ELM_ID(elm)==ELMID_SCRIPT)||
-      (ELM_ID(elm)==ELMID_STYLE))
-      && !tree_node_search_att(elm, ATTID_XML_SPACE)) {
-
-    set_node_att(elm,ATTID_XML_SPACE,"preserve",1);
-  }
-
 }
 
 
@@ -1573,21 +1695,6 @@ static int err_html_struct(document_t *document, int elm_id)
   int ok= 0;
   tree_node_t *html=NULL, *head=NULL, *body=NULL;
   tree_node_t *nodo;
-
-  /*
-  if (document->inicio) {
-    html= document->inicio;
-    if (html->cont.elemento.hijo) {
-      if (ELM_ID(html->cont.elemento.hijo)==ELMID_HEAD) {
-	head=html->cont.elemento.hijo;
-	if (head->sig && 
-	     (((doctype==XHTML_FRAMESET)&&(ELM_ID(head->sig)==ELMID_BODY))
-	      || ((doctype==XHTML_FRAMESET)&&(ELM_ID(head->sig)==ELMID_FRAMESET))))
-	  body= head->sig;
-      } 
-    }
-  }
-  */
 
   html= document->inicio;
   if (html) {
@@ -1737,10 +1844,6 @@ static tree_node_t* err_aux_insert_elm(int elm_id, const xchar *content, int len
   /* si tiene contenido, se lo inserta */
   if (content && (len>0)) {
     tree_link_data_node(Node_chardata, elm, content, len);
-
-/*     data= new_tree_node(Node_chardata); */
-/*     link_node(data, elm, LINK_MODE_CHILD); */
-/*     tree_set_node_data(data,content,len); */
   }
 
   /* si es HTML, HEAD o BODY, marca las variables de inserción */
@@ -1883,348 +1986,520 @@ xchar* check_and_fix_att_value(xchar* value)
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 /*
  * ===================================================================
- * FUNCIONES PARA VOLCAR EL ÁRBOL A UN DOCUMENTO XHTML
+ * Write the XHTML output
  * ===================================================================
  *
  */
 
-/* para preservar espacios en blanco en la salida */
+/* internal variables of the output module */
 static int xml_space_on;
-
-
+static int inline_on;
+static int indent;
+static int chars_in_line;
+static int whitespace_needed;
 
 /*
- * vuelca la salida XHTML a partir de los datos
- * recogidos en el árbol
+ * Writes to output the document
  *
  */ 
-static void volcar_salida(document_t *doc)
+static void write_document(document_t *doc)
 {
   tree_node_t *p,*ant;
   int allow_child;
   int dir;
-  int chars_of_line;   /* número de caracteres escritos en la última línea */
   int indent; /* número de caracteres a identar */
 
-  chars_of_line= 0;
-  indent= 0;
-  xml_space_on= 0;
+  indent = 0;
+  xml_space_on = 0;
 
-  /* vuelca <?xml... */
+  /* write <?xml... */
   fprintf(outputf,"%s?xml version=\"1.0\"", lt);
   if (document->encoding[0]) 
     fprintf(outputf," encoding=\"%s\"",document->encoding);
   fprintf(outputf,"?%s\n\n",gt);
 
-
-  /* vuelca <!DOCTYPE... */
-  fprintf(outputf,"%s!DOCTYPE html\n   %s\n   \"%s\" %s\n\n", 
+  /* write <!DOCTYPE... */
+  fprintf(outputf,"%s!DOCTYPE html\n   %s\n   \"%s\" %s\n", 
 	  lt, doctype_string[doctype], dtd_string[doctype], gt);
-
   
-  for (p=ant=doc->inicio, allow_child=1, dir=NODE_CHILD; 
-       p;
-       ant=p, dir= tree_walk(&p,allow_child)) {
+  p = doc->inicio;
+  indent = 0;
+  write_node(p);
+  fputs(eol, outputf);
+}
 
-    /* cierra el tag anterior si p no es hijo suyo */
-    if ((dir!=NODE_CHILD) && allow_child && (ant->tipo==Node_element)) {
-      if (tree_node_search_att(ant,ATTID_XML_SPACE))
-	xml_space_on--;
-      if (dtd_elm_is_block(ELM_ID(ant)) && !xml_space_on)
-	indent-= param_tab_len;
-      if (ELM_PTR(ant).contenttype[doctype] != CONTTYPE_EMPTY) {
-	if (dtd_elm_is_block(ELM_ID(ant)))
-	  chars_of_line= new_line_output(indent);
-	chars_of_line+= elm_output_end_tag(ant);
-      }
-    }
-    
-    if (p->tipo==Node_element) {
-      switch (dir) {
-      case NODE_BROTHER:
-      case NODE_CHILD:
-        if (dtd_elm_is_block(ELM_ID(p)) && !xml_space_on) {
-	  chars_of_line= new_line_output(indent);
-	  indent+= param_tab_len;
-	}
-	chars_of_line+= elm_output_start_tag(p);
-	allow_child= 1;
-	break;
-	
-      case NODE_FATHER:
-	if (tree_node_search_att(p,ATTID_XML_SPACE)) 
-	  xml_space_on--;
-        if (dtd_elm_is_block(ELM_ID(p)) && !xml_space_on)
-	  indent-= param_tab_len;
-	if ((ant->tipo==Node_element) && 
-	    dtd_elm_is_block(ELM_ID(ant))) 
-	  chars_of_line=new_line_output(indent);
+static int write_node(tree_node_t *node)
+{
+  int len;
 
-	chars_of_line+= elm_output_end_tag(p);
-	allow_child= 0;
-	break;
-      }
-    }
-    else if (p->tipo==Node_chardata) {
-      chars_of_line= data_output(p, chars_of_line, indent);
-      allow_child= 0;
-    }
-    
-    else if (p->tipo==Node_comment) {
-      chars_of_line= comment_output(p, chars_of_line, indent);
-      allow_child= 0;
-    }
+  switch (node->tipo) {
+  case Node_element:
+    len = write_element(node);
+    break;
+  case Node_chardata:
+    if (!xml_space_on)
+      len = write_chardata(node);
+    else
+      len = write_chardata_space_preserve(node);
+    break;
+  case Node_cdata_sec:
+    len = write_cdata_sec(node);
+    break;
+  case Node_comment:
+    len = write_comment(node);
+    break;
+  }
 
-  } /* for */
-
-  /* vuelca una última línea */
-  new_line_output(0);
+  return len;
 }
 
 
+static int write_element(tree_node_t *elm)
+{
+  int len;
+  tree_node_t *n;
+  int is_block;
+  int xml_space_activated;
+
+  is_block = dtd_elm_is_block(ELM_ID(elm));
+
+  /* activate "xml:space preserve" if necessary */
+  if (!xml_space_on 
+      && (tree_node_search_att(elm, ATTID_XML_SPACE)
+	  || ELM_ID(elm) == ELMID_SCRIPT
+	  || ELM_ID(elm) == ELMID_STYLE)) {
+    if (ELM_ID(elm) == ELMID_STYLE)
+      len += write_indent(indent, 1);
+    else if (ELM_ID(elm) != ELMID_SCRIPT && is_block)
+      len += fprintf(outputf, eol);
+    xml_space_activated = 1;
+    xml_space_on = 1;
+  } else {
+    xml_space_activated = 0;
+  }
+
+  /* write start tag */
+  if (is_block) {
+     len += write_indent(indent, 1);
+     inline_on = 0;
+  } else {
+    if (!inline_on) {
+      inline_on = 1;
+      whitespace_needed = 0;
+      if (!param_compact_block_elms)
+	len += write_indent(indent, 1);
+    }
+  }
+  len += write_start_tag(elm);
+
+  /* process children nodes */
+  n = elm->cont.elemento.hijo;
+  if (is_block)
+    indent += param_tab_len;
+  while (n) {
+    len += write_node(n);
+    n = n->sig;
+  }
+  if (is_block)
+    indent -= param_tab_len;
+
+  /* write end tag if not empty */
+  if (elm->cont.elemento.hijo) {
+    if (is_block) {
+      if (inline_on) {
+	inline_on = 0;
+	if (!param_compact_block_elms)
+	  len += write_indent(indent, 1);
+      } else {
+	len += write_indent(indent, 1);
+      }
+    }
+    len += write_end_tag(elm);
+  }
+
+  /* deactivate "xml:space preserve" if activated */
+  if (xml_space_activated) {
+    xml_space_on = 0;
+  }
+
+  return len;
+}
 
 
-static int elm_output_start_tag(tree_node_t* nodo)
+static int write_chardata(tree_node_t *node)
+{
+  int i;
+  int pos;
+  int data_len;
+  xchar *data;
+  int to_print;
+  int num;
+  int printed;
+
+  data = (char*)tree_index_to_ptr(node->cont.chardata.data);
+  data_len = node->cont.chardata.data_len;
+  pos = 0;
+  num = 0;
+
+  while (pos < data_len) {
+    /* filter blanks at the beginning of this data block */
+    for (i = pos; 
+	 i < data_len
+	   && (data[i] == 0x0a || data[i] == 0x0d 
+	       || data[i] == ' ' || data[i] == '\t'); 
+	 i++);
+
+    if (!inline_on && pos == 0 && i < data_len) {
+      inline_on = 1;
+      whitespace_needed = 0;
+      if (!param_compact_block_elms)
+	num += write_indent(indent, 1);
+    }
+
+    /* put one whitespace instead, but only if no new line is printed */
+    if (i != pos && chars_in_line != indent)
+      whitespace_needed = 1;
+
+    /* find the next breakpoint */
+    pos = i;
+    to_print = 0;
+    for ( ; 
+	  i < data_len && data[i] != 0x0a && data[i] != 0x0d 
+	    && data[i] != ' ' && data[i] != '\t';
+	  i++, to_print++);
+    
+    if (to_print) {
+      num += write_whitespace_or_newline_if_needed(to_print);
+      printed = write_plain_data(&data[pos], to_print);
+/*       chars_in_line += printed; */
+      num += printed;
+      pos += to_print;
+    } 
+  }
+
+  return num;
+}
+
+static int write_cdata_sec(tree_node_t *node)
+{
+  int len;
+
+  len = 0;
+
+  if (!inline_on && !xml_space_on) {
+    inline_on = 1;
+    whitespace_needed = 0;
+    len += write_indent(indent, 1);
+  }
+
+  /* write the opening markup (with // if xml_space_on <- (script|style) */
+  if (param_protect_cdata && xml_space_on) {
+    len += fprintf(outputf, "//%s![CDATA[", lt);
+    chars_in_line += 11;
+  } else {
+    write_whitespace_or_newline_if_needed(9);
+    len += fprintf(outputf, "%s![CDATA[", lt);
+    chars_in_line += 9;
+  }
+
+  /* write the data node itself */
+  len += write_chardata_space_preserve(node);
+
+  /* write the closing markup */
+  if (param_protect_cdata && xml_space_on) {
+    len += fprintf(outputf, "//]]%s", gt);
+    chars_in_line += 5;
+  } else {
+    len += fprintf(outputf, "]]%s", gt);
+    chars_in_line += 3;
+  }
+}
+
+static int write_chardata_space_preserve(tree_node_t *node)
+{
+  int data_len;
+  xchar *data;
+  int num;
+
+  data = (char*)tree_index_to_ptr(node->cont.chardata.data);
+  data_len = node->cont.chardata.data_len;
+  num = 0;
+
+  num += write_plain_data(data, data_len);
+
+  return num;
+}
+
+static int write_comment(tree_node_t *comm)
+{
+  int num;
+  int prev_inline;
+
+  num = write_indent(indent, 1);
+
+  write_whitespace_or_newline_if_needed(4); /* strlen("<!--") */
+
+  if (param_pre_comments) {
+    num += fprintf(outputf, "<!--");
+    chars_in_line += 4;
+    num += write_chardata_space_preserve(comm);
+  } else {
+    num += fprintf(outputf, "<!-- ");
+    chars_in_line += 5;
+    prev_inline = inline_on;
+    inline_on = 1;
+    indent += param_tab_len;
+    num += write_chardata(comm);
+    indent -= param_tab_len;
+    inline_on = prev_inline;
+  }
+
+  num += fprintf(outputf, "-->");
+  chars_in_line += 3;
+
+  return num;
+}
+
+static int write_start_tag(tree_node_t* nodo)
 {
   att_node_t *att;
-  char limite;
+  char limit;
   char *valor;
   int num;
   char *text;
   int chars_to_print;
   int i;
+  char *elm_name;
+  int elm_name_len;
+  int printed;
+  
 
-  if (tree_node_search_att(nodo,ATTID_XML_SPACE)) xml_space_on++;
+  elm_name = elm_list[nodo->cont.elemento.elm_id].name;
+  elm_name_len = strlen(elm_name);
+  num = 0;
 
-  num= fprintf(outputf,"%s%s",lt,elm_list[nodo->cont.elemento.elm_id].name);
+  if (nodo->cont.elemento.hijo)
+    num += write_whitespace_or_newline_if_needed(1 + elm_name_len);
+  else
+    num += write_whitespace_or_newline_if_needed(3 + elm_name_len);
+
+  printed = fprintf(outputf, "%s%s", lt, elm_name);
+  num += printed;
+  chars_in_line += printed;
 
   for (att= nodo->cont.elemento.attlist; att; att= att->sig)
     if (att->es_valido) {
       valor= (char*)tree_index_to_ptr(att->valor);
 
-      if (xsearch(valor,"\"")) limite= '\'';
-      else limite= '\"';
+      if (xsearch(valor,"\"")) limit= '\'';
+      else limit= '\"';
+
+      /* does this attribute fit in this line? */
+      if (inline_on 
+	  && (3 + strlen(att_list[att->att_id].name) 
+	      + strlen(valor) + chars_in_line) > param_chars_per_line) {
+	num += write_indent(indent, 1);
+      }
       
-      /* escribe nombre=comilla */
-      num+= fprintf(outputf," %s=%c",att_list[att->att_id].name, limite);
-      
-      /* el valor se escribe por trozos, para filtrar & y < si fuese
-       * necesario en modo CGI
-       */
-      
+      if (chars_in_line != indent) {
+	fputc(' ', outputf);
+	num++;
+	chars_in_line++;
+      }
+
+      /* write name=(single|double)quote */
+      printed = fprintf(outputf, "%s=%c", att_list[att->att_id].name, limit);
+      num += printed;
+      chars_in_line += printed;
+
       chars_to_print = strlen(valor);
       text = valor;
       while (chars_to_print > 0) {
-	if (text[0]=='&') {
-	  num += fprintf(outputf,"%s",amp);
+	if (text[0] == '&') {
+	  num += fprintf(outputf, "%s", amp);
+	  chars_in_line++;
 	  text++;
 	  chars_to_print--;
-	} else if (text[0]=='<') {
-	  num += fprintf(outputf,"%s",lt);
+	} else if (text[0] == '<') {
+	  num += fprintf(outputf, "%s", lt);
+	  chars_in_line++;
 	  text++;
 	  chars_to_print--;
-	} 
+	} else if (text[0] == 0x0a) {
+	  num += fprintf(outputf, " ");
+	  chars_in_line++;
+	  text++;
+	  chars_to_print--;
+	} else if (text[0] == 0x0d) {
+	  num += fprintf(outputf, " ");
+	  chars_in_line++;
+	  if (chars_to_print > 1 && text[1] == 0x0a) {
+	    text += 2;
+	    chars_to_print -= 2;
+	  } else {
+	    text++;
+	    chars_to_print--;
+	  }
+	}
 	
 	for (i=0; i < chars_to_print; i++)
-	  if (text[i]=='&' || text[i]=='<') {
+	  if (text[i] == '&' || text[i] == '<' 
+	      || text[i] == 0x0a || text[i] == 0x0d) {
 	    break;
 	  }
 	
-	/* imprime el fragmento */
-	num += fwrite(text,i, 1, outputf);
+	/* print this fragment of text */
+	printed = fwrite(text, i, 1, outputf) * i;
+	num += printed;
+	chars_in_line += printed;
 	text += i;
 	chars_to_print -= i;
       }
       
-      num+= fprintf(outputf,"%c", limite);
+      num+= fprintf(outputf,"%c", limit);
+      chars_in_line++;
     }
 
-  if (elm_list[nodo->cont.elemento.elm_id].contenttype[doctype]
-      ==CONTTYPE_EMPTY) num+=fprintf(outputf,"/");
+  if (!nodo->cont.elemento.hijo) {
+    num+=fprintf(outputf,"/");
+    chars_in_line++;
+  }
   
   num+=fprintf(outputf,gt);
-
-  EPRINTF2(">>S...<%s> num %d\n", ELM_PTR(nodo).name, num);
-
-  return num;
-}
-
-
-
-static int elm_output_end_tag(tree_node_t* nodo)
-{
-  int num= 0;
-
-  if (elm_list[nodo->cont.elemento.elm_id].contenttype[doctype]
-      !=CONTTYPE_EMPTY) {
-
-    num+= fprintf(outputf,"%s/%s%s",lt,
-		  elm_list[nodo->cont.elemento.elm_id].name, gt);
-  }
-
-  EPRINTF2(">>...<%s/> num %d\n", ELM_PTR(nodo).name, num);
+  chars_in_line++;
 
   return num;
 }
 
-
-/*
- * El parámetro nl indica cuántos caracteres han sido
- * escritos en la línea actual.
- *
- * Devuelve: el número de caracteres escritos en la última línea
- *
- */
-static int data_output(tree_node_t *nodo, int nl, int indent)
-{
-  int i;
-  char *text;
-  int num_chars= nodo->cont.chardata.data_len; 
-  int chars_to_print;
-
-  DEBUG("data_output");
-  EPRINTF2(">> >> nl %d; indent %d\n", nl, indent); 
-
-
-  text= (char*)tree_index_to_ptr(nodo->cont.chardata.data);
-
-  /* busca el primer blanco */
-
-  /* vuelca el texto */
-  while (num_chars > 0) {
-    int found;
-
-    DEBUG("Nueva iteración");
-    EPRINTF2("TEXT(%d)[[%s]]\n", num_chars, text); 
-
-    found= 0;
-
-    /* busca el próximo fin de línea */
-    for (i= 0;i < (param_chars_per_line - nl) && (i<num_chars);i++)
-      if ((text[i]== 0x0a) || (text[i]== 0x0d)) {
-	found= 1;
-	break;
-      } 
-
-    EPRINTF3(">> num_chars %d; found %d; i %d; ", num_chars, found, i); 
-    EPRINTF2("nl %d; xml_space_on: %d\n", nl, xml_space_on);
-
-    if (!xml_space_on && !found && (i<num_chars)) {
-      /* busca el próximo punto donde cortar la línea */
-      int i0= param_chars_per_line - nl; 
-      if (i0 < 0) i0= 0;
-
-      for (i= i0 ; 
-	   (i<num_chars) && 
-	     (text[i]!= 0x0a) && (text[i]!= 0x0d) && (text[i]!= 0x20);
-	   i++);
-      if (i<num_chars) {
-	if (text[i]== 0x20) text[i]= '\n';
-	chars_to_print= i + 1;
-	EPRINTF1("corte %d; ", i);
-      } else 
-	chars_to_print= num_chars;
-    } else if (found) {
-      text[i]='\n';
-      chars_to_print= i + 1;
-    } else {
-      chars_to_print= num_chars;
-    }
-    EPRINTF1("chars_to_print %d\n", chars_to_print);
-
-    while (chars_to_print > 0) {
-
-      if (text[0]=='&') {
-	fprintf(outputf,"%s",amp);
-	text++;
-	chars_to_print--;
-	num_chars--;
-      } else if (text[0]=='<') {
-	fprintf(outputf,"%s",lt);
-	text++;
-	chars_to_print--;
-	num_chars--;
-      } else if (text[0]=='>') {
-	fprintf(outputf,"%s",gt);
-	text++;
-	chars_to_print--;
-	num_chars--;
-      } 
-
-      for (i=0; i < chars_to_print; i++)
-	if (text[i]=='&' || text[i]=='<' || text[i]=='>') {
-	  break;
-	}
-      
-      /* imprime el fragmento */
-      fwrite(text,i, 1, outputf);
-      text += i;
-      chars_to_print -= i;
-      num_chars -= i;
-    }
-    
-    /* si quedan caracteres por imprimir, identa la nueva línea */
-    if (num_chars > 0 && !xml_space_on) {
-      for (i=0; i<indent; i++) fputc(' ',outputf);
-      nl= indent;
-      
-      /* filtra los blancos sobrantes tras el corte de línea*/
-      for ( ; (num_chars>0) && (text[0]==0x0a || text[0]==0x0d || text[0]==0x20); 
-	    text++, num_chars--);
-    }
-  }
-
-  EPRINTF1(">>...[text] num %d\n", nl+chars_to_print);
-
-
-  return nl + chars_to_print;
-}
-
-
-
-
-static int comment_output(tree_node_t *nodo, int nl, int indent)
+static int write_end_tag(tree_node_t* nodo)
 {
   int num;
+  int printed;
+  char *elm_name;
+  int elm_name_len;
+  
+  if (!nodo->cont.elemento.hijo)
+    return 0;
 
-  fprintf(outputf,"%s!--",lt);
+  elm_name = elm_list[nodo->cont.elemento.elm_id].name;
+  elm_name_len = strlen(elm_name);
+  num = 0;
 
-  /* imprime el comentario como si fuese texto */
-  num= data_output(nodo, nl + 4, indent);
+  num += write_whitespace_or_newline_if_needed(3 + elm_name_len);
 
-  fprintf(outputf,"--%s",gt);
-  num+= 3;
+  printed = fprintf(outputf,"%s/%s%s",lt,
+		    elm_list[nodo->cont.elemento.elm_id].name, gt);
+  num += printed;
+  chars_in_line += printed;
 
   return num;
 }
 
+/*
+ * In inline mode, if a whitespace is needed, writes it or,
+ * if the text following it doesn't fit in the line, writes
+ * a new line instead. If no whitespace needs to be written,
+ * then the current line must be continued, even if it is
+ * overflown.
+ *
+ */
+static int write_whitespace_or_newline_if_needed(int next_data_len)
+{
+  int num = 0;
 
-static int new_line_output(int indent) 
+  if (inline_on && whitespace_needed) {
+    /* does the next text fit in this line */
+    if ((chars_in_line + next_data_len + 1) > param_chars_per_line) {
+      /* write a new line */
+      num += write_indent(indent, 1);
+    } else {
+      /* write a whitespace only */
+      fputc(' ', outputf);
+      num++;
+      chars_in_line++;
+    }
+
+    whitespace_needed = 0;
+  }
+
+  return num;
+}
+
+static int write_plain_data(xchar* text, int len)
+{
+  int num;
+  int i;
+  int pos;
+  int wrote;
+
+  i = 0;
+  num = 0;
+  while (i < len) {
+    if (text[i] == '&') {
+      num += fprintf(outputf, "%s", amp);
+      i++;
+      chars_in_line++;
+    } else if (text[i] == '<') {
+      num += fprintf(outputf, "%s", lt);
+      i++;
+      chars_in_line++;
+    } else if (text[i] == 0x0a) {
+      fputc('\n', outputf);
+      num++;
+      i++;
+      chars_in_line = 0;
+    } else if (text[i] == 0x0d) {
+      fputc('\n', outputf);
+      num++;
+      chars_in_line = 0;
+      if (i + 1 < len && text[i + 1] == 0x0a) {
+	i += 2;
+      } else { 
+	i++;
+      }
+    }
+
+    pos = i;
+    for ( ; i < len; i++) {
+      if (text[i] == '&' || text[i] == '<' 
+	  || text[i] == 0x0d || text[i] == 0x0a) {
+	break;
+      }
+    }
+      
+    /* print the fragment */
+    if (i > pos) {
+      wrote = fwrite(&text[pos], i - pos, 1, outputf) * (i - pos);
+      num += wrote;
+      chars_in_line += wrote;
+    }
+  }
+
+  return num;
+}
+
+static int write_indent(int len, int new_line)
 {
   int i;
 
-  fputc('\n',outputf);
-  for (i=0; i<indent; i++)
-    fputc(' ',outputf);
-  
-  return indent;
+  if (xml_space_on) {
+    return 0;
+  }
+
+  chars_in_line = indent;
+
+  if (new_line) {
+    fputs(eol, outputf);
+  }
+
+  for (i = 0; i < len; i++) 
+    fputc(' ', outputf);
+
+  if (new_line)
+    return len + 1;
+  else
+    return len;
 }
+

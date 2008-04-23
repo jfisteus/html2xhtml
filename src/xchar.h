@@ -1,6 +1,6 @@
 /***************************************************************************
- *   Copyright (C) 2007 by Jesús Arias Fisteus   *
- *   jaf@it.uc3m.es   *
+ *   Copyright (C) 2007 by Jesus Arias Fisteus                             *
+ *   jaf@it.uc3m.es                                                        *
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
@@ -57,6 +57,12 @@ xchar *xsearch(const xchar *str, const xchar *substr);
 
 /* devuelve la longitud de una cadena */
 size_t xstrlen(const xchar *str);
+
+/*
+ * devuelve la longitud de una cadena (en caracteres)
+ *
+ */
+size_t xstrnlen(const xchar *str, int maxlen);
 
 /* devuelve la longitud de una cadena (bytes) contando
  * el treminador

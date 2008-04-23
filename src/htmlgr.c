@@ -77,8 +77,16 @@
      TOK_ATT_VALUE = 266,
      TOK_EREF = 267,
      TOK_CREF = 268,
-     TOK_STAG_END = 269,
-     TOK_ATT_EQ = 270
+     TOK_CDATA_SEC = 269,
+     TOK_XMLPI_INI = 270,
+     TOK_STAG_END = 271,
+     TOK_EMPTYTAG_END = 272,
+     TOK_ATT_EQ = 273,
+     TOK_XMLPI_END = 274,
+     TOK_WHITESPACE = 275,
+     TOK_BOUNDARY = 276,
+     TOK_PARAM_HEADER = 277,
+     TOK_PARAM_CONTENT = 278
    };
 #endif
 /* Tokens.  */
@@ -93,8 +101,16 @@
 #define TOK_ATT_VALUE 266
 #define TOK_EREF 267
 #define TOK_CREF 268
-#define TOK_STAG_END 269
-#define TOK_ATT_EQ 270
+#define TOK_CDATA_SEC 269
+#define TOK_XMLPI_INI 270
+#define TOK_STAG_END 271
+#define TOK_EMPTYTAG_END 272
+#define TOK_ATT_EQ 273
+#define TOK_XMLPI_END 274
+#define TOK_WHITESPACE 275
+#define TOK_BOUNDARY 276
+#define TOK_PARAM_HEADER 277
+#define TOK_PARAM_CONTENT 278
 
 
 
@@ -103,15 +119,18 @@
 #line 3 "htmlgr.y"
 
 #include <stdio.h>
-#include <mensajes.h>
 #include <string.h>
-#include <xchar.h>
+#include "xchar.h"
+#include "mensajes.h"
 
-#include <procesador.h>
+#include "procesador.h"
+
+#define HTML_FIELD_NAME "html"
 
 extern char *tree_strdup(const char *str);
 extern void *tree_malloc();
-  
+extern int cgi_mode;
+
 /* lista de atributos del elemento actual */
 #define MAX_ELEMENT_ATTRIBUTES  255
 static void setAttributeData(char *data);
@@ -119,9 +138,17 @@ static void setAttributeData(char *data);
 
 static char *element_attributes[MAX_ELEMENT_ATTRIBUTES];
 static int num_element_attributes= 0;
+static char *content= NULL;
 
 /* para establecer modo script en el lexer */
-void begin_script(char *nombre);
+void lexer_begin_script(char *nombre);
+void lexer_cgi_begin_html(void);
+
+/* establece un parámetro */
+void cgi_parse_param(char *nombre, char *valor);
+
+/* busca name="nombre" y devuelve un puntero a "nombre", o NULL */
+static char *get_nombre(char *cadena);
 
 /* control de <PRE> */
 extern int pre_state;
@@ -153,13 +180,13 @@ extern int pre_state;
 
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
 typedef union YYSTYPE
-#line 35 "htmlgr.y"
+#line 46 "htmlgr.y"
 {
   int  ent;
   char *cad;
 }
 /* Line 187 of yacc.c.  */
-#line 163 "y.tab.c"
+#line 190 "y.tab.c"
 	YYSTYPE;
 # define yystype YYSTYPE /* obsolescent; will be withdrawn */
 # define YYSTYPE_IS_DECLARED 1
@@ -172,7 +199,7 @@ typedef union YYSTYPE
 
 
 /* Line 216 of yacc.c.  */
-#line 176 "y.tab.c"
+#line 203 "y.tab.c"
 
 #ifdef short
 # undef short
@@ -385,22 +412,22 @@ union yyalloc
 #endif
 
 /* YYFINAL -- State number of the termination state.  */
-#define YYFINAL  2
+#define YYFINAL  5
 /* YYLAST -- Last index in YYTABLE.  */
-#define YYLAST   15
+#define YYLAST   24
 
 /* YYNTOKENS -- Number of terminals.  */
-#define YYNTOKENS  16
+#define YYNTOKENS  24
 /* YYNNTS -- Number of nonterminals.  */
-#define YYNNTS  11
+#define YYNNTS  19
 /* YYNRULES -- Number of rules.  */
-#define YYNRULES  22
+#define YYNRULES  37
 /* YYNRULES -- Number of states.  */
-#define YYNSTATES  24
+#define YYNSTATES  42
 
 /* YYTRANSLATE(YYLEX) -- Bison symbol number corresponding to YYLEX.  */
 #define YYUNDEFTOK  2
-#define YYMAXUTOK   270
+#define YYMAXUTOK   278
 
 #define YYTRANSLATE(YYX)						\
   ((unsigned int) (YYX) <= YYMAXUTOK ? yytranslate[YYX] : YYUNDEFTOK)
@@ -435,7 +462,7 @@ static const yytype_uint8 yytranslate[] =
        2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
        2,     2,     2,     2,     2,     2,     1,     2,     3,     4,
        5,     6,     7,     8,     9,    10,    11,    12,    13,    14,
-      15
+      15,    16,    17,    18,    19,    20,    21,    22,    23
 };
 
 #if YYDEBUG
@@ -443,28 +470,34 @@ static const yytype_uint8 yytranslate[] =
    YYRHS.  */
 static const yytype_uint8 yyprhs[] =
 {
-       0,     0,     3,     4,     7,    10,    13,    16,    19,    22,
-      25,    27,    29,    31,    35,    37,    39,    41,    43,    44,
-      47,    51,    53
+       0,     0,     3,     5,     7,    10,    11,    14,    17,    20,
+      23,    24,    27,    30,    33,    36,    39,    42,    45,    48,
+      51,    54,    56,    58,    60,    64,    66,    70,    72,    74,
+      76,    78,    80,    84,    85,    88,    92,    94
 };
 
 /* YYRHS -- A `-1'-separated list of the rules' RHS.  */
 static const yytype_int8 yyrhs[] =
 {
-      17,     0,    -1,    -1,    17,    18,    -1,    17,    19,    -1,
-      17,    20,    -1,    17,    21,    -1,    17,    22,    -1,    17,
-      23,    -1,    17,    24,    -1,     3,    -1,     4,    -1,     5,
-      -1,     6,    25,    14,    -1,     7,    -1,     8,    -1,    12,
-      -1,    13,    -1,    -1,    25,    26,    -1,     9,    15,    11,
-      -1,     9,    -1,     9,    15,    -1
+      25,     0,    -1,    30,    -1,    26,    -1,    27,    21,    -1,
+      -1,    27,    28,    -1,    29,    23,    -1,    29,    30,    -1,
+      21,    22,    -1,    -1,    30,    31,    -1,    30,    32,    -1,
+      30,    33,    -1,    30,    34,    -1,    30,    35,    -1,    30,
+      36,    -1,    30,    37,    -1,    30,    38,    -1,    30,    39,
+      -1,    30,    40,    -1,     3,    -1,     4,    -1,     5,    -1,
+       6,    41,    16,    -1,     7,    -1,     6,    41,    17,    -1,
+       8,    -1,    14,    -1,    20,    -1,    12,    -1,    13,    -1,
+      15,    41,    19,    -1,    -1,    41,    42,    -1,     9,    18,
+      11,    -1,     9,    -1,     9,    18,    -1
 };
 
 /* YYRLINE[YYN] -- source line where rule number YYN was defined.  */
 static const yytype_uint8 yyrline[] =
 {
-       0,    48,    48,    49,    50,    51,    52,    53,    54,    55,
-      58,    64,    70,    76,    93,   102,   108,   113,   119,   120,
-     123,   127,   131
+       0,    63,    63,    64,    67,    69,    70,    73,    76,    79,
+      92,    93,    94,    95,    96,    97,    98,    99,   100,   101,
+     102,   105,   111,   117,   123,   140,   149,   160,   166,   172,
+     176,   181,   187,   196,   197,   200,   204,   208
 };
 #endif
 
@@ -476,9 +509,12 @@ static const char *const yytname[] =
   "$end", "error", "$undefined", "TOK_DOCTYPE", "TOK_COMMENT",
   "TOK_BAD_COMMENT", "TOK_STAG_INI", "TOK_ETAG", "TOK_CDATA",
   "TOK_ATT_NAME", "TOK_ATT_NAMECHAR", "TOK_ATT_VALUE", "TOK_EREF",
-  "TOK_CREF", "TOK_STAG_END", "TOK_ATT_EQ", "$accept", "html", "doctype",
-  "comment", "bad_comment", "stag", "etag", "cdata", "ref", "attributes",
-  "attribute", 0
+  "TOK_CREF", "TOK_CDATA_SEC", "TOK_XMLPI_INI", "TOK_STAG_END",
+  "TOK_EMPTYTAG_END", "TOK_ATT_EQ", "TOK_XMLPI_END", "TOK_WHITESPACE",
+  "TOK_BOUNDARY", "TOK_PARAM_HEADER", "TOK_PARAM_CONTENT", "$accept",
+  "input", "cgi", "params", "param", "param_header", "html", "doctype",
+  "comment", "bad_comment", "stag", "etag", "cdata", "cdata_sec",
+  "whitespace", "ref", "xmldecl", "attributes", "attribute", 0
 };
 #endif
 
@@ -488,24 +524,27 @@ static const char *const yytname[] =
 static const yytype_uint16 yytoknum[] =
 {
        0,   256,   257,   258,   259,   260,   261,   262,   263,   264,
-     265,   266,   267,   268,   269,   270
+     265,   266,   267,   268,   269,   270,   271,   272,   273,   274,
+     275,   276,   277,   278
 };
 # endif
 
 /* YYR1[YYN] -- Symbol number of symbol that rule YYN derives.  */
 static const yytype_uint8 yyr1[] =
 {
-       0,    16,    17,    17,    17,    17,    17,    17,    17,    17,
-      18,    19,    20,    21,    22,    23,    24,    24,    25,    25,
-      26,    26,    26
+       0,    24,    25,    25,    26,    27,    27,    28,    28,    29,
+      30,    30,    30,    30,    30,    30,    30,    30,    30,    30,
+      30,    31,    32,    33,    34,    35,    34,    36,    37,    38,
+      39,    39,    40,    41,    41,    42,    42,    42
 };
 
 /* YYR2[YYN] -- Number of symbols composing right hand side of rule YYN.  */
 static const yytype_uint8 yyr2[] =
 {
-       0,     2,     0,     2,     2,     2,     2,     2,     2,     2,
-       1,     1,     1,     3,     1,     1,     1,     1,     0,     2,
-       3,     1,     2
+       0,     2,     1,     1,     2,     0,     2,     2,     2,     2,
+       0,     2,     2,     2,     2,     2,     2,     2,     2,     2,
+       2,     1,     1,     1,     3,     1,     3,     1,     1,     1,
+       1,     1,     3,     0,     2,     3,     1,     2
 };
 
 /* YYDEFACT[STATE-NAME] -- Default rule to reduce with in state
@@ -513,59 +552,67 @@ static const yytype_uint8 yyr2[] =
    means the default is an error.  */
 static const yytype_uint8 yydefact[] =
 {
-       2,     0,     1,    10,    11,    12,    18,    14,    15,    16,
-      17,     3,     4,     5,     6,     7,     8,     9,     0,    21,
-      13,    19,    22,    20
+      10,     0,     3,     0,     2,     1,     4,     6,    10,    21,
+      22,    23,    33,    25,    27,    30,    31,    28,    33,    29,
+      11,    12,    13,    14,    15,    16,    17,    18,    19,    20,
+       9,     7,     8,     0,     0,    36,    24,    26,    34,    32,
+      37,    35
 };
 
 /* YYDEFGOTO[NTERM-NUM].  */
 static const yytype_int8 yydefgoto[] =
 {
-      -1,     1,    11,    12,    13,    14,    15,    16,    17,    18,
-      21
+      -1,     1,     2,     3,     7,     8,     4,    20,    21,    22,
+      23,    24,    25,    26,    27,    28,    29,    33,    38
 };
 
 /* YYPACT[STATE-NUM] -- Index in YYTABLE of the portion describing
    STATE-NUM.  */
-#define YYPACT_NINF -15
+#define YYPACT_NINF -16
 static const yytype_int8 yypact[] =
 {
-     -15,     0,   -15,   -15,   -15,   -15,   -15,   -15,   -15,   -15,
-     -15,   -15,   -15,   -15,   -15,   -15,   -15,   -15,     1,   -14,
-     -15,   -15,    -9,   -15
+     -15,    13,   -16,    -5,    -3,   -16,     0,   -16,    -4,   -16,
+     -16,   -16,   -16,   -16,   -16,   -16,   -16,   -16,   -16,   -16,
+     -16,   -16,   -16,   -16,   -16,   -16,   -16,   -16,   -16,   -16,
+     -16,   -16,    -3,    -2,    -1,     2,   -16,   -16,   -16,   -16,
+      10,   -16
 };
 
 /* YYPGOTO[NTERM-NUM].  */
 static const yytype_int8 yypgoto[] =
 {
-     -15,   -15,   -15,   -15,   -15,   -15,   -15,   -15,   -15,   -15,
-     -15
+     -16,   -16,   -16,   -16,   -16,   -16,    15,   -16,   -16,   -16,
+     -16,   -16,   -16,   -16,   -16,   -16,   -16,     6,   -16
 };
 
 /* YYTABLE[YYPACT[STATE-NUM]].  What to do in state STATE-NUM.  If
    positive, shift that token.  If negative, reduce the rule which
    number is the opposite.  If zero, do what YYDEFACT says.
    If YYTABLE_NINF, syntax error.  */
-#define YYTABLE_NINF -1
-static const yytype_uint8 yytable[] =
+#define YYTABLE_NINF -6
+static const yytype_int8 yytable[] =
 {
-       2,    22,    23,     3,     4,     5,     6,     7,     8,     0,
-      19,     0,     9,    10,     0,    20
+       9,    10,    11,    12,    13,    14,    -5,    35,    35,    15,
+      16,    17,    18,     5,    36,    37,     6,    19,    39,    31,
+      40,    41,    30,    32,    34
 };
 
-static const yytype_int8 yycheck[] =
+static const yytype_uint8 yycheck[] =
 {
-       0,    15,    11,     3,     4,     5,     6,     7,     8,    -1,
-       9,    -1,    12,    13,    -1,    14
+       3,     4,     5,     6,     7,     8,    21,     9,     9,    12,
+      13,    14,    15,     0,    16,    17,    21,    20,    19,    23,
+      18,    11,    22,     8,    18
 };
 
 /* YYSTOS[STATE-NUM] -- The (internal number of the) accessing
    symbol of state STATE-NUM.  */
 static const yytype_uint8 yystos[] =
 {
-       0,    17,     0,     3,     4,     5,     6,     7,     8,    12,
-      13,    18,    19,    20,    21,    22,    23,    24,    25,     9,
-      14,    26,    15,    11
+       0,    25,    26,    27,    30,     0,    21,    28,    29,     3,
+       4,     5,     6,     7,     8,    12,    13,    14,    15,    20,
+      31,    32,    33,    34,    35,    36,    37,    38,    39,    40,
+      22,    23,    30,    41,    41,     9,    16,    17,    42,    19,
+      18,    11
 };
 
 #define yyerrok		(yyerrstatus = 0)
@@ -1379,32 +1426,54 @@ yyreduce:
   YY_REDUCE_PRINT (yyn);
   switch (yyn)
     {
-        case 10:
-#line 58 "htmlgr.y"
+        case 7:
+#line 73 "htmlgr.y"
+    {
+  cgi_parse_param((yyvsp[(1) - (2)].cad), (yyvsp[(2) - (2)].cad) +4);
+}
+    break;
+
+  case 9:
+#line 79 "htmlgr.y"
+    {
+  char* nombre= get_nombre((yyvsp[(2) - (2)].cad));
+  if (!strcmp(nombre, HTML_FIELD_NAME)) {
+    lexer_cgi_begin_html();
+    /* reinitialize the converter to allow the doctype parameter to
+     * take effect.
+     */
+    saxStartDocument();
+  }
+  (yyval.cad) = nombre ;
+}
+    break;
+
+  case 21:
+#line 105 "htmlgr.y"
     {
   //fprintf(stderr,"TOK_DOCTYPE: %s\n",$1);
   saxDoctype((yyvsp[(1) - (1)].cad));
 }
     break;
 
-  case 11:
-#line 64 "htmlgr.y"
+  case 22:
+#line 111 "htmlgr.y"
     {
   //fprintf(stderr,"TOK_COMMENT: %s\n",$1);
   saxComment((yyvsp[(1) - (1)].cad));
 }
     break;
 
-  case 12:
-#line 70 "htmlgr.y"
+  case 23:
+#line 117 "htmlgr.y"
     {
   //fprintf(stderr,"TOK_BAD_COMMENT: %s\n",$1);
   INFORM("bad comment");
 }
     break;
 
-  case 13:
-#line 76 "htmlgr.y"
+  case 24:
+#line 123 "htmlgr.y"
     {   
   //fprintf(stderr,"STAG-: %s\n",$1);
   setAttributeData(NULL);
@@ -1414,7 +1483,7 @@ yyreduce:
 
   /* modo script del lexer (para SCRIPT y STYLE) */
   if ((!strcasecmp((yyvsp[(1) - (3)].cad),"script")) ||(!strcasecmp((yyvsp[(1) - (3)].cad),"style"))) 
-    begin_script((yyvsp[(1) - (3)].cad));
+    lexer_begin_script((yyvsp[(1) - (3)].cad));
 
   if (!strcasecmp((yyvsp[(1) - (3)].cad),"pre")) {DEBUG("inicio de modo PRE");pre_state++;}
 
@@ -1422,8 +1491,8 @@ yyreduce:
 }
     break;
 
-  case 14:
-#line 93 "htmlgr.y"
+  case 25:
+#line 140 "htmlgr.y"
     {
   //fprintf(stderr,"ETAG-: %s\n",$1);
   saxEndElement((yyvsp[(1) - (1)].cad));
@@ -1433,16 +1502,44 @@ yyreduce:
 }
     break;
 
-  case 15:
-#line 102 "htmlgr.y"
+  case 26:
+#line 149 "htmlgr.y"
+    {   
+  //fprintf(stderr,"EMTYTAG-: %s\n",$1);
+  setAttributeData(NULL);
+  saxStartElement((yyvsp[(1) - (3)].cad),(xchar**)element_attributes);
+/*   freeAttributeData(); */
+  num_element_attributes = 0;
+/*   free($1); */
+  saxEndElement((yyvsp[(1) - (3)].cad));
+}
+    break;
+
+  case 27:
+#line 160 "htmlgr.y"
     {
   //fprintf(stderr,"CDATA: <%s>\n",$1);
   saxCharacters((yyvsp[(1) - (1)].cad),strlen((yyvsp[(1) - (1)].cad)));
 }
     break;
 
-  case 16:
-#line 108 "htmlgr.y"
+  case 28:
+#line 166 "htmlgr.y"
+    {
+  //fprintf(stderr,"CDATA_SEC: <%s>\n",$1);
+  saxCDataSection((yyvsp[(1) - (1)].cad),strlen((yyvsp[(1) - (1)].cad)));
+}
+    break;
+
+  case 29:
+#line 172 "htmlgr.y"
+    {
+  saxWhiteSpace();
+}
+    break;
+
+  case 30:
+#line 176 "htmlgr.y"
     {
   //fprintf(stderr,"EREF: %s\n",$1);
   saxReference((yyvsp[(1) - (1)].cad));
@@ -1450,32 +1547,42 @@ yyreduce:
 }
     break;
 
-  case 17:
-#line 113 "htmlgr.y"
+  case 31:
+#line 181 "htmlgr.y"
     {
   //fprintf(stderr,"CREF: %s\n",$1);
   saxReference((yyvsp[(1) - (1)].cad));
 }
     break;
 
-  case 20:
-#line 123 "htmlgr.y"
+  case 32:
+#line 187 "htmlgr.y"
+    {   
+  //fprintf(stderr,"XMLDECL-: %s\n",$1);
+  setAttributeData(NULL);
+  saxXmlProcessingInstruction((yyvsp[(1) - (3)].cad),(xchar**)element_attributes);
+  num_element_attributes = 0;
+}
+    break;
+
+  case 35:
+#line 200 "htmlgr.y"
     {
                      setAttributeData((yyvsp[(1) - (3)].cad));
                      setAttributeData((yyvsp[(3) - (3)].cad));
                      }
     break;
 
-  case 21:
-#line 127 "htmlgr.y"
+  case 36:
+#line 204 "htmlgr.y"
     {
                      setAttributeData((yyvsp[(1) - (1)].cad));
                      setAttributeData((yyvsp[(1) - (1)].cad));
 }
     break;
 
-  case 22:
-#line 131 "htmlgr.y"
+  case 37:
+#line 208 "htmlgr.y"
     {
                      char *cad= (char*) tree_malloc(1);
                      cad[0]= 0;
@@ -1486,7 +1593,7 @@ yyreduce:
 
 
 /* Line 1267 of yacc.c.  */
-#line 1490 "y.tab.c"
+#line 1597 "y.tab.c"
       default: break;
     }
   YY_SYMBOL_PRINT ("-> $$ =", yyr1[yyn], &yyval, &yyloc);
@@ -1700,7 +1807,7 @@ yyreturn:
 }
 
 
-#line 139 "htmlgr.y"
+#line 216 "htmlgr.y"
 
 
 
@@ -1731,36 +1838,21 @@ static void setAttributeData(char *data)
   element_attributes[num_element_attributes++]= data;  
 }
 
-
-
-#if 0
-/*
- * libera la memoria dinámica asignada al array
- * de datos de atributos
- *
- * PROBLEMA: en uno de los casos hay dos seguidos que referencian a
- *     la misma posición: hay que liberar sólo uno de ellos para que
- *     no casque el programa. Para solucionarlo, se tiene en cuenta
- *     siempre el anterior puntero, y se libera el actual sólo si no 
- *     coincide con el anterior.
- *
- */
-static void freeAttributeData(void)
+/* busca name="nombre" y devuelve un puntero a "nombre", o NULL */
+static char *get_nombre(char *cadena) 
 {
-  int i;
+  char *pos,*tmp;
 
-  /* se libera el primero */
-  if ((num_element_attributes > 0) && (element_attributes[0])) {
-    free(element_attributes[0]);
+  pos= strstr(cadena, "name=\"");
+
+  if (pos) {
+    pos+= 6;
+    for (tmp=pos; *tmp!='\"' && *tmp; tmp++);
+    if (*tmp=='\"') *tmp= 0;
+    else pos= NULL;
   }
 
-  /* se liberan el resto */
-  for (i=1 ; i<num_element_attributes; i++)
-    if (element_attributes[i] && (element_attributes[i]!=element_attributes[i-1])) {
-      free(element_attributes[i]);
-    }
-
-  num_element_attributes= 0;
+  return pos;
 }
-#endif
+
 

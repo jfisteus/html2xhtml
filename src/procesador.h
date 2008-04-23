@@ -1,6 +1,6 @@
 /***************************************************************************
- *   Copyright (C) 2007 by Jesús Arias Fisteus   *
- *   jaf@it.uc3m.es   *
+ *   Copyright (C) 2007 by Jesus Arias Fisteus                             *
+ *   jaf@it.uc3m.es                                                        *
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
@@ -85,10 +85,13 @@ void saxStartElement(const xchar *fullname, xchar **atts);
 void saxEndElement(const xchar *name);
 void saxReference(const xchar *name);
 void saxCharacters(const xchar *ch, int len);
+void saxCDataSection(const xchar *ch, int len);
+void saxWhiteSpace(void);
 void saxComment(const xchar *value);
 void saxDoctype(const xchar *data);
+void saxXmlProcessingInstruction(const xchar *fullname, xchar **atts);
 void saxError(xchar *data);
-int  writeOutput(int mode);
+int  writeOutput(void);
 void freeMemory(void);
 
 #endif
