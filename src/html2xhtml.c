@@ -412,7 +412,7 @@ static void cgi_exit_on_error(char *msg)
 
 static void cgi_write_output()
 {
-  fprintf(stdout, "Content-Type:%s\n\n", "text/html");
+  fprintf(stdout, "Content-Type:%s; charset=iso-8859-1\n\n", "text/html");
 
   if (param_cgi_html_output) 
     cgi_write_header();
