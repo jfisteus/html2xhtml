@@ -81,7 +81,7 @@ BOUNDARY_LINE ({S}*\-\-[\x20-\xff]*)\x0d\x0a
 
 
 
-%x TAG TAG_ATT_VAL SCRIPT SCRIPT_END CGI_CONTENT CGI_HEADER CGI_INICIO
+%x TAG TAG_ATT_VAL SCRIPT SCRIPT_END CGI_CONTENT CGI_HEADER CGI_INIT
 
 %%
 
@@ -89,7 +89,21 @@ BOUNDARY_LINE ({S}*\-\-[\x20-\xff]*)\x0d\x0a
 {ESP} {if (pre_state) {yylval.cad= yytext; return TOK_CDATA;}
        else {return TOK_WHITESPACE;}}
 
-<*>{BOUNDARY_LINE} {if (!lexer_is_boundary(yytext)) REJECT else {BEGIN(CGI_HEADER);return TOK_BOUNDARY;}}
+<TAG_ATT_VAL>{BOUNDARY_LINE} {if (!lexer_is_boundary(yytext)) {
+                                BEGIN(TAG);yylval.cad= tree_strdup(filtcom(trim(yytext)));
+                                return TOK_ATT_VALUE;
+                              } else {BEGIN(CGI_HEADER);return TOK_BOUNDARY;}}
+
+<SCRIPT>{BOUNDARY_LINE} {if (!lexer_is_boundary(yytext)) {
+                             yylval.cad= yytext; return TOK_CDATA_SEC;
+                         } else {BEGIN(CGI_HEADER);return TOK_BOUNDARY;}}
+
+<CGI_INIT,CGI_HEADER,CGI_CONTENT>{BOUNDARY_LINE} {if (!lexer_is_boundary(yytext)) yyerror(); else {BEGIN(CGI_HEADER);return TOK_BOUNDARY;}}
+
+{BOUNDARY_LINE} {if (!lexer_is_boundary(yytext)) {
+                                 yylval.cad= yytext; 
+                                 return TOK_CDATA;
+                              } else {BEGIN(CGI_HEADER);return TOK_BOUNDARY;}}
 
 "<!DOCTYPE"{ALL_IN_TAG}\>{ESP} {yylval.cad=trimf(yytext);return TOK_DOCTYPE;}
 "<!doctype"{ALL_IN_TAG}\>{ESP} {yylval.cad=trimf(yytext);return TOK_DOCTYPE;}
@@ -140,7 +154,7 @@ BOUNDARY_LINE ({S}*\-\-[\x20-\xff]*)\x0d\x0a
 "<![CDATA["{CDATASEC}"]]>" {yylval.cad=cdata_sec(yytext);return TOK_CDATA_SEC;}
 
 <CGI_HEADER>{CGI_HEADER_LINES} {yylval.cad= yytext; BEGIN(CGI_CONTENT);return TOK_PARAM_HEADER;}
-<CGI_CONTENT>{CGI_CONTENT_LINES} {yylval.cad= yytext; BEGIN(CGI_INICIO);return TOK_PARAM_CONTENT;}
+<CGI_CONTENT>{CGI_CONTENT_LINES} {yylval.cad= yytext; BEGIN(CGI_INIT);return TOK_PARAM_CONTENT;}
 
 &                   {yylval.cad= tree_strdup("&amp;"); return TOK_EREF;}
 \<                  {yylval.cad= tree_strdup("&lt;"); return TOK_EREF;}
@@ -341,7 +355,7 @@ void lexer_cgi_begin_html(void) {
 
 void lexer_cgi_init(void) {
   DEBUG("Lexer initialized in CGI mode");
-  BEGIN(CGI_INICIO);
+  BEGIN(CGI_INIT);
 }
 
 int lexer_is_boundary(char *texto) {
