@@ -27,7 +27,7 @@ char dtd_string[DTD_NUM][DTD_STR_LEN]= {
     "http://www.w3.org/TR/xhtml-basic/xhtml-basic10.dtd",
     "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd",
     "http://www.wapforum.org/DTD/xhtml-mobile10.dtd",
-    "http://www.w3.org/TR/xhtml-basic/xhtml-basic11.dtd",
+    "http://www.w3.org/MarkUp/DTD/xhtml-basic11.dtd",
     "http://www.w3.org/MarkUp/DTD/xhtml-print10.dtd"
 };
 

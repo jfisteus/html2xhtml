@@ -26,14 +26,14 @@
 #define elm_data_num 97
 #define att_data_num 163
 #define ent_data_num 254
-#define elm_buffer_num 2974
+#define elm_buffer_num 3027
 #define att_buffer_num 1050
 
 /* variables declaradas en dtd.c */
 extern elm_data_t elm_list[];
 extern unsigned char elm_buffer[];
 extern att_data_t att_list[];
-extern char att_buffer[];
+extern unsigned char att_buffer[];
 
 extern int ent_hash[257];
 extern char ent_list[][25];
@@ -76,6 +76,13 @@ extern char ent_list[][25];
 #define ELMID_BUTTON 77
 #define ELMID_FIELDSET 75
 #define ELMID_ISINDEX 78
+#define ELMID_CENTER 32
+#define ELMID_U 57
+#define ELMID_S 58
+#define ELMID_STRIKE 59
+#define ELMID_INS 33
+#define ELMID_DEL 34
+#define ELMID_AREA 67
 #define ATTID_XML_SPACE 32
 #define ATTID_HTTP_EQUIV_0 8
 #define ATTID_HTTP_EQUIV_1 151
