@@ -18,6 +18,8 @@
 
 #define ELM_ATTLIST_LEN 39
 
+#define DTD_SNAPSHOT_DATE "2008-06-26 13:53:57+0200"
+
 /* ficheros declarando tipos y otras macros */
 #include "dtd_types.h"
 

@@ -24,6 +24,7 @@
  * Queries the internal dtdlib of the converter.
  *
  * Use:
+ *    dtdquery -v
  *    dtdquery -e <element_name>
  *    dtdquery -a <attribute_name>
  *    dtdquery --list-dtds
@@ -31,12 +32,16 @@
  *
  */
 
+#ifdef HAVE_CONFIG_H
+#include <config.h>
+#endif
 
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 
-#include <dtd_util.h>
+#include "dtd_util.h"
+#include "dtd.h"
 
 void lee_elm(char *elm_name);
 void lee_att(char *att_name);
@@ -44,6 +49,7 @@ void check_content(char **argv, int argc);
 void listar_dtds();
 void comparar_dtds(char *dtd_key_1, char *dtd_key_2);
 void error_de_parametros();
+void print_version();
 
 int comparar_elemento(int elmid, int dtd1, int dtd2);
 int atributos_solo_en_uno(int *lista1, int *lista2, int* resultado);
@@ -86,6 +92,7 @@ int main (int argc, char **argv)
   } else {
     if (!strcmp(argv[1],"-e")) lee_elm(argv[2]);
     else if (!strcmp(argv[1],"-a")) lee_att(argv[2]);
+    else if (!strcmp(argv[1],"-v")) print_version();
     else if (!strcmp(argv[1],"-c")) check_content(argv, argc);
     else if (!strcmp(argv[1],"--list-dtds")) listar_dtds();
     else if (!strcmp(argv[1],"--compare") && argc == 4) 
@@ -96,9 +103,16 @@ int main (int argc, char **argv)
   exit(0);
 }
 
+void print_version()
+{
+  fprintf(stderr, "dtdquery (part of html2xhtml version %s)\n", VERSION);
+  fprintf(stderr, "DTD data based on DTDs as available at %s\n",
+	  DTD_SNAPSHOT_DATE);
+}
 
 void error_de_parametros()
 {
+  fprintf(stderr, "dtdquery -v\n");
   fprintf(stderr, "dtdquery -e <element_name>\n");
   fprintf(stderr, "dtdquery -a <attribute_name>\n");
   fprintf(stderr, "dtdquery --list-dtds\n");
