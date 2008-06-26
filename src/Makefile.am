@@ -1,6 +1,7 @@
-bin_PROGRAMS = html2xhtml
+bin_PROGRAMS = html2xhtml dtdquery
 html2xhtml_SOURCES = dtd.c dtd_names.c dtd_util.c htmlgr.y html.l html2xhtml.c \
 	mensajes.c procesador.c tree.c xchar.c
+dtdquery_SOURCES = dtdquery.c tree.c dtd.c dtd_names.c dtd_util.c xchar.c mensajes.c
 
 # set the include path found by configure
 INCLUDES= $(all_includes)
