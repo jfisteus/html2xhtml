@@ -106,7 +106,7 @@ int main (int argc, char **argv)
 void print_version()
 {
   fprintf(stderr, "dtdquery (part of html2xhtml version %s)\n", VERSION);
-  fprintf(stderr, "DTD data based on DTDs as available at %s\n",
+  fprintf(stderr, "DTD data based on DTDs as available on %s\n",
 	  DTD_SNAPSHOT_DATE);
 }
 

@@ -279,7 +279,7 @@ static void print_doctypes(void)
 void print_version(void)
 {
   fprintf(stderr, "html2xhtml version %s\n", VERSION);
-  fprintf(stderr, "DTD data based on DTDs as available at %s\n\n",
+  fprintf(stderr, "DTD data based on DTDs as available on %s\n\n",
 	  DTD_SNAPSHOT_DATE);
 }
 
