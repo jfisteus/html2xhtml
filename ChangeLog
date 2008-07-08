@@ -1,3 +1,8 @@
+2008-06-26  Jesus Arias Fisteus <jaf@it.uc3m.es>
+
+	* html2xhtml Updated DTD data.
+	* html2xhtml Ported dtd_query from the old source tree.
+
 2008-06-17  Jesus Arias Fisteus <jaf@it.uc3m.es>
 
 	* html2xhtml Released as stable, version 1.1.1.
