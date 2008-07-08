@@ -1,3 +1,19 @@
+2008-06-17  Jesus Arias Fisteus <jaf@it.uc3m.es>
+
+	* html2xhtml Released as stable, version 1.1.1.
+
+2008-05-29  Jesus Arias Fisteus <jaf@it.uc3m.es>
+
+	* html2xhtml Removed the REJECT rule from the parser.
+
+2008-05-22  Jesus Arias Fisteus <jaf@it.uc3m.es>
+
+	* html2xhtml Fixed a bug in the CGI related to charset.
+
+2008-04-17  Jesus Arias Fisteus <jaf@it.uc3m.es>
+
+	* html2xhtml Released as 1.1b6
+
 2008-04-08  Jesus Arias Fisteus <jaf@it.uc3m.es>
 
 	* html2xhtml Fixed two bugs related to incorrect memory access.
@@ -10,6 +26,10 @@
 	* html2xhtml Flexibility added to the parser: allows closing 
 	XML PIs with ">" instead of "%>"
 	
+2008-03-05  Jesus Arias Fisteus <jaf@it.uc3m.es>
+
+	* html2xhtml Released as 1.1b5
+
 2008-03-03  Jesus Arias Fisteus <jaf@it.uc3m.es>
 
 	* html2xhtml Fixed a bug when an end tags appears inside
