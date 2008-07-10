@@ -1,0 +1,20 @@
+DTDCoder
+
+Generates automatically DTD data extracted from XHTML DTDs. Creates
+the files 'dtd.c', 'dtd.h', 'dtd_names.c' y 'dtd_names.h'.
+
+Invocation:
+
+java DTDCoder <index_file> <output_directory>
+
+Example:
+
+java DTDCoder dtd_index.xml ../src
+
+For an example of an index file, see dtd_index.xml. See also the examples
+of templates (*.xhtml).
+
+
+ 
+
+

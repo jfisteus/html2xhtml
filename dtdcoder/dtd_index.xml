@@ -1,0 +1,70 @@
+<?xml version="1.0" ?>
+
+<!-- $Id: dtd_index.xml,v 1.5 2007-09-16 20:48:21 jaf Exp $ -->
+
+<dtds>
+  <dtd>
+    <key>transitional</key>
+    <name>xhtml-1.0-transitional</name>
+    <constantName>XHTML_TRANSITIONAL</constantName>
+    <publicId>PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"</publicId>
+    <dtdUrl>http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd</dtdUrl>
+    <templateFile>plantilla0.xhtml</templateFile>
+  </dtd>
+  <dtd>
+    <key>strict</key>
+    <name>xhtml-1.0-strict</name>
+    <constantName>XHTML_STRICT</constantName>
+    <publicId>PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"</publicId>
+    <dtdUrl>http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd</dtdUrl>
+    <templateFile>plantilla1.xhtml</templateFile>
+  </dtd>
+  <dtd>
+    <key>frameset</key>
+    <name>xhtml-1.0-frameset</name>
+    <constantName>XHTML_FRAMESET</constantName>
+    <publicId>PUBLIC "-//W3C//DTD XHTML 1.0 Frameset//EN"</publicId>
+    <dtdUrl>http://www.w3.org/TR/xhtml1/DTD/xhtml1-frameset.dtd</dtdUrl>
+    <templateFile>plantilla2.xhtml</templateFile>
+  </dtd>
+  <dtd>
+    <key>basic-1.0</key>
+    <name>xhtml-basic-1.0</name>
+    <constantName>XHTML_BASIC</constantName>
+    <publicId>PUBLIC "-//W3C//DTD XHTML Basic 1.0//EN"</publicId>
+    <dtdUrl>http://www.w3.org/TR/xhtml-basic/xhtml-basic10.dtd</dtdUrl>
+    <templateFile>plantilla3.xhtml</templateFile>
+  </dtd>
+  <dtd>
+    <key>1.1</key>
+    <name>xhtml-1.1</name>
+    <constantName>XHTML_11</constantName>
+    <publicId>PUBLIC "-//W3C//DTD XHTML 1.1//EN"</publicId>
+    <dtdUrl>http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd</dtdUrl>
+    <templateFile>plantilla4.xhtml</templateFile>
+  </dtd>
+  <dtd>
+    <key>mp</key>
+    <name>xhtml-mobileprofile-1.0</name>
+    <constantName>XHTML_MP</constantName>
+    <publicId>PUBLIC "-//WAPFORUM//DTD XHTML Mobile 1.0//EN"</publicId>
+    <dtdUrl>http://www.wapforum.org/DTD/xhtml-mobile10.dtd</dtdUrl>
+    <templateFile>plantilla5.xhtml</templateFile>
+  </dtd>
+  <dtd>
+    <key>basic-1.1</key>
+    <name>xhtml-basic-1.1</name>
+    <constantName>XHTML_BASIC_11</constantName>
+    <publicId>PUBLIC "-//W3C//DTD XHTML Basic 1.1//EN"</publicId>
+    <dtdUrl>http://www.w3.org/MarkUp/DTD/xhtml-basic11.dtd</dtdUrl>
+    <templateFile>plantilla6.xhtml</templateFile>
+  </dtd>
+  <dtd>
+    <key>print-1.0</key>
+    <name>xhtml-print-1.0</name>
+    <constantName>XHTML_PRINT</constantName>
+    <publicId>PUBLIC "-//W3C//DTD XHTML-Print 1.0//EN"</publicId>
+    <dtdUrl>http://www.w3.org/MarkUp/DTD/xhtml-print10.dtd</dtdUrl>
+    <templateFile>plantilla7.xhtml</templateFile>
+  </dtd>
+</dtds>
