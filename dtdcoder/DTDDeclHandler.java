@@ -1,13 +1,13 @@
 /*
  * DTDDeclHandler.java
  *
- * (Jes˙s Arias Fisteus)
+ * (Jes√∫s Arias Fisteus)
  *
  * 'Handler' que recibe las notificaciones de decleraciones
  * encontradas en los DTD.
  *
- * Una vez finalizado el an·lisis de los DTD, genera los
- * ficheros dtd.c y dtd.h con esta informaciÛn codificada
+ * Una vez finalizado el an√°lisis de los DTD, genera los
+ * ficheros dtd.c y dtd.h con esta informaci√≥n codificada
  * para ser usada en el resto del programa.
  *
  *
@@ -29,8 +29,8 @@ import java.io.FileOutputStream;
 
 
 /**
- * StringTokenizer con varios mÈtodos auxiliares para
- * recuperar el ˙ltimo token emitido
+ * StringTokenizer con varios m√©todos auxiliares para
+ * recuperar el √∫ltimo token emitido
  *
  */
 class MyStringTokenizer extends StringTokenizer {
@@ -70,7 +70,7 @@ class MyStringTokenizer extends StringTokenizer {
 
 
 /**
- * Esta clase guarda los datos asociados a la declaraciÛn de un
+ * Esta clase guarda los datos asociados a la declaraci√≥n de un
  * atributo
  *
  */
@@ -98,7 +98,7 @@ class DeclAtt {
     public int      tipo;
     public int      obligatorio;
     public int      defecto= -1;
-    public int      dtd;              /* m·scara de DTD */
+    public int      dtd;              /* m√°scara de DTD */
     public int      id;
     public String   tipoString= null;
     public String   defectoString;
@@ -211,7 +211,7 @@ class DeclAtt {
 
 
 /**
- * esta clase guarda los datos asociados a la declaraciÛn de un elemento
+ * esta clase guarda los datos asociados a la declaraci√≥n de un elemento
  *
  */
 class DeclElm {
@@ -224,7 +224,7 @@ class DeclElm {
 
 
     /**
-     * valores de constantes para codificaciÛn de contenido de elementos
+     * valores de constantes para codificaci√≥n de contenido de elementos
      *
      */
     private static final int CSPEC_PAR_O=     1;
@@ -297,7 +297,7 @@ class DeclElm {
 
 
 
-        /* øser· child o mixed?   NOTA: llega con los espacios filtrados */
+        /* ¬øser√° child o mixed?   NOTA: llega con los espacios filtrados */
         if (contenido.charAt(0)!='(')
             throw new SAXException("Contenido incorrecto");
 
@@ -339,7 +339,7 @@ class DeclElm {
     /**
      * Codifica el contenido de un elemento y lo inserta en el buffer
      *
-     * Devuelve el puntero a la posiciÛn del buffer
+     * Devuelve el puntero a la posici√≥n del buffer
      *
      */
     public static int codificaContenido(Vector elementos,
@@ -382,7 +382,7 @@ class DeclElm {
             }
 
         } else {
-            // tipo children: se llama a una subfunciÛn
+            // tipo children: se llama a una subfunci√≥n
             MyStringTokenizer tokenizer=
                 new MyStringTokenizer(contenido,"()|,",true);
 
@@ -407,7 +407,7 @@ class DeclElm {
 
 
     /**
-     * funciÛn recursiva para codificar los contenidos de tipo children
+     * funci√≥n recursiva para codificar los contenidos de tipo children
      *
      */
     private static int codificaContenidoChild(MyStringTokenizer tok,
@@ -428,8 +428,8 @@ class DeclElm {
         while (true) {
             v= tok.nextToken();
 
-            if (v.compareTo(")")==0) break; //fin de recursiÛn
-            else if (v.compareTo("(")==0) {//nueva recursiÛn
+            if (v.compareTo(")")==0) break; //fin de recursi√≥n
+            else if (v.compareTo("(")==0) {//nueva recursi√≥n
                 tok.recuperar(v);
                 ptr= codificaContenidoChild(tok,buffer,ptr,elementos);
             }
@@ -474,7 +474,7 @@ class DeclElm {
 
         } //while(1)
 
-        // se codifica el parÈntesis de cierre
+        // se codifica el par√©ntesis de cierre
         buffer[ptr++]= CSPEC_PAR_C;
 
         if (tok.hasMoreTokens()) {
@@ -603,7 +603,7 @@ class DTDDeclHandler implements DeclHandler {
 //      System.err.println("internalEntityDecl: ");
 //      System.err.println("   "+name+": "+value+" ["+"]");
 
-        /* en principio, sÛlo se almacena el nombre de la entidad */
+        /* en principio, s√≥lo se almacena el nombre de la entidad */
         if (name.charAt(0)!='%')
           if (entities.indexOf(name)==-1)
             entities.addElement(name);
@@ -620,7 +620,7 @@ class DTDDeclHandler implements DeclHandler {
 //        System.err.println("   "+systemId);
     }
 
-    /** establece el n˙mero de dtd para las siguientes declaraciones */
+    /** establece el n√∫mero de dtd para las siguientes declaraciones */
     protected void establecerDtd(int num) {
         dtd= num;
     }
@@ -710,7 +710,7 @@ class DTDDeclHandler implements DeclHandler {
                                                   elm.contenido[nDtd]);
                 }
 
-                // n˙mero de atributos
+                // n√∫mero de atributos
                 if (elm.listaAtt[nDtd].size() > numMaxAtt)
                     numMaxAtt= elm.listaAtt[nDtd].size();
 
@@ -738,7 +738,7 @@ class DTDDeclHandler implements DeclHandler {
         out.println(" * fichero generado mediante DTDCoder");
         out.println(" * NO EDITAR");
         out.println(" *");
-        out.println(" * codificaciÛn de los datos de los DTD");
+        out.println(" * codificaci√≥n de los datos de los DTD");
         out.println(" *");
         out.println(" */");
         out.println("");
@@ -753,7 +753,7 @@ class DTDDeclHandler implements DeclHandler {
 
     private void imprimirEntidades(PrintStream out) {
 
-        /* busca el nombre m·s largo para fijar el tamaÒo del array */
+        /* busca el nombre m√°s largo para fijar el tama√±o del array */
         int max= 0;
         for (int i=0; i<entities.size(); i++)
             if (((String)entities.elementAt(i)).length()>max)
@@ -934,7 +934,7 @@ class DTDDeclHandler implements DeclHandler {
         out.println(" * fichero generado mediante DTDCoder");
         out.println(" * NO EDITAR");
         out.println(" *");
-        out.println(" * codificaciÛn de los datos de los DTD");
+        out.println(" * codificaci√≥n de los datos de los DTD");
         out.println(" * fichero de declaraciones");
         out.println(" *");
         out.println(" */");
