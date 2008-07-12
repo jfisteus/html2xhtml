@@ -1,8 +1,6 @@
 /*
- * fichero generado mediante DTDCoder
- * NO EDITAR
- *
- * datos asociados a cada DTD
+ * This file has been created automatically by DTDCoder.
+ * Do not edit, use DTDCoder instead.
  *
  */
 

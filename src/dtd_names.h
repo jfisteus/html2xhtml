@@ -1,8 +1,6 @@
 /*
- * fichero generado mediante DTDCoder
- * NO EDITAR
- *
- * asociación entre número de DTD y nombre
+ * This file has been created automatically by DTDCoder.
+ * Do not edit, use DTDCoder instead.
  *
  */
 

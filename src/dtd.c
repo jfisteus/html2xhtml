@@ -1,8 +1,6 @@
 /*
- * fichero generado mediante DTDCoder
- * NO EDITAR
- *
- * codificación de los datos de los DTD
+ * This file has been created automatically by DTDCoder.
+ * Do not edit, use DTDCoder instead.
  *
  */
 
@@ -265,7 +263,7 @@ char ent_list[254][25]= {
     "ecirc"  /*252*/,
     "eacute"  /*255*/
 };
-/* tabla hash para entidades */
+/* hash table for entities */
 int ent_hash[257]= {
    0,  2,  3,  3,  4,  4,  7,  9,  9,  9, 10, 10, 10, 11, 11, 11
 , 12, 13, 16, 17, 20, 20, 20, 21, 22, 22, 24, 24, 24, 25, 25, 25
@@ -453,7 +451,7 @@ att_data_t att_list[163]= {
     {"version",-2,3,1018,128}
 };
 
-/* buffer de datos para los atributos */
+/* data buffer for attribute specs */
 
 unsigned char att_buffer[1050]= {
   40,108,116,114,124,114,116,108, 41,  0,104,116,116,112, 58, 47
@@ -524,7 +522,7 @@ unsigned char att_buffer[1050]= {
 ,116, 32, 49, 46, 48, 47, 47, 69, 78,  0
 };
 
-/* elementos */
+/* elements */
 elm_data_t elm_list[97]= {
     {"html",{4,4,4,4,4,4,4,4},{0,0,5,0,0,0,0,0},
         {
@@ -3243,7 +3241,7 @@ elm_data_t elm_list[97]= {
        }, 16}
 };
 
-/* buffer de datos para contenido de elementos */
+/* buffer for element content specs */
 
 unsigned char elm_buffer[3027]= {
    1,129,139,  2,  0,  1,129,217,  2,  0,  1, 21,135,134,132,133

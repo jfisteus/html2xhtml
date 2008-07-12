@@ -1,9 +1,6 @@
 /*
- * fichero generado mediante DTDCoder
- * NO EDITAR
- *
- * codificación de los datos de los DTD
- * fichero de declaraciones
+ * This file has been created automatically by DTDCoder.
+ * Do not edit, use DTDCoder instead.
  *
  */
 
@@ -18,12 +15,11 @@
 
 #define ELM_ATTLIST_LEN 39
 
-#define DTD_SNAPSHOT_DATE "2008-06-26 13:53:57+0200"
-
-/* ficheros declarando tipos y otras macros */
+/* files that declare types and other macros */
 #include "dtd_types.h"
-
 #include "dtd_names.h"
+
+#define DTD_SNAPSHOT_DATE "2008-07-13 01:51:08+0200"
 
 #define elm_data_num 97
 #define att_data_num 163
@@ -31,7 +27,7 @@
 #define elm_buffer_num 3027
 #define att_buffer_num 1050
 
-/* variables declaradas en dtd.c */
+/* variables declared in dtd.c */
 extern elm_data_t elm_list[];
 extern unsigned char elm_buffer[];
 extern att_data_t att_list[];
