@@ -13,8 +13,8 @@ DTD_TEMPLATES = template-transitional.xhtml template-strict.xhtml \
 	template-mp.xhtml template-print10.xhtml 
 EXTRA_DIST = $(DTD_SRC) $(DTD_TEMPLATES) dtd_index.xml
 
-CLEANFILES = DTDCoder.class DTDDeclHandler.class DeclAtt.class DeclElm.class \
-	DTDData.class MyStringTokenizer.class 
+CLEANFILES = DTDCoder.class DTDDeclHandler.class AttDecl.class ElmDecl.class \
+	DTDCoder\$$DTDData.class MyStringTokenizer.class
 
 DTDCoder.class: $(DTD_SRC)
 	javac $(DTD_SRC)

@@ -1,47 +1,78 @@
+/***************************************************************************
+ *   Copyright (C) 2001-2008 by Jesus Arias Fisteus                        *
+ *   jaf@it.uc3m.es                                                        *
+ *                                                                         *
+ *   This program is free software; you can redistribute it and/or modify  *
+ *   it under the terms of the GNU General Public License as published by  *
+ *   the Free Software Foundation; either version 2 of the License, or     *
+ *   (at your option) any later version.                                   *
+ *                                                                         *
+ *   This program is distributed in the hope that it will be useful,       *
+ *   but WITHOUT ANY WARRANTY; without even the implied warranty of        *
+ *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the         *
+ *   GNU General Public License for more details.                          *
+ *                                                                         *
+ *   You should have received a copy of the GNU General Public License     *
+ *   along with this program; if not, write to the                         *
+ *   Free Software Foundation, Inc.,                                       *
+ *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
+ ***************************************************************************/
+
+
 /*
  * DTDCoder.java
  *
- * (Jesús Arias Fisteus)
- *
- * Codificación de la clase DTDCoder. Genera los ficheros
- * dtd.c, dtd.h, dtd_names.c y dtd_names.h
- * necesarios para el resto del programa,
- * a partir del análisis de los DTD XHTML de entrada.
- *
- * Funciona en combinación con DTDDeclHandler, que recibirá
- * las notificaciones de declaraciones encontradas en el DTD
- *
- * Forma de invocación explicada ejecutándolo sin parámetros
- *
- * $Id: DTDCoder.java,v 1.5 2005/01/29 19:38:44 jaf Exp $
+ * Main class that generates dtd.c, dtd.h, dtd_names.c and dtd_names.h
  *
  */
 
-import org.xml.sax.helpers.DefaultHandler;
-import org.w3c.dom.Element;
-import org.w3c.dom.NodeList;
-import org.w3c.dom.Node;
-import org.w3c.dom.Document;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.SAXParserFactory;
-import javax.xml.parsers.SAXParser;
-import org.xml.sax.XMLReader;
-import org.xml.sax.helpers.XMLReaderFactory;
-
-import java.io.PrintWriter;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.PrintWriter;
 
-/**
- * Clase que invoca el parser sobre ficheros de prueba
- *
- */
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.SAXParser;
+import javax.xml.parsers.SAXParserFactory;
+
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
+import org.xml.sax.helpers.DefaultHandler;
+
 public class DTDCoder
     extends DefaultHandler
 {
 
-    public DTDData[] procesarIndice(String indice)
+    public static void main(String argv[]) {
+        if (argv.length != 2) {
+            System.out.println("Error: two command line arguments expected:");
+            System.err.println("java DTDCoder <index_file>"
+                               + " <output_dir>\n");
+            System.exit(1);
+        }
+
+        DTDCoder coder = new DTDCoder();
+        DTDData[] dtds = coder.processIndexFile(argv[0]);
+        DTDDeclHandler handler= new DTDDeclHandler(dtds.length);
+
+        for (int i = 0; i < dtds.length; i++) {
+            handler.setDtd(i);
+            coder.processDtd(dtds[i], handler);
+        }
+
+        // escribe dtd.c y dtd.h
+        handler.writeFiles(argv[1]);
+
+        try {
+            // write dtd_names.c y dtd_names.h
+            coder.writeDtdNames(dtds, argv[1]);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+    
+    public DTDData[] processIndexFile(String indice)
     {
         DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
         Document doc = null;
@@ -52,8 +83,8 @@ public class DTDCoder
             return null;
         }
 
-        Element dtdsElement = doc.getDocumentElement();
-        NodeList dtdElements = dtdsElement.getElementsByTagName("dtd");
+        Element rootElement = doc.getDocumentElement();
+        NodeList dtdElements = rootElement.getElementsByTagName("dtd");
         DTDData[] dtds = new DTDData[dtdElements.getLength()];
         for (int i = 0; i < dtds.length; i++) {
             Element element = (Element) dtdElements.item(i);
@@ -64,16 +95,12 @@ public class DTDCoder
     }
 
 
-    public void procesarDtd(DTDData dtd, DTDDeclHandler handler)
+    public void processDtd(DTDData dtd, DTDDeclHandler handler)
     {
-        System.out.println("Procesando DTD " + dtd.getKey()
-                           +  "; plantilla " + dtd.getTemplateFile());
+        System.out.println("Processing DTD " + dtd.getKey()
+                           +  "; from template " + dtd.getTemplateFile());
 
-        // código comentado: bug en parser SAX de J2SDK 1.4
-        // no funciona cuando se redeclara una entidad, como es
-        // el caso del DTD de xhtml 1.1.
-        //
-
+        
         SAXParserFactory factory = SAXParserFactory.newInstance();
         factory.setValidating(true);
 
@@ -86,8 +113,11 @@ public class DTDCoder
             e.printStackTrace();
         }
 
-        // alternativa utilizando Xerces
-        //
+        /* 
+         * The code above does not work properly on some buggy JDK 1.4 versions.
+         * Xerces could be used intead (uncomment the following lines)
+         */
+
 //      try {
 //          XMLReader parser = XMLReaderFactory.createXMLReader("org.apache.xerces.parsers.SAXParser");
 //          parser.setProperty("http://xml.org/sax/properties/declaration-handler",
@@ -99,11 +129,11 @@ public class DTDCoder
 
     }
 
-    protected void escribirDtdNames(DTDData[] dtds, String dir)
+    protected void writeDtdNames(DTDData[] dtds, String dir)
         throws IOException
     {
 
-        // calcula las longitudes máximas
+        // compute maximum lengths
         int publicIdSize = 0;
         int dtdUrlSize = 0;
         int keySize = 0;
@@ -129,20 +159,13 @@ public class DTDCoder
         }
 
 
-        // Escribe dtd_names.h
+        // Write dtd_names.h
         PrintWriter out =
             new PrintWriter(new FileOutputStream(dir + "/dtd_names.h"));
 
-        System.out.println("Escribiendo " + dir + "/dtd_names.h");
+        System.out.println("Writing " + dir + "/dtd_names.h");
+        writeFileHeader(out);
 
-        out.println("/*");
-        out.println(" * fichero generado mediante DTDCoder");
-        out.println(" * NO EDITAR");
-        out.println(" *");
-        out.println(" * asociación entre número de DTD y nombre");
-        out.println(" *");
-        out.println(" */");
-        out.println();
         out.println("#define XHTML_NUM_DTDS " + dtds.length);
         out.println();
         for (int i = 0; i < dtds.length; i++) {
@@ -157,19 +180,12 @@ public class DTDCoder
         out.close();
 
 
-        // Escribe dtd_names.c
+        // Write dtd_names.c
         out = new PrintWriter(new FileOutputStream(dir + "/dtd_names.c"));
 
         System.out.println("Escribiendo " + dir + "/dtd_names.c");
+        writeFileHeader(out);
 
-        out.println("/*");
-        out.println(" * fichero generado mediante DTDCoder");
-        out.println(" * NO EDITAR");
-        out.println(" *");
-        out.println(" * datos asociados a cada DTD");
-        out.println(" *");
-        out.println(" */");
-        out.println();
         out.println("#include \"dtd.h\"");
         out.println("#include \"dtd_names.h\"");
         out.println();
@@ -226,7 +242,7 @@ public class DTDCoder
     }
 
     /**
-     * Convierte " a \"
+     * Convert " into \"
      *
      */
     private String regexp(String str)
@@ -234,113 +250,87 @@ public class DTDCoder
         return str.replaceAll("\\\"","\\\\\\\"");
     }
 
-    public static void main(String argv[]) {
-
-        if (argv.length != 2) {
-            System.err.println("uso: java DTDCoder indice"
-                               + " ruta_salida\n");
-            System.err.println("indice:");
-            System.err.println("  fichero con información básica de cada DTD");
-            System.err.println("ruta salida:");
-            System.err.println("  genera dtd.c, dtd.h y dtd_names.c "
-                               + "en el directorio 'ruta salida'\n");
-
-            System.exit(1);
-        }
-
-        DTDCoder coder = new DTDCoder();
-        DTDData[] dtds = coder.procesarIndice(argv[0]);
-        DTDDeclHandler handler= new DTDDeclHandler(dtds.length);
-
-        for (int i = 0; i < dtds.length; i++) {
-            handler.establecerDtd(i);
-            coder.procesarDtd(dtds[i], handler);
-        }
-
-        // escribe dtd.c y dtd.h
-        handler.finalizar(argv[1]);
-
-        try {
-            // escribe dtd_names.c y dtd_names.h
-            coder.escribirDtdNames(dtds, argv[1]);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+    public static void writeFileHeader(PrintWriter out) {
+        out.println("/*");
+        out.println(" * This file has been created automatically by DTDCoder.");
+        out.println(" * Do not edit, use DTDCoder instead.");
+        out.println(" *");
+        out.println(" */");
+        out.println();
     }
-}
-
-
-class DTDData
-{
-    private String key;
-    private String name;
-    private String constantName;
-    private String publicId;
-    private String dtdUrl;
-    private String templateFile;
-
-    public DTDData(Element element)
-        throws IllegalArgumentException
+    
+    class DTDData
     {
-        if (!"dtd".equals(element.getNodeName())) {
-            throw new IllegalArgumentException("Element 'dtd' expected");
-        }
+        private String key;
+        private String name;
+        private String constantName;
+        private String publicId;
+        private String dtdUrl;
+        private String templateFile;
 
-        key = getElementContent("key", element);
-        name = getElementContent("name", element);
-        constantName = getElementContent("constantName", element);
-        publicId = getElementContent("publicId", element);
-        dtdUrl = getElementContent("dtdUrl", element);
-        templateFile = getElementContent("templateFile", element);
-    }
-
-    public String getKey()
-    {
-        return key;
-    }
-
-    public String getName()
-    {
-        return name;
-    }
-
-    public String getConstantName()
-    {
-        return constantName;
-    }
-
-    public String getPublicId()
-    {
-        return publicId;
-    }
-
-    public String getDtdUrl()
-    {
-        return dtdUrl;
-    }
-
-    public String getTemplateFile()
-    {
-        return templateFile;
-    }
-
-    private String getElementContent(String elementName, Element baseElement)
-        throws IllegalArgumentException
-    {
-        NodeList children = baseElement.getElementsByTagName(elementName);
-        if (children.getLength() == 1) {
-            Element element = (Element) children.item(0);
-            Node content = element.getFirstChild();
-
-            if (content.getNodeType() == Node.TEXT_NODE) {
-                return content.getNodeValue();
-            } else {
-                throw new IllegalArgumentException("Bad content in "
-                                                   + elementName);
+        public DTDData(Element element)
+            throws IllegalArgumentException
+        {
+            if (!"dtd".equals(element.getNodeName())) {
+                throw new IllegalArgumentException("Element 'dtd' expected");
             }
-        } else {
-            throw new IllegalArgumentException("Element " + elementName
-                                               + " not found");
+
+            key = getElementContent("key", element);
+            name = getElementContent("name", element);
+            constantName = getElementContent("constantName", element);
+            publicId = getElementContent("publicId", element);
+            dtdUrl = getElementContent("dtdUrl", element);
+            templateFile = getElementContent("templateFile", element);
+        }
+
+        public String getKey()
+        {
+            return key;
+        }
+
+        public String getName()
+        {
+            return name;
+        }
+
+        public String getConstantName()
+        {
+            return constantName;
+        }
+
+        public String getPublicId()
+        {
+            return publicId;
+        }
+
+        public String getDtdUrl()
+        {
+            return dtdUrl;
+        }
+
+        public String getTemplateFile()
+        {
+            return templateFile;
+        }
+
+        private String getElementContent(String elementName, Element baseElement)
+            throws IllegalArgumentException
+        {
+            NodeList children = baseElement.getElementsByTagName(elementName);
+            if (children.getLength() == 1) {
+                Element element = (Element) children.item(0);
+                Node content = element.getFirstChild();
+
+                if (content.getNodeType() == Node.TEXT_NODE) {
+                    return content.getNodeValue();
+                } else {
+                    throw new IllegalArgumentException("Bad content in "
+                                                       + elementName);
+                }
+            } else {
+                throw new IllegalArgumentException("Element " + elementName
+                                                   + " not found");
+            }
         }
     }
 }
