@@ -31,7 +31,7 @@
     <constantName>XHTML_BASIC</constantName>
     <publicId>PUBLIC "-//W3C//DTD XHTML Basic 1.0//EN"</publicId>
     <dtdUrl>http://www.w3.org/TR/xhtml-basic/xhtml-basic10.dtd</dtdUrl>
-    <templateFile>template-basic11.xhtml</templateFile>
+    <templateFile>template-basic10.xhtml</templateFile>
   </dtd>
   <dtd>
     <key>1.1</key>
