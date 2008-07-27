@@ -1071,7 +1071,7 @@ static void elm_meta_scan(tree_node_t *meta)
 
 
 
-
+#if 0
 static void sellar_documento(void)
 {
   tree_node_t *sello;
@@ -1092,7 +1092,7 @@ static void sellar_documento(void)
       ELM_ID(document->inicio->cont.elemento.hijo)==ELMID_HEAD)
     link_node(sello,document->inicio->cont.elemento.hijo,LINK_MODE_CHILD);
 }
-
+#endif
 
 
 
@@ -2037,7 +2037,7 @@ static void write_document(document_t *doc)
 
 static int write_node(tree_node_t *node)
 {
-  int len;
+  int len = 0;
 
   switch (node->tipo) {
   case Node_element:
@@ -2063,7 +2063,7 @@ static int write_node(tree_node_t *node)
 
 static int write_element(tree_node_t *elm)
 {
-  int len;
+  int len = 0;
   tree_node_t *n;
   int is_block;
   int xml_space_activated;
@@ -2235,6 +2235,8 @@ static int write_cdata_sec(tree_node_t *node)
   } else {
     inside_cdata_sec = 1;
   }
+
+  return len;
 }
 
 static int write_chardata_space_preserve(tree_node_t *node)
