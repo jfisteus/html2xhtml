@@ -2010,10 +2010,8 @@ static int inside_cdata_sec;
  */ 
 static void write_document(document_t *doc)
 {
-  tree_node_t *p,*ant;
-  int allow_child;
-  int dir;
-  int indent; /* número de caracteres a identar */
+  tree_node_t *p;
+  int indent;
 
   indent = 0;
   xml_space_on = 0;
