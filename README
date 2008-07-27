@@ -103,6 +103,15 @@ OPTIONS:
                      not set, a new line character and indentation is
                      written between them.
 
+--empty_elm_tags_always
+                     By default, empty element tags are written only for
+                     elements declared as empty in the DTD. This option
+                     makes any element not having content to be written
+                     with the empty element tag, even if it si not declared
+                     as empty in the DTD. This option can cause problems
+                     when the XHTML document is opened by browsers in
+                     HTML (tag soup) mode.
+
 HTML ENCODINGS:
 
 This program only works for input encodings that code every ASCI
