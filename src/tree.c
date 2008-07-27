@@ -147,9 +147,9 @@ tree_node_t *new_tree_node(node_type_t tipo)
   switch (tipo) {
   case Node_comment:
   case Node_chardata:
+  case Node_cdata_sec:
     nodo->cont.chardata.data= -1;
     break;
-
   case Node_element:
     nodo->cont.elemento.attlist= NULL;
     nodo->cont.elemento.hijo= NULL;

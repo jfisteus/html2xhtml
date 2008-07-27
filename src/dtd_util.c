@@ -494,7 +494,7 @@ static int is_child_valid(int *rule_ptr, int elements[], int num)
   int repeat;
   int rule;
   int elm;
-  int valid;
+  int valid = -1;
   int elm_matched;
   int error_code;
   int coincide_choice;

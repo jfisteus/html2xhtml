@@ -32,6 +32,7 @@
 #endif
 
 #include <stdio.h>
+#include <string.h>
 
 #include "procesador.h"
 #include "dtd_names.h"
@@ -236,6 +237,7 @@ static void process_parameters(int argc,char **argv)
 int yyerror (char *e)
 {
   EXIT(e);
+  return 0; /* never reached */
 }
 
 
