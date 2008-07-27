@@ -144,6 +144,7 @@ extern int   param_pre_comments; /* preserve spacing inside comments */
 extern int   param_protect_cdata;
 extern int   param_cgi_html_output;
 extern int   param_compact_block_elms;
+extern int   param_empty_tags;
 
 /* element insertion variables */
 static tree_node_t *ins_html;
@@ -2121,6 +2122,8 @@ static int write_element(tree_node_t *elm)
       }
     }
     len += write_end_tag(elm);
+  } else if (!param_empty_tags) {
+    len += write_end_tag(elm);
   }
 
   /* deactivate "xml:space preserve" if activated */
@@ -2298,7 +2301,7 @@ static int write_start_tag(tree_node_t* nodo)
   int printed;
   
 
-  elm_name = elm_list[nodo->cont.elemento.elm_id].name;
+  elm_name = elm_list[ELM_ID(nodo)].name;
   elm_name_len = strlen(elm_name);
   num = 0;
 
@@ -2384,7 +2387,8 @@ static int write_start_tag(tree_node_t* nodo)
       chars_in_line++;
     }
 
-  if (!nodo->cont.elemento.hijo) {
+  if ((param_empty_tags && !nodo->cont.elemento.hijo)
+      || elm_list[ELM_ID(nodo)].contenttype[doctype] == CONTTYPE_EMPTY) {
     num+=fprintf(outputf,"/");
     chars_in_line++;
   }
@@ -2402,8 +2406,8 @@ static int write_end_tag(tree_node_t* nodo)
   char *elm_name;
   int elm_name_len;
   
-  if (!nodo->cont.elemento.hijo)
-    return 0;
+/*   if (!nodo->cont.elemento.hijo) */
+/*     return 0; */
 
   elm_name = elm_list[nodo->cont.elemento.elm_id].name;
   elm_name_len = strlen(elm_name);

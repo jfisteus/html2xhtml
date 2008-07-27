@@ -1,3 +1,7 @@
+2008-07-27  Jesus Arias Fisteus <jaf@it.uc3m.es>
+
+	* html2xhtml Empty element tags written only for elements 
+	declared as empty in DTD.
 2008-06-26  Jesus Arias Fisteus <jaf@it.uc3m.es>
 
 	* html2xhtml Updated DTD data.

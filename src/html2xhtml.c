@@ -62,6 +62,7 @@ int   param_pre_comments; /* preserve spacing inside comments */
 int   param_protect_cdata;
 int   param_cgi_html_output;
 int   param_compact_block_elms;
+int   param_empty_tags;
 
 static int cgi_mode;
 static int cgi_multipart_input;
@@ -170,6 +171,7 @@ static void set_default_parameters()
     param_cgi_html_output = 1;
   else
     param_cgi_html_output = 0;
+  param_empty_tags = 0;
 }
 
 static void process_parameters(int argc,char **argv)
@@ -213,6 +215,8 @@ static void process_parameters(int argc,char **argv)
       param_protect_cdata = 0;
     } else if (!strcmp(argv[i],"--compact-block-elements")) {
       param_compact_block_elms = 1;
+    } else if (!strcmp(argv[i],"--empty_elm_tags_always")) {
+      param_empty_tags = 1;
     } else if (!fich && argv[i][0]!='-') {
       fich= 1;
       parser_set_input(fopen(argv[i],"r"));
@@ -261,7 +265,7 @@ static void help(void)
   fprintf(stderr, "           [-o <output_file>]\n");
   fprintf(stderr, "           [-l <line_length>] [-b <tab_length>]\n");
   fprintf(stderr, "           [--preserve-space-comments] [--no-protect-cdata]\n");
-  fprintf(stderr, "           [--compact-block-elements]\n");
+  fprintf(stderr, "           [--compact-block-elements] [--empty_elm_tags_always]\n");
   fprintf(stderr, "\n");
   print_doctypes();
 }
