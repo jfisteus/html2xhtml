@@ -72,7 +72,7 @@ int dtd_id(char *key);
 				   __FILE__,__LINE__,msg);exit(1);} 
 
 
-/* para que el módulo de mensajes no eche de menos la variable */
+/* para que el mÃ³dulo de mensajes no eche de menos la variable */
 int parser_num_linea= -1;
 
 
@@ -270,7 +270,7 @@ void comparar_dtds(char *dtd_key_1, char *dtd_key_2)
 
   if (dtd1 != -1 && dtd2 != -1 && dtd1 != dtd2) {
     
-    /* lista los elementos sólo en dtd1*/
+    /* lista los elementos sÃ³lo en dtd1*/
     printf("Elements only in %s:\n", dtd_key_1);
     num_listados = 0;
     for (i = 0; i < elm_data_num; i++) {
@@ -285,7 +285,7 @@ void comparar_dtds(char *dtd_key_1, char *dtd_key_2)
     }
     printf("\n");
 
-    /* lista los elementos sólo en dtd2*/
+    /* lista los elementos sÃ³lo en dtd2*/
     printf("Elements only in %s:\n", dtd_key_2); 
     num_listados = 0;
     for (i = 0; i < elm_data_num; i++) {
@@ -356,7 +356,7 @@ int comparar_elemento(int elmid, int dtd1, int dtd2)
   int solo2[ELM_ATTLIST_LEN];
   int i, k;
 
-  /* ¿está en ambos DTD? */
+  /* Â¿estÃ¡ en ambos DTD? */
   if (!elm_list[elmid].contenttype[dtd1]
       || !elm_list[elmid].contenttype[dtd2])
     return -1;
@@ -433,7 +433,7 @@ char *readElmBuffer(int buff_ptr)
 
 /*
  * ==================================================================
- * útiles para pasar datos a cadenas
+ * Ãºtiles para pasar datos a cadenas
  * ==================================================================
  *
  */
@@ -525,7 +525,7 @@ char *defDeclToString(defaultDecl_t def)
 
 /* movida a dtd_util.c */
 #if 0
-/* función recursiva que pasa a la cadena el contentspec del buffer */
+/* funciÃ³n recursiva que pasa a la cadena el contentspec del buffer */
 char *contentspecToString(unsigned char *buff, char *str, contentType_t conttype,int *len_buff)
 {
   unsigned char v;
