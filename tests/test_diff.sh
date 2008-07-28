@@ -6,15 +6,25 @@ FAIL_FILE=fails
 
 if [ $# -eq 1 ]
 then
-    echo "***** diff $REFDIR/$1.ref $ODIR/$1.out"
-    diff $REFDIR/$1.ref $ODIR/$1.out 
-else
-    if [ -f $FAIL_FAIL ]
+    if [ -f $1 ]
     then
-	for f in `cat $FAIL_FILE`
-	do
-	    echo "***** diff $REFDIR/$f.ref $ODIR/$f.out"
-	    diff $REFDIR/$f.ref $ODIR/$f.out
-	done
+	pushd $REFDIR
+	files=`ls $1-*.ref`
+	popd
+    else
+	files=$1
+    fi
+else
+    if [ -f $FAIL_FILE ]
+    then
+	files=`cat $FAIL_FILE`
     fi
 fi
+
+for file in $files
+do
+    file=${file%.ref}
+    echo "***** diff $ODIR/$file.out $REFDIR/$file.ref"
+    diff $ODIR/$file.out $REFDIR/$file.ref
+done
+
