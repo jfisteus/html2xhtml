@@ -2120,7 +2120,8 @@ static int write_element(tree_node_t *elm)
       }
     }
     len += write_end_tag(elm);
-  } else if (!param_empty_tags) {
+  } else if (!param_empty_tags
+	     && elm_list[ELM_ID(elm)].contenttype[doctype] != CONTTYPE_EMPTY) {
     len += write_end_tag(elm);
   }
 
