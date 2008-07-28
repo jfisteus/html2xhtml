@@ -48,6 +48,7 @@ static void set_default_parameters(void);
 static void process_parameters(int argc,char **argv);
 static void help(void);
 static void print_doctypes(void);
+static void print_doctype_keys(void);
 void print_version(void);
 
 char *param_charset;
@@ -221,7 +222,10 @@ static void process_parameters(int argc,char **argv)
     } else if (!strcmp(argv[i],"--version") || !strcmp(argv[i],"-v")) {
       print_version();
       exit(0);
-    } else {
+    } else if (!strcmp(argv[i],"-L")) {
+      print_doctype_keys();
+      exit(0);
+    }else {
       help();
       exit(1);
     }
@@ -272,6 +276,14 @@ static void print_doctypes(void)
   for (i = 0; i < XHTML_NUM_DTDS; i++) {
     fprintf(stderr, "'-t %s': document type %s.\n",
 	    dtd_key[i], dtd_name[i]);
+  }
+}
+
+static void print_doctype_keys(void)
+{
+  int i;
+  for (i = 0; i < XHTML_NUM_DTDS; i++) {
+    fprintf(stdout, "%s\n", dtd_key[i]);
   }
 }
 
