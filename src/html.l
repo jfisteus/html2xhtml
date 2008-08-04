@@ -51,7 +51,7 @@ char *cgi_boundary= NULL;
 		} \
 	else \
 		{ \
-		result = charset_get_input(buf, max_size); \
+		result = charset_read(buf, max_size); \
 		}
 
 %}

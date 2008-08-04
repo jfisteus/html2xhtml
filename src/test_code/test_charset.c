@@ -21,11 +21,13 @@ int main(int argc, char **argv)
       exit(1);
     }
       
-    charset_init(argv[1], file);
+    charset_init_input(argv[1], file);
     do {
-      read = charset_get_input(buf, sizeof(buf));
+      read = charset_read(buf, sizeof(buf));
       fwrite(buf, 1, read, stdout);
     } while (read > 0);
+
+    charset_close();
 
     if (fclose(file)) {
       perror("fclose");

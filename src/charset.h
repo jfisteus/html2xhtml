@@ -33,14 +33,19 @@
 #define CHARSET_BUFFER_SIZE 32768
 
 /*
- * Set/reset the initial state of the charset input converter
+ * Set/reset the initial state of the charset converter for input mode
  */
-void charset_init(const char *charset_in, FILE *input_file);
+void charset_init_input(const char *charset_in, FILE *input_file);
+
+/*
+ * Close the current charset converter
+ */
+void charset_close();
 
 /*
  * Read at most 'num' bytes into the buffer 'buf', encoded
  * with the internal charset.
  */
-int charset_get_input(char *buf, size_t num);
+int charset_read(char *outbuf, size_t num);
 
 #endif

@@ -126,12 +126,13 @@ int main(int argc,char **argv)
 
   /* intialize the converter */
   saxStartDocument();
-  charset_init("ISO-8859-1", inputf);
+  charset_init_input("ISO-8859-1", inputf);
   if (inputf != stdin)
     parser_set_input(inputf);
 
   /* parse the input file and convert it */
   yyparse();
+  charset_close();
   saxEndDocument();
 
 #ifdef WITH_CGI

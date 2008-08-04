@@ -35,16 +35,20 @@
 #include "mensajes.h"
 
 static iconv_t cd;
-static FILE *input;
-static char inbuf[CHARSET_BUFFER_SIZE];
-static char *inpos;
-static int inavail;
-static int eof_reached;
-static int closed;
+static FILE *file;
+static char buffer[CHARSET_BUFFER_SIZE];
+static char *bufferpos;
+static int avail;
+static enum {closed, finished, eof, open} state = closed;
 
-void charset_init(const char *charset_in, FILE *input_file)
+void charset_init_input(const char *charset_in, FILE *input_file)
 {
-  input = input_file;
+  if (state != closed) {
+    WARNING("Charset initialized, closing it now");
+    charset_close();
+  }
+
+  file = input_file;
   cd = iconv_open(CHARSET_INTERNAL_ENC, charset_in);
   if (cd == (iconv_t) -1) {
     /* Something went wrong.  */
@@ -54,61 +58,80 @@ void charset_init(const char *charset_in, FILE *input_file)
     else
       perror ("iconv_open");
 
-    if (fclose(input) != 0)
+    if (fclose(file) != 0)
       perror ("fclose");
     EXIT("Conversion aborted");
   }
 
-  inpos = inbuf;
-  inavail = 0;
-  eof_reached = 0;
-  closed = 0;
+  bufferpos = buffer;
+  avail = 0;
+  state = open;
 
   DEBUG("charset_init() executed");
 }
 
-int charset_get_input(char *buf, size_t num)
+void charset_close()
+{
+  if (state == open || (state == eof && avail > 0)) {
+    WARNING("Charset closed, but input still available");
+  }
+  if (state != closed) 
+    iconv_close(cd);
+
+  DEBUG("charset_close() executed");
+}
+
+int charset_read(char *outbuf, size_t num)
 {
   size_t nread;
   size_t nconv;
-  size_t buf_max = num;
+  size_t outbuf_max = num;
+  int read_again = 1;
 
   DEBUG("in charset_get_input()");
   EPRINTF1("    read %d bytes\n", num); 
 
-  if (closed)
+  if (state != open && state != eof)
     return 0;
 
   /* read more data from file into the input buffer if needed */
-  if (!eof_reached && inpos == inbuf && inavail < 16) {
-    nread = fread(inpos, 1, sizeof (inbuf) - inavail, input);
-    if (nread == 0) {
-      if (ferror(input)) {
-	perror("read");
-	EXIT("Error reading the input");
-      } else {
-	/* End of input file */
-	eof_reached = 1;
+  if (state != eof && bufferpos == buffer && avail < 16) {
+    while (read_again) {
+      nread = fread(bufferpos, 1, sizeof (buffer) - avail, file);
+      read_again = 0;
+      if (nread == 0) {
+	if (ferror(file)) {
+	  if (errno != EINTR) {
+	    perror("read");
+	    EXIT("Error reading the input");
+	  } else {
+	    /* interrupted: read again */
+	    read_again = 1;
+	  }
+	} else {
+	  /* End of input file */
+	  state = eof;
+	}
       }
     }
-    inavail += nread;
+    avail += nread;
   }
 
   /* convert the input into de internal charset */
-  if (inavail > 0) {
-    nconv = iconv(cd, &inpos, &inavail, &buf, &buf_max);
+  if (avail > 0) {
+    nconv = iconv(cd, &bufferpos, &avail, &outbuf, &outbuf_max);
     if (nconv == (size_t) -1) {
       if (errno == EINVAL) {
 	/* Some bytes in the input were not converted. Move
 	 * them to the beginning of the buffer so that
 	 * they can be used in the next round.
 	 */
-	if (!eof_reached) {
-	  memmove (inbuf, inpos, inavail);
-	  inpos = inbuf;
+	if (state != eof) {
+	  memmove (buffer, bufferpos, avail);
+	  bufferpos = buffer;
 	} else {
 	  WARNING("Some bytes discarded at the end of the input");
-	  inavail = 0;
+	  avail = 0;
 	}
       } 
       else if (errno == E2BIG) {
@@ -120,23 +143,23 @@ int charset_get_input(char *buf, size_t num)
       else {
 	/* It is a real problem. Stop the conversion. */
 	perror("inconv");
-	if (fclose(input) != 0)
+	if (fclose(file) != 0)
 	  perror ("fclose");
 	EXIT("Error while converting the input into the internal charset");
       }
     } else {
       /* coversion OK, no input left; read more in the next call */
-      inpos = inbuf;
-      inavail = 0;
+      bufferpos = buffer;
+      avail = 0;
     }
   }
 
   /* if no more input, put the conversion in the initial state */
-  if (eof_reached && inavail == 0) {
-    iconv (cd, NULL, NULL, &buf, &buf_max);
-    closed = 1;
+  if (state == eof && avail == 0) {
+    iconv (cd, NULL, NULL, &outbuf, &outbuf_max);
+    state = finished;
   }
 
-  return num - buf_max;
+  return num - outbuf_max;
 }
 
