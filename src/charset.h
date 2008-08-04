@@ -38,6 +38,11 @@
 void charset_init_input(const char *charset_in, FILE *input_file);
 
 /*
+ * Set/reset the initial state of the charset converter for output mode
+ */
+void charset_init_output(const char *charset_out, FILE *output_file);
+
+/*
  * Close the current charset converter
  */
 void charset_close();
@@ -47,5 +52,12 @@ void charset_close();
  * with the internal charset.
  */
 int charset_read(char *outbuf, size_t num);
+
+/*
+ * Convert and write 'num' bytes from the buffer 'buf'.
+ * Return the number of input bytes from 'buf' actually wrote.
+ * The rest must be refilled by the caller in the next call.
+ */
+size_t charset_write(char *buf, size_t num);
 
 #endif

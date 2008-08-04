@@ -39,7 +39,7 @@ static FILE *file;
 static char buffer[CHARSET_BUFFER_SIZE];
 static char *bufferpos;
 static int avail;
-static enum {closed, finished, eof, open} state = closed;
+static enum {closed, finished, eof, input, output} state = closed;
 
 void charset_init_input(const char *charset_in, FILE *input_file)
 {
@@ -65,18 +65,65 @@ void charset_init_input(const char *charset_in, FILE *input_file)
 
   bufferpos = buffer;
   avail = 0;
-  state = open;
+  state = input;
 
-  DEBUG("charset_init() executed");
+  DEBUG("charset_init_input() executed");
+}
+
+void charset_init_output(const char *charset_out, FILE *output_file)
+{
+  if (state != closed) {
+    WARNING("Charset initialized, closing it now");
+    charset_close();
+  }
+
+  file = output_file;
+  cd = iconv_open(charset_out, CHARSET_INTERNAL_ENC);
+  if (cd == (iconv_t) -1) {
+    /* Something went wrong.  */
+    if (errno == EINVAL)
+      error(0, 0, "Error: conversion from '%s' to '%s' not available",
+	    CHARSET_INTERNAL_ENC, charset_out);
+    else
+      perror ("iconv_open");
+
+    if (fclose(file) != 0)
+      perror ("fclose");
+    EXIT("Conversion aborted");
+  }
+
+  state = output;
+
+  DEBUG("charset_init_output() executed");
 }
 
 void charset_close()
 {
-  if (state == open || (state == eof && avail > 0)) {
+  size_t wrote;
+
+  if (state == input || (state == eof && avail > 0)) {
     WARNING("Charset closed, but input still available");
   }
-  if (state != closed) 
+
+  if (state == output) {
+    /* reset the state */
+    bufferpos = buffer;
+    avail = CHARSET_BUFFER_SIZE;
+    iconv (cd, NULL, NULL, &bufferpos, &avail);
+    if (avail < CHARSET_BUFFER_SIZE) {
+      /* write the output */
+      wrote = fwrite(buffer, 1, CHARSET_BUFFER_SIZE - avail, file);
+      if (wrote < 0) {
+	perror("fwrite()");
+	EXIT("Error writing a data block to the output");
+      }
+    }
+  }
+
+  if (state != closed) { 
     iconv_close(cd);
+    state = closed;
+  }
 
   DEBUG("charset_close() executed");
 }
@@ -88,10 +135,10 @@ int charset_read(char *outbuf, size_t num)
   size_t outbuf_max = num;
   int read_again = 1;
 
-  DEBUG("in charset_get_input()");
+  DEBUG("in charset_read()");
   EPRINTF1("    read %d bytes\n", num); 
 
-  if (state != open && state != eof)
+  if (state != input && state != eof)
     return 0;
 
   /* read more data from file into the input buffer if needed */
@@ -163,3 +210,58 @@ int charset_read(char *outbuf, size_t num)
   return num - outbuf_max;
 }
 
+size_t charset_write(char *buf, size_t num)
+{
+  int convert_again = 1;
+  char *bufpos = buf;
+  size_t n = num;
+  size_t nconv;
+  int wrote;
+
+  DEBUG("in charset_write()");
+  EPRINTF1("    write %d bytes\n", num); 
+
+  if (state != output)
+    return;
+
+  while (convert_again) {
+    convert_again = 0;
+    bufferpos = buffer;
+    avail = CHARSET_BUFFER_SIZE;
+
+    nconv = iconv(cd, &bufpos, &n, &bufferpos, &avail);
+    if (nconv == (size_t) -1) {
+      if (errno == EINVAL) {
+	/* Some bytes in the input were not converted.
+	 * The caller has to feed them again later.
+	 */
+
+      } 
+      else if (errno == E2BIG) {
+	/* The output buffer is full; no problem, just 
+	 * write and convert again
+	 */
+	convert_again = 1;
+      }
+      else {
+	/* It is a real problem. Stop the conversion. */
+	perror("inconv");
+	if (fclose(file) != 0)
+	  perror ("fclose");
+	EXIT("Error while converting into the output charset");
+      }
+    }
+
+    /* write the output */
+    wrote = fwrite(buffer, 1, CHARSET_BUFFER_SIZE - avail, file);
+    if (wrote < 0) {
+      perror("fwrite()");
+      EXIT("Error writing a data block to the output");
+    }
+  }
+
+  /* Return the number of bytes of the internal encoding wrote.
+   * The caller must feed later the bytes not wrote. 
+   */
+  return num - n;
+}

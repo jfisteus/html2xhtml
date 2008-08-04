@@ -50,12 +50,14 @@
 
 #include <stdio.h>
 #include <string.h>
+#include <stdarg.h>
 
 #include "procesador.h"
 #include "tree.h"
 #include "dtd_util.h"
 #include "mensajes.h"
 #include "xchar.h"
+#include "charset.h"
 
 #ifdef SELLAR
 #define SELLO "translated by html2xhtml - http://www.it.uc3m.es/jaf/html2xhtml/"
@@ -130,6 +132,12 @@ static int write_start_tag(tree_node_t* nodo);
 static int write_end_tag(tree_node_t* nodo);
 static int write_indent(int len, int new_line);
 static int write_plain_data(xchar* text, int len);
+static int cprintf_init(char *to_charset, FILE *file);
+static int cprintf_close(void);
+static int cprintf(char *format, ...);
+static int cwrite(const char *buf, size_t num);
+static int cputc(int c);
+static void cflush(void);
 
 /* configuration parameters */
 extern char *param_charset;
@@ -2004,6 +2012,11 @@ static int chars_in_line;
 static int whitespace_needed;
 static int inside_cdata_sec;
 
+#define CBUFFER_SIZE 32768
+static char cbuffer[CBUFFER_SIZE];
+static int cbuffer_pos;
+static int cbuffer_avail;
+
 /*
  * Writes to output the document
  *
@@ -2017,20 +2030,24 @@ static void write_document(document_t *doc)
   xml_space_on = 0;
   inside_cdata_sec = 0;
 
+  cprintf_init("ISO-8859-1", outputf);
+
   /* write <?xml... */
-  fprintf(outputf,"%s?xml version=\"1.0\"", lt);
+  cprintf("%s?xml version=\"1.0\"", lt);
   if (document->encoding[0]) 
-    fprintf(outputf," encoding=\"%s\"",document->encoding);
-  fprintf(outputf,"?%s\n\n",gt);
+    cprintf(" encoding=\"%s\"",document->encoding);
+  cprintf("?%s\n\n",gt);
 
   /* write <!DOCTYPE... */
-  fprintf(outputf,"%s!DOCTYPE html\n   %s\n   \"%s\" %s\n", 
+  cprintf("%s!DOCTYPE html\n   %s\n   \"%s\" %s\n", 
 	  lt, doctype_string[doctype], dtd_string[doctype], gt);
   
   p = doc->inicio;
   indent = 0;
   write_node(p);
-  fputs(eol, outputf);
+  cprintf(eol);
+
+  cprintf_close();
 }
 
 static int write_node(tree_node_t *node)
@@ -2076,7 +2093,7 @@ static int write_element(tree_node_t *elm)
     if (ELM_ID(elm) == ELMID_STYLE)
       len += write_indent(indent, 1);
     else if (ELM_ID(elm) != ELMID_SCRIPT && is_block)
-      len += fprintf(outputf, eol);
+      len += cprintf(eol);
     xml_space_activated = 1;
     xml_space_on = 1;
   } else {
@@ -2206,11 +2223,11 @@ static int write_cdata_sec(tree_node_t *node)
   if (!inside_cdata_sec) {
     /* write the opening markup (with // if xml_space_on <- (script|style) */
     if (param_protect_cdata && xml_space_on) {
-      len += fprintf(outputf, "//%s![CDATA[", lt);
+      len += cprintf("//%s![CDATA[", lt);
       chars_in_line += 11;
     } else {
       write_whitespace_or_newline_if_needed(9);
-      len += fprintf(outputf, "%s![CDATA[", lt);
+      len += cprintf("%s![CDATA[", lt);
       chars_in_line += 9;
     }
   }
@@ -2224,10 +2241,10 @@ static int write_cdata_sec(tree_node_t *node)
   if (!node->sig || node->sig->tipo != Node_cdata_sec) {
     /* write the closing markup */
     if (param_protect_cdata && xml_space_on) {
-      len += fprintf(outputf, "//]]%s", gt);
+      len += cprintf("//]]%s", gt);
       chars_in_line += 5;
     } else {
-      len += fprintf(outputf, "]]%s", gt);
+      len += cprintf("]]%s", gt);
       chars_in_line += 3;
     }
     inside_cdata_sec = 0;
@@ -2263,11 +2280,11 @@ static int write_comment(tree_node_t *comm)
   write_whitespace_or_newline_if_needed(4); /* strlen("<!--") */
 
   if (param_pre_comments) {
-    num += fprintf(outputf, "%s!--", lt);
+    num += cprintf("%s!--", lt);
     chars_in_line += 4;
     num += write_chardata_space_preserve(comm);
   } else {
-    num += fprintf(outputf, "%s!-- ", lt);
+    num += cprintf("%s!-- ", lt);
     chars_in_line += 5;
     prev_inline = inline_on;
     inline_on = 1;
@@ -2278,10 +2295,10 @@ static int write_comment(tree_node_t *comm)
   }
 
   if (param_pre_comments) {
-    num += fprintf(outputf, "--%s", gt);
+    num += cprintf("--%s", gt);
     chars_in_line += 3;
   } else {
-    num += fprintf(outputf, " --%s", gt);
+    num += cprintf(" --%s", gt);
     chars_in_line += 4;
   }
 
@@ -2311,7 +2328,7 @@ static int write_start_tag(tree_node_t* nodo)
   else
     num += write_whitespace_or_newline_if_needed(3 + elm_name_len);
 
-  printed = fprintf(outputf, "%s%s", lt, elm_name);
+  printed = cprintf("%s%s", lt, elm_name);
   num += printed;
   chars_in_line += printed;
 
@@ -2330,13 +2347,13 @@ static int write_start_tag(tree_node_t* nodo)
       }
       
       if (chars_in_line != indent) {
-	fputc(' ', outputf);
+	cputc(' ');
 	num++;
 	chars_in_line++;
       }
 
       /* write name=(single|double)quote */
-      printed = fprintf(outputf, "%s=%c", att_list[att->att_id].name, limit);
+      printed = cprintf("%s=%c", att_list[att->att_id].name, limit);
       num += printed;
       chars_in_line += printed;
 
@@ -2344,22 +2361,22 @@ static int write_start_tag(tree_node_t* nodo)
       text = valor;
       while (chars_to_print > 0) {
 	if (text[0] == '&') {
-	  num += fprintf(outputf, "%s", amp);
+	  num += cprintf("%s", amp);
 	  chars_in_line++;
 	  text++;
 	  chars_to_print--;
 	} else if (text[0] == '<') {
-	  num += fprintf(outputf, "%s", lt);
+	  num += cprintf("%s", lt);
 	  chars_in_line++;
 	  text++;
 	  chars_to_print--;
 	} else if (text[0] == 0x0a) {
-	  num += fprintf(outputf, " ");
+	  num += cprintf(" ");
 	  chars_in_line++;
 	  text++;
 	  chars_to_print--;
 	} else if (text[0] == 0x0d) {
-	  num += fprintf(outputf, " ");
+	  num += cprintf(" ");
 	  chars_in_line++;
 	  if (chars_to_print > 1 && text[1] == 0x0a) {
 	    text += 2;
@@ -2377,24 +2394,24 @@ static int write_start_tag(tree_node_t* nodo)
 	  }
 	
 	/* print this fragment of text */
-	printed = fwrite(text, i, 1, outputf) * i;
+	printed = cwrite(text, i);
 	num += printed;
 	chars_in_line += printed;
 	text += i;
 	chars_to_print -= i;
       }
       
-      num+= fprintf(outputf,"%c", limit);
+      num+= cprintf("%c", limit);
       chars_in_line++;
     }
 
   if ((param_empty_tags && !nodo->cont.elemento.hijo)
       || elm_list[ELM_ID(nodo)].contenttype[doctype] == CONTTYPE_EMPTY) {
-    num+=fprintf(outputf,"/");
+    num+=cprintf("/");
     chars_in_line++;
   }
   
-  num+=fprintf(outputf,gt);
+  num+=cprintf(gt);
   chars_in_line++;
 
   return num;
@@ -2416,7 +2433,7 @@ static int write_end_tag(tree_node_t* nodo)
 
   num += write_whitespace_or_newline_if_needed(3 + elm_name_len);
 
-  printed = fprintf(outputf,"%s/%s%s",lt,
+  printed = cprintf("%s/%s%s",lt,
 		    elm_list[nodo->cont.elemento.elm_id].name, gt);
   num += printed;
   chars_in_line += printed;
@@ -2443,7 +2460,7 @@ static int write_whitespace_or_newline_if_needed(int next_data_len)
       num += write_indent(indent, 1);
     } else {
       /* write a whitespace only */
-      fputc(' ', outputf);
+      cputc(' ');
       num++;
       chars_in_line++;
     }
@@ -2465,20 +2482,20 @@ static int write_plain_data(xchar* text, int len)
   num = 0;
   while (i < len) {
     if (text[i] == '&') {
-      num += fprintf(outputf, "%s", amp);
+      num += cprintf("%s", amp);
       i++;
       chars_in_line++;
     } else if (text[i] == '<') {
-      num += fprintf(outputf, "%s", lt);
+      num += cprintf("%s", lt);
       i++;
       chars_in_line++;
     } else if (text[i] == 0x0a) {
-      fputc('\n', outputf);
+      cputc('\n');
       num++;
       i++;
       chars_in_line = 0;
     } else if (text[i] == 0x0d) {
-      fputc('\n', outputf);
+      cputc('\n');
       num++;
       chars_in_line = 0;
       if (i + 1 < len && text[i + 1] == 0x0a) {
@@ -2498,7 +2515,7 @@ static int write_plain_data(xchar* text, int len)
       
     /* print the fragment */
     if (i > pos) {
-      wrote = fwrite(&text[pos], i - pos, 1, outputf) * (i - pos);
+      wrote = cwrite(&text[pos], i - pos);
       num += wrote;
       chars_in_line += wrote;
     }
@@ -2518,11 +2535,11 @@ static int write_indent(int len, int new_line)
   chars_in_line = indent;
 
   if (new_line) {
-    fputs(eol, outputf);
+    cprintf(eol);
   }
 
   for (i = 0; i < len; i++) 
-    fputc(' ', outputf);
+    cputc(' ');
 
   if (new_line)
     return len + 1;
@@ -2530,3 +2547,93 @@ static int write_indent(int len, int new_line)
     return len;
 }
 
+static int cprintf_init(char *to_charset, FILE *file)
+{
+  cbuffer_pos = 0;
+  cbuffer_avail = CBUFFER_SIZE;
+  charset_init_output(to_charset, file);
+}
+
+static int cprintf_close()
+{
+  /* write the last block */
+  if (cbuffer_pos > 0)
+    cflush();
+
+  /* close the charset converter */
+  charset_close();
+}
+
+static int cprintf(char *format, ...)
+{
+  va_list ap;
+  size_t written;
+  
+  va_start(ap, format);
+  written = vsnprintf(&cbuffer[cbuffer_pos], cbuffer_avail, format, ap); 
+  va_end(ap);
+
+  /* buffer overflow? */
+  if (written >= cbuffer_avail) {
+    if (written >= CBUFFER_SIZE) {
+      EXIT("Output buffer overflow");
+    }
+    /* write the current buffer, excluding the new data */
+    cflush();
+
+    /* write again the new data to the buffer, but now at the beginning */
+    va_start(ap, format);
+    written = vsnprintf(&cbuffer[cbuffer_pos], cbuffer_avail, format, ap);
+    va_end(ap);
+  }
+
+  if (written < 0) {
+    perror("vsnprintf()");
+    EXIT("Error when writing output");
+  }
+
+  cbuffer_pos += written;
+  cbuffer_avail -= written;
+
+  return written;
+}
+
+static int cwrite(const char *buf, size_t num)
+{
+  if (num > CBUFFER_SIZE) {
+    EXIT("Output buffer overflow");
+  }
+
+  if (num > cbuffer_avail) {
+    cflush();
+  }
+
+  memcpy(&cbuffer[cbuffer_pos], buf, num);
+  cbuffer_pos += num;
+  cbuffer_avail -= num;
+
+  return num;
+}
+
+static int cputc(int c)
+{
+  if (cbuffer_avail == 0)
+    cflush();
+  cbuffer[cbuffer_pos++] = (char) c;
+  cbuffer_avail--;
+}
+
+static void cflush()
+{
+  int wrote = charset_write(cbuffer, cbuffer_pos);
+  if (wrote < cbuffer_pos) {
+    /* feed again unwrote bytes */
+    memmove(cbuffer, &cbuffer[wrote], cbuffer_pos - wrote);
+    cbuffer_pos = cbuffer_pos - wrote;
+    cbuffer_avail = CBUFFER_SIZE - cbuffer_pos;
+  } else {
+    /* all the output bytes have been wrote */
+    cbuffer_pos = 0;
+    cbuffer_avail = CBUFFER_SIZE;
+  }
+}
