@@ -53,11 +53,13 @@ static void print_doctypes(void);
 static void print_doctype_keys(void);
 void print_version(void);
 
+FILE *inputf;
+FILE *outputf;
+
 char *param_charset;
 char *param_charset_default;
 int   param_strict;
 int   param_doctype;
-FILE *outputf;
 int   param_chars_per_line;
 int   param_tab_len;
 int   param_pre_comments; /* preserve spacing inside comments */
@@ -124,6 +126,10 @@ int main(int argc,char **argv)
 
   /* intialize the converter */
   saxStartDocument();
+  charset_init("ISO-8859-1", inputf);
+  if (inputf != stdin)
+    parser_set_input(inputf);
+
   /* parse the input file and convert it */
   yyparse();
   saxEndDocument();
@@ -163,7 +169,6 @@ static void set_default_parameters()
   param_charset_default = "ISO-8859-1";
   param_strict = 1;
   param_doctype = -1;
-  outputf = stdout;
   param_chars_per_line = 80;
   param_tab_len = 2;
   param_pre_comments = 0;
@@ -174,6 +179,9 @@ static void set_default_parameters()
   else
     param_cgi_html_output = 0;
   param_empty_tags = 0;
+
+  outputf = stdout;
+  inputf = stdin;
 }
 
 static void process_parameters(int argc,char **argv)
@@ -221,7 +229,11 @@ static void process_parameters(int argc,char **argv)
       param_empty_tags = 1;
     } else if (!fich && argv[i][0]!='-') {
       fich= 1;
-      parser_set_input(fopen(argv[i],"r"));
+      inputf = fopen(argv[i],"r");
+      if (!inputf) {
+	perror("fopen");
+	EXIT("Could not open the input file for reading");
+      }
     } else if (!strcmp(argv[i],"--help") || !strcmp(argv[i],"-h")) {
       help();
       exit(0);

@@ -43,6 +43,16 @@ char *cgi_boundary= NULL;
                             if (yytext[i]<0) is_ascii=0; \
                         }
 
+#define YY_INPUT(buf, result, max_size) \
+	if (yy_current_buffer->yy_is_interactive) \
+		{ \
+		    YY_FATAL_ERROR("interactive mode not allowed yet"); \
+		    result = 0; \
+		} \
+	else \
+		{ \
+		result = charset_get_input(buf, max_size); \
+		}
 
 %}
 
