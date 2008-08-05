@@ -138,6 +138,7 @@ static int cprintf(char *format, ...);
 static int cwrite(const char *buf, size_t num);
 static int cputc(int c);
 static void cflush(void);
+static size_t ccount_utf8_chars(const char *buf, size_t num_bytes);
 
 /* configuration parameters */
 extern char *param_charset;
@@ -2157,7 +2158,8 @@ static int write_chardata(tree_node_t *node)
   int pos;
   int data_len;
   xchar *data;
-  int to_print;
+  int bytes_to_print;
+  int chars_to_print;
   int num;
   int printed;
 
@@ -2187,18 +2189,21 @@ static int write_chardata(tree_node_t *node)
 
     /* find the next breakpoint */
     pos = i;
-    to_print = 0;
+    chars_to_print = 0;
+    bytes_to_print = 0;
     for ( ; 
 	  i < data_len && data[i] != 0x0a && data[i] != 0x0d 
 	    && data[i] != ' ' && data[i] != '\t';
-	  i++, to_print++);
+	  i++, bytes_to_print++) {
+      if ((char)(data[i] & 0xC0) != (char) 0x80)
+	chars_to_print++;
+    }
     
-    if (to_print) {
-      num += write_whitespace_or_newline_if_needed(to_print);
-      printed = write_plain_data(&data[pos], to_print);
-/*       chars_in_line += printed; */
+    if (bytes_to_print) {
+      num += write_whitespace_or_newline_if_needed(chars_to_print);
+      printed = write_plain_data(&data[pos], bytes_to_print);
       num += printed;
-      pos += to_print;
+      pos += bytes_to_print;
     } 
   }
 
@@ -2309,7 +2314,7 @@ static int write_start_tag(tree_node_t* nodo)
 {
   att_node_t *att;
   char limit;
-  char *valor;
+  char *value;
   int num;
   char *text;
   int chars_to_print;
@@ -2334,15 +2339,15 @@ static int write_start_tag(tree_node_t* nodo)
 
   for (att= nodo->cont.elemento.attlist; att; att= att->sig)
     if (att->es_valido) {
-      valor= (char*)tree_index_to_ptr(att->valor);
+      value= (char*)tree_index_to_ptr(att->valor);
 
-      if (xsearch(valor,"\"")) limit= '\'';
+      if (xsearch(value,"\"")) limit= '\'';
       else limit= '\"';
 
       /* does this attribute fit in this line? */
       if (inline_on 
 	  && (3 + strlen(att_list[att->att_id].name) 
-	      + strlen(valor) + chars_in_line) > param_chars_per_line) {
+	      + strlen(value) + chars_in_line) > param_chars_per_line) {
 	num += write_indent(indent, 1);
       }
       
@@ -2357,8 +2362,8 @@ static int write_start_tag(tree_node_t* nodo)
       num += printed;
       chars_in_line += printed;
 
-      chars_to_print = strlen(valor);
-      text = valor;
+      chars_to_print = strlen(value);
+      text = value;
       while (chars_to_print > 0) {
 	if (text[0] == '&') {
 	  num += cprintf("%s", amp);
@@ -2401,13 +2406,13 @@ static int write_start_tag(tree_node_t* nodo)
 	chars_to_print -= i;
       }
       
-      num+= cprintf("%c", limit);
+      num += cprintf("%c", limit);
       chars_in_line++;
     }
 
   if ((param_empty_tags && !nodo->cont.elemento.hijo)
       || elm_list[ELM_ID(nodo)].contenttype[doctype] == CONTTYPE_EMPTY) {
-    num+=cprintf("/");
+    num += cprintf("/");
     chars_in_line++;
   }
   
@@ -2568,7 +2573,8 @@ static int cprintf(char *format, ...)
 {
   va_list ap;
   size_t written;
-  
+  size_t chars_written;  
+
   va_start(ap, format);
   written = vsnprintf(&cbuffer[cbuffer_pos], cbuffer_avail, format, ap); 
   va_end(ap);
@@ -2592,14 +2598,19 @@ static int cprintf(char *format, ...)
     EXIT("Error when writing output");
   }
 
+  /* count the number of UTF-8 chars (written is in bytes, not chars) */
+  chars_written = ccount_utf8_chars(&cbuffer[cbuffer_pos], written);
+
   cbuffer_pos += written;
   cbuffer_avail -= written;
 
-  return written;
+  return (int) chars_written;
 }
 
 static int cwrite(const char *buf, size_t num)
 {
+  size_t chars_written;
+
   if (num > CBUFFER_SIZE) {
     EXIT("Output buffer overflow");
   }
@@ -2608,11 +2619,14 @@ static int cwrite(const char *buf, size_t num)
     cflush();
   }
 
+  /* count the number of UTF-8 chars (written is in bytes, not chars) */
+  chars_written = ccount_utf8_chars(buf, num);
+
   memcpy(&cbuffer[cbuffer_pos], buf, num);
   cbuffer_pos += num;
   cbuffer_avail -= num;
 
-  return num;
+  return (int) chars_written;
 }
 
 static int cputc(int c)
@@ -2636,4 +2650,17 @@ static void cflush()
     cbuffer_pos = 0;
     cbuffer_avail = CBUFFER_SIZE;
   }
+}
+
+static size_t ccount_utf8_chars(const char *buf, size_t num_bytes)
+{
+  size_t num_chars = 0;
+  int i;
+
+  for (i = 0; i < num_bytes; i++) {
+    if ((char)(buf[i] & 0xC0) != (char)0x80)
+      num_chars++;
+  }
+
+  return num_chars;
 }
