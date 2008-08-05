@@ -11,7 +11,7 @@
 
 int main(int argc, char **argv)
 {
-  char buf[128];
+  char buf[0x20000];
   int read;
 
   if (argc == 3) {
@@ -23,7 +23,7 @@ int main(int argc, char **argv)
       
     charset_init_input(argv[1], file);
     do {
-      read = charset_read(buf, sizeof(buf));
+      read = charset_read(buf, sizeof(buf), 0);
       fwrite(buf, 1, read, stdout);
     } while (read > 0);
 

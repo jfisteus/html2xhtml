@@ -135,63 +135,67 @@ int charset_read(char *outbuf, size_t num, int interactive)
 {
   size_t nconv;
   size_t outbuf_max = num;
+  int convert_more;
 
   DEBUG("in charset_read()");
-  EPRINTF1("    read %d bytes\n", num); 
+  EPRINTF1("    to be read %d bytes\n", num); 
 
   if (state != input && state != eof)
     return 0;
 
-  /* read more data from file into the input buffer if needed */
-  if (state != eof && bufferpos == buffer && avail < 16) {
-    if (!interactive)
-      read_block();
-    else
-      read_interactive();
-  }
+  do {
+    convert_more = 0;
 
-  /* convert the input into de internal charset */
-  if (avail > 0) {
-    nconv = iconv(cd, &bufferpos, &avail, &outbuf, &outbuf_max);
-    if (nconv == (size_t) -1) {
-      if (errno == EINVAL) {
-	/* Some bytes in the input were not converted. Move
-	 * them to the beginning of the buffer so that
-	 * they can be used in the next round.
-	 */
-	if (state != eof) {
-	  memmove (buffer, bufferpos, avail);
-	  bufferpos = buffer;
-	} else {
-	  WARNING("Some bytes discarded at the end of the input");
-	  avail = 0;
-	}
-      } 
-      else if (errno == E2BIG) {
-	/* The output buffer is full; no problem, just 
-	 * leave the rest of the input buffer for
-	 * the next call.
-	 */
-      }
-      else {
-	/* It is a real problem. Stop the conversion. */
-	perror("inconv");
-	if (fclose(file) != 0)
-	  perror ("fclose");
-	EXIT("Error while converting the input into the internal charset");
-      }
-    } else {
-      /* coversion OK, no input left; read more in the next call */
-      bufferpos = buffer;
-      avail = 0;
+    /* read more data from file into the input buffer if needed */
+    if (state != eof && bufferpos == buffer && avail < 16) {
+      if (!interactive)
+	read_block();
+      else
+	read_interactive();
     }
-  }
+
+    /* convert the input into de internal charset */
+    if (avail > 0) {
+      nconv = iconv(cd, &bufferpos, &avail, &outbuf, &outbuf_max);
+      if (nconv == (size_t) -1) {
+	if (errno == EINVAL) {
+	  /* Some bytes in the input were not converted. Move
+	   * them to the beginning of the buffer so that
+	   * they can be used in the next round.
+	   */
+	  if (state != eof) {
+	    memmove (buffer, bufferpos, avail);
+	    bufferpos = buffer;
+	    convert_more = 1;
+	  } else {
+	    WARNING("Some bytes discarded at the end of the input");
+	    avail = 0;
+	  }
+	}
+	else if (errno != E2BIG) {
+	  /* It is a real problem. Stop the conversion. */
+	  perror("inconv");
+	  if (fclose(file) != 0)
+	    perror ("fclose");
+	  EXIT("Error while converting the input into the internal charset");
+	}
+      } else {
+	/* coversion OK, no input left; read more now */
+	bufferpos = buffer;
+	avail = 0;
+	if (state != eof)
+	  convert_more = 1;
+      }
+    }
+  } while (convert_more && !interactive);
 
   /* if no more input, put the conversion in the initial state */
   if (state == eof && avail == 0) {
     iconv (cd, NULL, NULL, &outbuf, &outbuf_max);
     state = finished;
   }
+
+  EPRINTF1("    actually read %d bytes\n", num - outbuf_max); 
 
   return num - outbuf_max;
 }
