@@ -1,0 +1,128 @@
+POST / HTTP/1.1
+User-Agent: Opera/9.51 (X11; Linux i686; U; en)
+Host: localhost:8081
+Accept: text/html, application/xml;q=0.9, application/xhtml+xml, image/png, image/jpeg, image/gif, image/x-xbitmap, */*;q=0.1
+Accept-Language: gl,es;q=0.9,en;q=0.8
+Accept-Charset: iso-8859-1, utf-8, utf-16, *;q=0.1
+Accept-Encoding: deflate, gzip, x-gzip, identity, *;q=0
+Connection: Keep-Alive
+Content-Length: 4141
+Content-Type: multipart/form-data; boundary=----------kchnF3elYElXZLka8e4OkA
+
+------------kchnF3elYElXZLka8e4OkA
+Content-Disposition: form-data; name="tipo"
+
+strict
+------------kchnF3elYElXZLka8e4OkA
+Content-Disposition: form-data; name="html"; filename="conversor.html"
+Content-Type: text/html
+
+<?xml version="1.0" encoding="ISO-8859-1" ?>
+
+<!DOCTYPE html
+   PUBLIC "-//W3C//DTD XHTML 1.1//EN"
+   "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd" >
+
+<html xmlns="http://www.w3.org/1999/xhtml" >
+  <head >
+    <title >html2xhtml - HTML to XHTML translator</title>
+    <meta name="generator" content="convertido por html2xhtml - Jesus Arias Fisteus 2001" />
+
+    <style type="text/css">
+      .new {color:red}
+    </style>
+
+  </head>
+  <body >
+    <h1 >HTML to XHTML translator</h1>
+    <p><a href="conversor.es.html">(ver en español)</a></p>
+    <form action="http://localhost:8081/" method="post" 
+      enctype="multipart/form-data" id="formulario" >
+      <p>Output document type:</p>
+      <p>
+	<select name="tipo">
+	  <option value="auto" selected="selected">Auto</option>
+	  <option value="transitional">XHTML 1.0 Transitional</option>
+	  <option value="strict">XHTML 1.0 Strict</option>
+	  <option value="frameset">XHTML 1.0 Frameset</option>
+	  <option value="basic">XHTML Basic</option>
+	  <option value="1.1">XHTML 1.1</option>
+	  <option value="mp">XHTML Mobile Profile</option>
+	</select>
+      </p>
+
+      <p >Input HTML document:</p>
+      <p>
+	<input name="html" type="file" />
+	<input type="submit" value="translate" />
+      </p>
+    </form>
+    
+    <hr />
+
+    <p>
+      Bug report: by e-mail to jaf<img src="arr.gif" alt="__at__" />it.uc3m.es. 
+      Please, include input and output documents, 
+      a description of the error and, if possible, the date of
+      the translation.
+    </p>
+
+    <hr />
+<!--
+   <p><span class="new">New!</span> Added experimental support
+        for <i>XHTML Mobile Profile</i></p> 
+-->
+    <h2>How does it work?</h2>
+    <p>
+      This service performs automatic HTML to XHTML translation. Its 
+      work is done in several steps:
+    </p>
+    <ol>
+      <li>HTML parsing: it reads the HTML document and constructs a
+	tree in memory to represent it. The parser is capable to
+	correct many common problems (errors, bad formed documents, etc.) 
+	of current HTML documents in the web.</li>
+      <li>Translation: the tree is adapted to be a valid XHTML 
+	document of the selected type. It can translate properly
+	the most common cases. When it can't translate properly 
+	a piece of the document, this piece is discarded (because
+	the most important design requirement of this service is 
+	that the output must be a valid XHTML document).
+      </li>
+      <li>Output generation: the output XHTML document is generated from
+	the tree.</li>
+    </ol>
+
+    <hr />
+
+    <h2>References</h2>
+
+    <h3>Normative</h3>
+    <ul>
+      <li>
+	<a href="http://www.w3.org/TR/xhtml1">
+	  XHTML 1.0: The Extensible HyperText Markup Language. 
+	  A Reformulation of HTML 4 in XML 1.0</a> 
+      </li>
+      <li>
+	<a href="http://www.w3.org/TR/2001/REC-xhtml-modularization-20010410">
+	  Modularization of XHTML </a> 
+      </li>
+      <li>
+	<a href="http://www.w3.org/TR/2000/REC-xhtml-basic-20001219">
+	  XHTML Basic </a> 
+      </li>
+      <li>
+	<a href="http://www.w3.org/TR/2001/REC-xhtml11-20010531">
+	  XHTML 1.1 - Module-based XHTML </a> 
+      </li>
+      <li>
+	<a href="http://www1.wapforum.org/tech/documents/WAP-277-XHTMLMP-20011029-a.pdf">
+	XHTML Mobile Profile Specification (PDF)</a>
+      </li>
+
+    </ul>
+  </body>
+</html>
+
+------------kchnF3elYElXZLka8e4OkA
