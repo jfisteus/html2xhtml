@@ -51,7 +51,7 @@ void charset_close();
  * Read at most 'num' bytes into the buffer 'buf', encoded
  * with the internal charset.
  */
-int charset_read(char *outbuf, size_t num);
+int charset_read(char *outbuf, size_t num, int interactive);
 
 /*
  * Convert and write 'num' bytes from the buffer 'buf'.

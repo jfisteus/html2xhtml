@@ -44,15 +44,7 @@ char *cgi_boundary= NULL;
                         }
 
 #define YY_INPUT(buf, result, max_size) \
-	if (yy_current_buffer->yy_is_interactive) \
-		{ \
-		    YY_FATAL_ERROR("interactive mode not allowed yet"); \
-		    result = 0; \
-		} \
-	else \
-		{ \
-		result = charset_read(buf, max_size); \
-		}
+  result = charset_read(buf, max_size, yy_current_buffer->yy_is_interactive);
 
 %}
 

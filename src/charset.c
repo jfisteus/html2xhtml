@@ -41,6 +41,9 @@ static char *bufferpos;
 static int avail;
 static enum {closed, finished, eof, input, output} state = closed;
 
+static void read_block(void);
+static void read_interactive(void);
+
 void charset_init_input(const char *charset_in, FILE *input_file)
 {
   if (state != closed) {
@@ -128,12 +131,10 @@ void charset_close()
   DEBUG("charset_close() executed");
 }
 
-int charset_read(char *outbuf, size_t num)
+int charset_read(char *outbuf, size_t num, int interactive)
 {
-  size_t nread;
   size_t nconv;
   size_t outbuf_max = num;
-  int read_again = 1;
 
   DEBUG("in charset_read()");
   EPRINTF1("    read %d bytes\n", num); 
@@ -143,25 +144,10 @@ int charset_read(char *outbuf, size_t num)
 
   /* read more data from file into the input buffer if needed */
   if (state != eof && bufferpos == buffer && avail < 16) {
-    while (read_again) {
-      nread = fread(bufferpos, 1, sizeof (buffer) - avail, file);
-      read_again = 0;
-      if (nread == 0) {
-	if (ferror(file)) {
-	  if (errno != EINTR) {
-	    perror("read");
-	    EXIT("Error reading the input");
-	  } else {
-	    /* interrupted: read again */
-	    read_again = 1;
-	  }
-	} else {
-	  /* End of input file */
-	  state = eof;
-	}
-      }
-    }
-    avail += nread;
+    if (!interactive)
+      read_block();
+    else
+      read_interactive();
   }
 
   /* convert the input into de internal charset */
@@ -264,4 +250,54 @@ size_t charset_write(char *buf, size_t num)
    * The caller must feed later the bytes not wrote. 
    */
   return num - n;
+}
+
+static void read_block()
+{
+  size_t nread;
+  int read_again = 1;
+
+  while (read_again) {
+    nread = fread(bufferpos, 1, sizeof (buffer) - avail, file);
+    read_again = 0;
+    if (nread == 0) {
+      if (ferror(file)) {
+	if (errno != EINTR) {
+	  perror("read");
+	  EXIT("Error reading the input");
+	} else {
+	  /* interrupted: read again */
+	  read_again = 1;
+	}
+      } else {
+	/* End of input file */
+	state = eof;
+      }
+    }
+  }
+  avail += nread;
+}
+
+static void read_interactive()
+{
+  int c = '*';
+  int n;
+  size_t max_size;
+
+  max_size = sizeof(buffer) - avail;
+
+  for (n = 0; n < max_size && (c = getc(file)) != EOF && c != '\n'; ++n)
+    bufferpos[n] = (char) c;
+
+  if (c == '\n')
+    bufferpos[n++] = (char) c;
+  else if (c == EOF) {
+    if (ferror(file)) {
+      perror("getc()");
+      EXIT("interactive input failed");
+    } else
+      state = eof;
+  }
+
+  avail += n;
 }
