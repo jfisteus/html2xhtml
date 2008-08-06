@@ -89,6 +89,28 @@ int dtd_get_dtd_index(const char *key)
 
 
 /*
+ * devuelve el índice (número) del dtd cuya clave (key)
+ * coincida con la proporcionada
+ *
+ */
+int dtd_get_dtd_index_n(const char *key, size_t key_length)
+{
+  int i;
+  int dtd= -1;
+
+  for (i=0; i<DTD_NUM; i++) {
+    if (key_length == strlen(dtd_key[i])
+	&& !strncmp(key, dtd_key[i], key_length)) {
+      dtd = i;
+      break;
+    }
+  }
+
+  return dtd;
+}
+
+
+/*
  * busca un elemento por nombre y devuelve
  * su identificador
  *

@@ -39,8 +39,11 @@
 #include "dtd_util.h"
 #include "dtd.h"
 #include "mensajes.h"
-
+#include "tree.h"
 #include "xchar.h"
+#include "params.h"
+#include "cgi.h"
+#include "charset.h"
 
 /* parser Yacc / lex */
 int yyparse(void);
@@ -52,21 +55,6 @@ static void help(void);
 static void print_doctypes(void);
 static void print_doctype_keys(void);
 void print_version(void);
-
-FILE *inputf;
-FILE *outputf;
-
-char *param_charset;
-char *param_charset_default;
-int   param_strict;
-int   param_doctype;
-int   param_chars_per_line;
-int   param_tab_len;
-int   param_pre_comments; /* preserve spacing inside comments */
-int   param_protect_cdata;
-int   param_cgi_html_output;
-int   param_compact_block_elms;
-int   param_empty_tags;
 
 static int cgi_mode;
 static int cgi_multipart_input;
@@ -89,46 +77,40 @@ static void cgi_debug_write_state(void);
 
 int main(int argc,char **argv)
 {
+  size_t preload_read;
+  const char *preload_buffer;
+
+  tree_init();
 #ifdef WITH_CGI
-  int cgi_valid_request;
-
-  /* check if it is a CGI request or not */
-  cgi_valid_request = is_a_cgi_request();
-  if (cgi_valid_request) {
-    cgi_mode = 1;
-    if (cgi_valid_request < 0) {
-      cgi_write_error_bad_req(cgi_valid_request);
-      return 0;
-    } 
-  } else {
-    cgi_mode = 0;
+  cgi_check_request();
+  if (cgi_status < 0) {
+    cgi_write_error_bad_req(cgi_status);
+    return 0;
   }
 
-  set_default_parameters();
+  params_set_defaults();
 
-  /* initializations, depending on the mode */
-  if (!cgi_mode) {
-    /* process command line arguments */
-    process_parameters(argc, argv); 
-  } else {
-    tree_init();
-    if (cgi_multipart_input)
-      lexer_cgi_init();
-/*     cgi_debug_write_input(); */
-/*     exit(0); */
-  }
+  if (!cgi_status)
+    process_parameters(argc, argv);
+
+  preload_buffer = charset_init_preload(param_inputf, &preload_read);
+
+  if (cgi_status > 0)
+    cgi_process_parameters(&preload_buffer, &preload_read);
+
+  charset_preload_to_input("ISO-8859-1", preload_read);
 #else
   cgi_mode = 0;
   set_default_parameters();
   /* process command line arguments */
   process_parameters(argc, argv); 
+  charset_init_input("ISO-8859-1", param_inputf);
 #endif
 
   /* intialize the converter */
   saxStartDocument();
-  charset_init_input("ISO-8859-1", inputf);
-  if (inputf != stdin)
-    parser_set_input(inputf);
+  if (param_inputf != stdin)
+    parser_set_input(param_inputf);
 
   /* parse the input file and convert it */
   yyparse();
@@ -136,14 +118,14 @@ int main(int argc,char **argv)
   saxEndDocument();
 
 #ifdef WITH_CGI
-  if (!cgi_mode) {
+  if (!cgi_status) {
     /* write the output */
     if (writeOutput()) 
       EXIT("Bad state in writeOutput()");
 
     /* close de output file */
-    if (outputf != stdout)
-      fclose(outputf);
+    if (param_outputf != stdout)
+      fclose(param_outputf);
   } else {
     cgi_write_output();
   }
@@ -153,8 +135,8 @@ int main(int argc,char **argv)
     EXIT("Bad state in writeOutput()");
   
   /* close de output file */
-  if (outputf != stdout)
-    fclose(outputf);
+  if (param_outputf != stdout)
+    fclose(param_outputf);
 #endif
 
   /* show final messages */
@@ -181,8 +163,8 @@ static void set_default_parameters()
     param_cgi_html_output = 0;
   param_empty_tags = 0;
 
-  outputf = stdout;
-  inputf = stdin;
+  param_outputf = stdout;
+  param_inputf = stdin;
 }
 
 static void process_parameters(int argc,char **argv)
@@ -205,8 +187,8 @@ static void process_parameters(int argc,char **argv)
     } else if (!strcmp(argv[i],"-o") && ((i+1)<argc)) {
       i++;
       /* open the output file */
-      outputf = fopen(argv[i], "w");
-      if (!outputf) {
+      param_outputf = fopen(argv[i], "w");
+      if (!param_outputf) {
 	perror("fopen");
 	EXIT("Could not open the output file for writing");
       }
@@ -230,8 +212,8 @@ static void process_parameters(int argc,char **argv)
       param_empty_tags = 1;
     } else if (!fich && argv[i][0]!='-') {
       fich= 1;
-      inputf = fopen(argv[i],"r");
-      if (!inputf) {
+      param_inputf = fopen(argv[i],"r");
+      if (!param_inputf) {
 	perror("fopen");
 	EXIT("Could not open the input file for reading");
       }
@@ -463,8 +445,8 @@ static void cgi_write_header()
 {
   fprintf(stdout, "<?xml version=\"1.0\"");
   if (document->encoding[0]) 
-    fprintf(outputf," encoding=\"%s\"", document->encoding);
-  fprintf(outputf,"?>\n\n");
+    fprintf(stdout," encoding=\"%s\"", document->encoding);
+  fprintf(stdout,"?>\n\n");
 
   fprintf(stdout,
 "<!DOCTYPE html\n\

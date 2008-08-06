@@ -64,6 +64,15 @@ extern char dtd_name[DTD_NUM][DTD_NAM_LEN];
  */
 int dtd_get_dtd_index(const char *key);
 
+
+/*
+ * devuelve el índice (número) del dtd cuya clave (key)
+ * coincida con la proporcionada
+ *
+ */
+int dtd_get_dtd_index_n(const char *key, size_t key_length);
+
+
 /*
  * devuelve un puntero al elemento o -1 si no se encuentra
  *

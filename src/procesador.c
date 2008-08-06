@@ -58,6 +58,7 @@
 #include "mensajes.h"
 #include "xchar.h"
 #include "charset.h"
+#include "params.h"
 
 #ifdef SELLAR
 #define SELLO "translated by html2xhtml - http://www.it.uc3m.es/jaf/html2xhtml/"
@@ -65,6 +66,8 @@
 
 #define MAX_NUM_ERRORS 20
 #define ID_LIST_SIZE    8192
+
+extern int is_ascii;
 
 /* estructura principal */
 document_t *document;  /* árbol del documento */
@@ -140,21 +143,6 @@ static int cputc(int c);
 static void cflush(void);
 static size_t ccount_utf8_chars(const char *buf, size_t num_bytes);
 
-/* configuration parameters */
-extern char *param_charset;
-extern char *param_charset_default;
-extern int   param_strict;
-extern int   param_doctype;
-extern int   is_ascii;
-extern FILE *outputf;
-extern int   param_chars_per_line;
-extern int   param_tab_len;
-extern int   param_pre_comments; /* preserve spacing inside comments */
-extern int   param_protect_cdata;
-extern int   param_cgi_html_output;
-extern int   param_compact_block_elms;
-extern int   param_empty_tags;
-
 /* element insertion variables */
 static tree_node_t *ins_html;
 static tree_node_t *ins_head;
@@ -209,7 +197,7 @@ void saxStartDocument(void)
     id_list_num = 0;
     new_place_recovery_on = 0;
 
-    tree_init();
+/*     tree_init(); */
     
     document= new_tree_document(doctype, -1);
   }
@@ -2031,7 +2019,7 @@ static void write_document(document_t *doc)
   xml_space_on = 0;
   inside_cdata_sec = 0;
 
-  cprintf_init("ISO-8859-1", outputf);
+  cprintf_init("ISO-8859-1", param_outputf);
 
   /* write <?xml... */
   cprintf("%s?xml version=\"1.0\"", lt);

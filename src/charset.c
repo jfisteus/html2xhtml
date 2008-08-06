@@ -1,5 +1,5 @@
 /***************************************************************************
- *   Copyright (C) 2007 by Jesus Arias Fisteus                             *
+ *   Copyright (C) 2008 by Jesus Arias Fisteus                             *
  *   jaf@it.uc3m.es                                                        *
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
@@ -39,10 +39,11 @@ static FILE *file;
 static char buffer[CHARSET_BUFFER_SIZE];
 static char *bufferpos;
 static int avail;
-static enum {closed, finished, eof, input, output} state = closed;
+static enum {closed, finished, eof, input, output, preload} state = closed;
 
 static void read_block(void);
 static void read_interactive(void);
+static void open_iconv(const char *to_charset, const char *from_charset);
 
 void charset_init_input(const char *charset_in, FILE *input_file)
 {
@@ -51,23 +52,10 @@ void charset_init_input(const char *charset_in, FILE *input_file)
     charset_close();
   }
 
-  file = input_file;
-  cd = iconv_open(CHARSET_INTERNAL_ENC, charset_in);
-  if (cd == (iconv_t) -1) {
-    /* Something went wrong.  */
-    if (errno == EINVAL)
-      error(0, 0, "Error: conversion from '%s' to '%s' not available",
-	    charset_in, CHARSET_INTERNAL_ENC);
-    else
-      perror ("iconv_open");
-
-    if (fclose(file) != 0)
-      perror ("fclose");
-    EXIT("Conversion aborted");
-  }
-
+  open_iconv(CHARSET_INTERNAL_ENC, charset_in);
   bufferpos = buffer;
   avail = 0;
+  file = input_file;
   state = input;
 
   DEBUG("charset_init_input() executed");
@@ -80,24 +68,40 @@ void charset_init_output(const char *charset_out, FILE *output_file)
     charset_close();
   }
 
+  open_iconv(charset_out, CHARSET_INTERNAL_ENC);
   file = output_file;
-  cd = iconv_open(charset_out, CHARSET_INTERNAL_ENC);
-  if (cd == (iconv_t) -1) {
-    /* Something went wrong.  */
-    if (errno == EINVAL)
-      error(0, 0, "Error: conversion from '%s' to '%s' not available",
-	    CHARSET_INTERNAL_ENC, charset_out);
-    else
-      perror ("iconv_open");
-
-    if (fclose(file) != 0)
-      perror ("fclose");
-    EXIT("Conversion aborted");
-  }
-
   state = output;
 
   DEBUG("charset_init_output() executed");
+}
+
+char *charset_init_preload(FILE *input_file, size_t *bytes_read)
+{
+  if (state != closed) {
+    WARNING("Charset initialized, closing it now");
+    charset_close();
+  }
+
+  file = input_file;
+  bufferpos = buffer;
+  avail = 0;
+  read_block();
+  *bytes_read = avail;
+
+  state = preload;
+  return buffer;
+}
+
+void charset_preload_to_input(const char *charset_in, size_t bytes_avail)
+{
+  if (state != preload) {
+    EXIT("Not in preload state");
+  }
+
+  open_iconv(CHARSET_INTERNAL_ENC, charset_in);
+  bufferpos = buffer + avail - bytes_avail;
+  avail = bytes_avail;
+  state = input;
 }
 
 void charset_close()
@@ -124,8 +128,9 @@ void charset_close()
   }
 
   if (state != closed) { 
-    iconv_close(cd);
     state = closed;
+    if (state != preload)
+      iconv_close(cd);
   }
 
   DEBUG("charset_close() executed");
@@ -191,8 +196,9 @@ int charset_read(char *outbuf, size_t num, int interactive)
 
   /* if no more input, put the conversion in the initial state */
   if (state == eof && avail == 0) {
-    iconv (cd, NULL, NULL, &outbuf, &outbuf_max);
-    state = finished;
+    nconv = iconv (cd, NULL, NULL, &outbuf, &outbuf_max);
+    if (nconv != (size_t) -1 || errno != E2BIG)
+      state = finished;
   }
 
   EPRINTF1("    actually read %d bytes\n", num - outbuf_max); 
@@ -304,4 +310,21 @@ static void read_interactive()
   }
 
   avail += n;
+}
+
+static void open_iconv(const char *to_charset, const char *from_charset)
+{
+  cd = iconv_open(to_charset, from_charset);
+  if (cd == (iconv_t) -1) {
+    /* Something went wrong.  */
+    if (errno == EINVAL)
+      error(0, 0, "Error: conversion from '%s' to '%s' not available",
+	    from_charset, to_charset);
+    else
+      perror ("iconv_open");
+
+    if (fclose(file) != 0)
+      perror ("fclose");
+    EXIT("Conversion aborted");
+  }
 }

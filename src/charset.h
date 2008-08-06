@@ -1,5 +1,5 @@
 /***************************************************************************
- *   Copyright (C) 2007 by Jesus Arias Fisteus                             *
+ *   Copyright (C) 2008 by Jesus Arias Fisteus                             *
  *   jaf@it.uc3m.es                                                        *
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
@@ -41,6 +41,20 @@ void charset_init_input(const char *charset_in, FILE *input_file);
  * Set/reset the initial state of the charset converter for output mode
  */
 void charset_init_output(const char *charset_out, FILE *output_file);
+
+/*
+ * Set/reset preload mode. Loads a data block from input_file
+ * and returns a pointer to the buffer where data is stored.
+ * The parameter 'bytes_read' is set to the number of bytes read.
+ * State can be changed later to input with 'charset_preload_to_input'. 
+ */
+char *charset_init_preload(FILE *input_file, size_t *bytes_read);
+
+/*
+ * Changes from preload to input state. 'bytes_avail' bytes
+ * are skipped in the next read operation.
+ */
+void charset_preload_to_input(const char *charset_in, size_t bytes_avail);
 
 /*
  * Close the current charset converter
