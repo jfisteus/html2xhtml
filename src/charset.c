@@ -321,8 +321,8 @@ static void read_block()
 	len = nread;
       if (!memcmp(&buffer[avail], &stop_string[stop_matched], len)) {
 	/* stop string found (or still partially) */
-	stop_matched += len;
 	nread = -stop_matched;
+	stop_matched += len;
 	if (stop_matched == stop_len)
 	  state = eof;
       } else {
@@ -409,6 +409,7 @@ static void detect_boundary(const char *buf, size_t *nread)
   int i;
   int ini, middle, end;
   int pos = 1; /* no need to scan first two, as they should be crlf */
+  int k;
   
   do {
     /* scan the bytes read to find the "---" pattern */
@@ -420,8 +421,10 @@ static void detect_boundary(const char *buf, size_t *nread)
     if (buf[i] == '-') {
       /* look backwards */
       middle = i;
-      for ( ; i >= 2 && buf[i] == '-'; i--);
+      k = (pos - stop_step >= 1) ? pos - stop_step : 1;
+      for ( ; i > k && buf[i] == '-'; i--);
       if (buf[i - 1] == '\r' && buf[i] == '\n') {
+	/* look forward */
 	ini = i - 1;
 	end = ini + stop_len;
 	end = (end <= *nread) ? end : *nread;
