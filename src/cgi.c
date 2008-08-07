@@ -28,8 +28,8 @@
 
 int cgi_status = CGI_ST_UNITIALIZED;
 
-static char *boundary = NULL;
-static int boundary_len = 0;
+char *boundary = NULL;
+int boundary_len = 0;
 
 static int process_params_multipart(const char **input, size_t *input_len);
 static int process_params_query_string();

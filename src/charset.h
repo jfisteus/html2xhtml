@@ -74,4 +74,12 @@ int charset_read(char *outbuf, size_t num, int interactive);
  */
 size_t charset_write(char *buf, size_t num);
 
+#ifdef WITH_CGI
+/*
+ * Set the boundary (invoke only in 'input' mode).
+ * The fucntion adds the initial "\r\n--".
+ */
+void charset_cgi_boundary(const char *str, size_t len);
+#endif
+
 #endif

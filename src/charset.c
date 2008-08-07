@@ -33,6 +33,7 @@
 
 #include "charset.h"
 #include "mensajes.h"
+#include "tree.h"
 
 static iconv_t cd;
 static FILE *file;
@@ -44,6 +45,15 @@ static enum {closed, finished, eof, input, output, preload} state = closed;
 static void read_block(void);
 static void read_interactive(void);
 static void open_iconv(const char *to_charset, const char *from_charset);
+
+#ifdef WITH_CGI
+static char *stop_string = NULL;
+static size_t stop_len = 0;
+static size_t stop_matched = 0;
+static int stop_step;
+
+static void detect_boundary(const char *buf, size_t *nread);
+#endif
 
 void charset_init_input(const char *charset_in, FILE *input_file)
 {
@@ -132,6 +142,12 @@ void charset_close()
     if (state != preload)
       iconv_close(cd);
   }
+
+#ifdef WITH_CGI
+  stop_string = NULL;
+  stop_len = 0;
+  stop_matched = 0;
+#endif
 
   DEBUG("charset_close() executed");
 }
@@ -267,8 +283,16 @@ static void read_block()
   size_t nread;
   int read_again = 1;
 
+#ifdef WITH_CGI
+  if (stop_string && stop_matched > 0) {
+    /* refill the buffer with the partially matched data */
+    memcpy(&buffer[avail], stop_string, stop_matched);
+    avail += stop_matched;
+  }
+#endif
+
   while (read_again) {
-    nread = fread(bufferpos, 1, sizeof (buffer) - avail, file);
+    nread = fread(buffer + avail, 1, sizeof (buffer) - avail, file);
     read_again = 0;
     if (nread == 0) {
       if (ferror(file)) {
@@ -285,6 +309,31 @@ static void read_block()
       }
     }
   }
+
+#ifdef WITH_CGI
+  if (stop_string && nread > 0) {
+    if (stop_matched > 0) {
+      /* the stop string was partially matched */
+      int len;
+
+      len = stop_len - stop_matched;
+      if (len > nread)
+	len = nread;
+      if (!memcmp(&buffer[avail], &stop_string[stop_matched], len)) {
+	/* stop string found (or still partially) */
+	stop_matched += len;
+	nread = -stop_matched;
+	if (stop_matched == stop_len)
+	  state = eof;
+      } else {
+	stop_matched = 0;
+      }
+    }
+    if (!stop_matched)
+      detect_boundary(&buffer[avail], &nread);
+  }
+#endif
+
   avail += nread;
 }
 
@@ -328,3 +377,70 @@ static void open_iconv(const char *to_charset, const char *from_charset)
     EXIT("Conversion aborted");
   }
 }
+
+#ifdef WITH_CGI
+void charset_cgi_boundary(const char *str, size_t len)
+{
+  int i;
+
+  if (state == input) {
+    /* construct the stop string \r\n--boundary */
+    stop_len = 4 + len;
+    stop_string = tree_malloc(stop_len + 1);
+    stop_string[0] = '\r';
+    stop_string[1] = '\n';
+    stop_string[2] = '-';
+    stop_string[3] = '-';
+    memcpy(&stop_string[4], str, len);
+    stop_string[stop_len] = 0;
+    stop_matched = 0;
+
+    /* optimization: normally, there are a lot of '-' in a row */
+    for (i = 4; i < stop_len && stop_string[i] == '-'; i++);
+    stop_step = i - 2;
+
+    /* if input data available in the buffer, look for the boundary */
+    detect_boundary(bufferpos, &avail);
+  }
+}
+
+static void detect_boundary(const char *buf, size_t *nread)
+{
+  int i;
+  int ini, middle, end;
+  int pos = 1; /* no need to scan first two, as they should be crlf */
+  
+  do {
+    /* scan the bytes read to find the "---" pattern */
+    pos += stop_step;
+    for ( ; pos < *nread && buf[pos] != '-'; pos += stop_step);
+    i = pos;
+    if (i >= *nread)
+      i = *nread - 1;
+    if (buf[i] == '-') {
+      /* look backwards */
+      middle = i;
+      for ( ; i >= 2 && buf[i] == '-'; i--);
+      if (buf[i - 1] == '\r' && buf[i] == '\n') {
+	ini = i - 1;
+	end = ini + stop_len;
+	end = (end <= *nread) ? end : *nread;
+	if (middle == end - 1 || !memcmp(&buf[middle + 1], 
+					 &stop_string[middle + 1 - ini],
+					 end - middle - 1)) {
+	  stop_matched = end - ini;
+	  *nread = ini;
+	  if (stop_matched == stop_len)
+	    state = eof;
+	}
+      }
+    } else if (buf[i] == '\r') {
+      (*nread)--;
+      stop_matched = 1;
+    } else if (buf[i] == '\n' && buf[i - 1] == '\r') {
+      *nread -= 2;
+      stop_matched = 2;
+    }
+  } while (pos < *nread && !stop_matched);
+}
+#endif

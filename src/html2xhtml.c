@@ -99,6 +99,8 @@ int main(int argc,char **argv)
     cgi_process_parameters(&preload_buffer, &preload_read);
 
   charset_preload_to_input("ISO-8859-1", preload_read);
+  if (cgi_status == CGI_ST_MULTIPART)
+    charset_cgi_boundary(boundary, boundary_len);
 #else
   cgi_mode = 0;
   set_default_parameters();

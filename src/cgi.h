@@ -29,6 +29,8 @@
 #define CGI_H
 
 extern int cgi_status;
+extern char *boundary;
+extern int boundary_len;
 
 #define CGI_ST_NOCGI 0
 #define CGI_ST_DIRECT 1
