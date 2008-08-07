@@ -3,16 +3,11 @@
 %{
 #include <stdio.h>
 #include <string.h>
+
 #include "xchar.h"
 #include "mensajes.h"
-
 #include "procesador.h"
-
-#define HTML_FIELD_NAME "html"
-
-extern char *tree_strdup(const char *str);
-extern void *tree_malloc();
-extern int cgi_mode;
+#include "tree.h"
 
 /* lista de atributos del elemento actual */
 #define MAX_ELEMENT_ATTRIBUTES  255
@@ -25,13 +20,6 @@ static char *content= NULL;
 
 /* para establecer modo script en el lexer */
 void lexer_begin_script(char *nombre);
-void lexer_cgi_begin_html(void);
-
-/* establece un parámetro */
-void cgi_parse_param(char *nombre, char *valor);
-
-/* busca name="nombre" y devuelve un puntero a "nombre", o NULL */
-static char *get_nombre(char *cadena);
 
 /* control de <PRE> */
 extern int pre_state;
@@ -54,39 +42,10 @@ extern int pre_state;
 %token <cad> TOK_CDATA_SEC TOK_XMLPI_INI
 %token <ent> TOK_STAG_END TOK_EMPTYTAG_END TOK_ATT_EQ TOK_XMLPI_END
 %token <ent> TOK_WHITESPACE
-%token <cad> TOK_BOUNDARY TOK_PARAM_HEADER TOK_PARAM_CONTENT
-
-%type <cad> param_header param
  
 %%
 
 input: html
-| cgi
-;
-
-cgi: params TOK_BOUNDARY ;
-
-params: 
-| params param 
-;
-
-param: param_header TOK_PARAM_CONTENT {
-  cgi_parse_param($1, $2 +4);
-}
-| param_header html 
-;
-
-param_header: TOK_BOUNDARY TOK_PARAM_HEADER {
-  char* nombre= get_nombre($2);
-  if (!strcmp(nombre, HTML_FIELD_NAME)) {
-    lexer_cgi_begin_html();
-    /* reinitialize the converter to allow the doctype parameter to
-     * take effect.
-     */
-    saxStartDocument();
-  }
-  $$ = nombre ;
-}
 ;
 
 html: 
@@ -220,8 +179,6 @@ attribute: TOK_ATT_NAME TOK_ATT_EQ TOK_ATT_VALUE {
 %%
 
 
-
-
 /*
  * setAttributeData
  *
@@ -246,21 +203,3 @@ static void setAttributeData(char *data)
 
   element_attributes[num_element_attributes++]= data;  
 }
-
-/* busca name="nombre" y devuelve un puntero a "nombre", o NULL */
-static char *get_nombre(char *cadena) 
-{
-  char *pos,*tmp;
-
-  pos= strstr(cadena, "name=\"");
-
-  if (pos) {
-    pos+= 6;
-    for (tmp=pos; *tmp!='\"' && *tmp; tmp++);
-    if (*tmp=='\"') *tmp= 0;
-    else pos= NULL;
-  }
-
-  return pos;
-}
-

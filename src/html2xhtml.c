@@ -1,6 +1,6 @@
 /***************************************************************************
- *   Copyright (C) 2007 by Jesus Arias Fisteus   *
- *   jaf@it.uc3m.es   *
+ *   Copyright (C) 2007 by Jesus Arias Fisteus                             *
+ *   jaf@it.uc3m.es                                                        *
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
@@ -42,38 +42,24 @@
 #include "tree.h"
 #include "xchar.h"
 #include "params.h"
-#include "cgi.h"
 #include "charset.h"
+
+#ifdef WITH_CGI
+#include "cgi.h"
+#endif
+
 
 /* parser Yacc / lex */
 int yyparse(void);
 void parser_set_input(FILE *input);  /* in html.l */
+
+void print_version(void);
 
 static void set_default_parameters(void);
 static void process_parameters(int argc,char **argv);
 static void help(void);
 static void print_doctypes(void);
 static void print_doctype_keys(void);
-void print_version(void);
-
-static int cgi_mode;
-static int cgi_multipart_input;
-
-#ifdef WITH_CGI
-void lexer_cgi_init(void);
-
-void cgi_parse_param(char *nombre, char *valor);
-static int is_a_cgi_request(void);
-static void cgi_write_error_bad_req(int code);
-static void cgi_write_output(void);
-static void cgi_write_header(void);
-static void cgi_write_footer(void);
-static void cgi_exit_on_error(char *msg);
-#ifdef CGI_DEBUG
-static void cgi_debug_write_input(void);
-static void cgi_debug_write_state(void);
-#endif
-#endif
 
 int main(int argc,char **argv)
 {
@@ -81,15 +67,18 @@ int main(int argc,char **argv)
   const char *preload_buffer;
 
   tree_init();
+
 #ifdef WITH_CGI
   cgi_check_request();
   if (cgi_status < 0) {
-    cgi_write_error_bad_req(cgi_status);
+    cgi_write_error_bad_req();
     return 0;
   }
+#endif
 
   params_set_defaults();
 
+#ifdef WITH_CGI
   if (!cgi_status)
     process_parameters(argc, argv);
 
@@ -102,8 +91,6 @@ int main(int argc,char **argv)
   if (cgi_status == CGI_ST_MULTIPART)
     charset_cgi_boundary(boundary, boundary_len);
 #else
-  cgi_mode = 0;
-  set_default_parameters();
   /* process command line arguments */
   process_parameters(argc, argv); 
   charset_init_input("ISO-8859-1", param_inputf);
@@ -148,28 +135,7 @@ int main(int argc,char **argv)
   return 0;
 }
 
-static void set_default_parameters()
-{
-  param_charset = NULL;
-  param_charset_default = "ISO-8859-1";
-  param_strict = 1;
-  param_doctype = -1;
-  param_chars_per_line = 80;
-  param_tab_len = 2;
-  param_pre_comments = 0;
-  param_protect_cdata = 1;
-  param_compact_block_elms = 0;
-  if (cgi_mode && cgi_multipart_input)
-    param_cgi_html_output = 1;
-  else
-    param_cgi_html_output = 0;
-  param_empty_tags = 0;
-
-  param_outputf = stdout;
-  param_inputf = stdin;
-}
-
-static void process_parameters(int argc,char **argv)
+static void process_parameters(int argc, char **argv)
 {
   int i, fich, tmpnum;
 
@@ -235,7 +201,7 @@ static void process_parameters(int argc,char **argv)
   } 
 }
 
-int yyerror (char *e)
+int yyerror(char *e)
 {
   EXIT(e);
   return 0; /* never reached */
@@ -245,17 +211,21 @@ int yyerror (char *e)
 void exit_on_error(char *msg)
 {
 #ifdef WITH_CGI
-  if (cgi_mode)
     /* this function exits the program */
-    cgi_exit_on_error(msg); 
+  if (cgi_status) {  
+    cgi_write_error(msg);
+  } else { 
 #endif
 
-  fprintf(stderr,"!!%s(%d)[l%d]: %s\n",__FILE__,__LINE__,
-	  parser_num_linea,msg);
+    fprintf(stderr,"!!%s(%d)[l%d]: %s\n",__FILE__,__LINE__,
+	    parser_num_linea,msg);
+    write_end_messages();
 
-  write_end_messages();
+#ifdef WITH_CGI
+  }
+#endif
+
   freeMemory();
-
   exit(1);
 }
 
@@ -298,235 +268,6 @@ void print_version(void)
 	  DTD_SNAPSHOT_DATE);
 }
 
-
-void cgi_parse_param(char *name, char *value) 
-{
-#ifdef WITH_CGI
-  int tmpnum;
-
-  if (cgi_mode) {
-    DEBUG("cgi_param()");
-    EPRINTF2("name: %s, value: %s\n", name, value);
-    
-    if (!strcmp(name, "type") || !strcmp(name, "tipo")) {
-      tmpnum = dtd_get_dtd_index(value);
-      if (tmpnum >= 0)
-	param_doctype = tmpnum;
-    } else if ((!strcmp(name, "salida") || !strcmp(name, "output"))
-	       && !strcmp(value, "plain")) {
-      param_cgi_html_output = 0;
-      EPRINTF("param_cgi_html_output: deactivated\n");
-    } else if (!strcmp(name,"linelength")) {
-      tmpnum= atoi(value);
-      if (tmpnum >= 40)
-	param_chars_per_line= tmpnum; 
-    } else if (!strcmp(name,"tablength")) {
-      tmpnum= atoi(value);
-      if (tmpnum >= 0 && tmpnum <= 16)
-	param_tab_len= tmpnum; 
-    }
-  } else {
-    EXIT("Error: multipart/form-data input but CGI mode has not been detected");
-  }
-#else
-  EXIT("Error: multipart/form-data input but not compiled with CGI support");
-#endif
-}
-
-
-#ifdef WITH_CGI
-
-/*
- * Checks if the request comes from the CGI interface.
- *
- * Returns:
- *          0 if it is not a CGI request
- *          1 if it is a valid CGI request
- *         -1 if it is a non-valid CGI request (bad method)
- *         -2 if it is a non-valid CGI request because of other reasons
- *
- */  
-static int is_a_cgi_request() {
-  char *method;
-  char *type;
-  char *query_string;
-  char *l;
-  int length= -1;
-
-  method = getenv("REQUEST_METHOD");
-  type = getenv("CONTENT_TYPE");
-  query_string = getenv("QUERY_STRING");
-
-  if (type && method && query_string) {
-    l= getenv("CONTENT_LENGTH");
-    if (l) 
-      length= atoi(l);
-
-    if (strcasecmp(method,"POST"))
-      return -1; /* bad method */
-
-    if (length <= 0) {
-      return -2;
-    }
-
-    if (!strncmp(type, "multipart/form-data", 19))
-      cgi_multipart_input = 1;
-    else if (!strncmp(type,"text/html", 9))
-      cgi_multipart_input = 0;
-    else
-      return -2;
-    
-    return 1;
-  } else {
-    return 0;
-  }
-} 
-
-static void cgi_write_error_bad_req(int code)
-{
-  fprintf(stdout,"Content-Type:%s\n","text/html");
-  
-  /* invalid request */
-  if (code == -1) { /* method != POST */
-    fprintf(stdout,"Status:405 Method not allowed\n\n");
-    if (param_cgi_html_output) {
-      fprintf(stdout,"<html><head><title>html2xhtml-Error</title></head><body>");
-      fprintf(stdout,"<h1>405 Method not allowed</h1></body></html>");
-    }
-  }
-  else {
-    fprintf(stdout,"Status:400 Bad request\n\n");
-    if (param_cgi_html_output) {
-      fprintf(stdout,"<html><head><title>html2xhtml-Error</title></head><body>");
-      fprintf(stdout,"<h1>400 Bad Request</h1></body></html>");
-    }
-  }  
-}
-
-static void cgi_exit_on_error(char *msg)
-{  
-  fprintf(stdout,"Content-Type:%s\n","text/html");
-  fprintf(stdout,"Status:400 Bad request\n\n");
-  fprintf(stdout,"<html><head><title>html2xhtml-Error</title></head><body>");
-  fprintf(stdout,"<h1>400 Bad Request</h1>");
-  fprintf(stdout,"<p>An error has been detected while parsing the input");
-  if (parser_num_linea > 0) 
-    fprintf(stdout," at line %d. Please, ", parser_num_linea);
-  else fprintf(stdout,". Please, ");
-  fprintf(stdout,"check that you have uploaded a HTML document.</p>");
-  if (msg)
-    fprintf(stdout,"<p>Error: %s</p>", msg);
-
-#ifdef CGI_DEBUG
-  cgi_debug_write_state();
-#endif
-
-  fprintf(stdout,"</body></html>");  
-
-  freeMemory();
-
-  exit(0);
-}
-
-static void cgi_write_output()
-{
-  fprintf(stdout, "Content-Type:%s; charset=iso-8859-1\n\n", "text/html");
-
-  if (param_cgi_html_output) 
-    cgi_write_header();
-
-  /* write the XHTML output */
-  if (writeOutput()) 
-    EXIT("Incorrect state in writeOutput()");
-
-  if (param_cgi_html_output)
-    cgi_write_footer();
-}
-
-static void cgi_write_header() 
-{
-  fprintf(stdout, "<?xml version=\"1.0\"");
-  if (document->encoding[0]) 
-    fprintf(stdout," encoding=\"%s\"", document->encoding);
-  fprintf(stdout,"?>\n\n");
-
-  fprintf(stdout,
-"<!DOCTYPE html\n\
-   PUBLIC \"-//W3C//DTD XHTML 1.0 Strict//EN\"\n\
-   \"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd\">\n\n");
-
-  fprintf(stdout,
-"<html xmlns=\"http://www.w3.org/1999/xhtml\">\n\
-  <head>\n\
-    <title>html2xhtml - page translated</title>\n\
-    <link type=\"text/css\" href=\"/jaf/xhtmlpedia/xhtmlpedia.css\" rel=\"stylesheet\"/>\n\
-  </head>\n");
-  
-  fprintf(stdout,
-" <body>\n\
-    <table class=\"navigation\">\n\
-      <tr>\n\
-        <td class=\"nav-left\"><a href=\"/jaf/html2xhtml/\">back to main page</a></td>\n\
-        <td class=\"nav-center\"><a href=\"/jaf/xhtmlpedia/index.html\">go to the xhtmlpedia</a></td>\n\
-        <td class=\"nav-right\"><a href=\"/jaf/html2xhtml/download.html\">download html2xhtml</a></td>\n\
-      </tr>\n\
-    </table>");
-
-  fprintf(stdout,
-"    <div class=\"title\">\n\
-      <h1>html2xhtml</h1>\n\
-      <p>The document has been converted</p>\n\
-    </div>\n");
-
-  fprintf(stdout,
-"    <p>The input document has been succesfully converted. If you want\n\
-      to save it in a file, copy and paste it in a text editor.\n\
-      You can also <a href=\"/jaf/html2xhtml/download.html\">download\n\
-      html2xhtml</a> and run it in your computer.</p>\n\
-    <pre class=\"document\" xml:space=\"preserve\">\n");
-}
-
-static void cgi_write_footer() 
-{
-  fprintf(stdout,
-"</pre>\n\
-    <p class=\"boxed\">\n\
-    <img src=\"/jaf/html2xhtml/h2x.png\" alt=\"html2xhtml logo\" />\n\
-      <i>html2xhtml %s</i>, copyright 2001-2008 <a href=\"http://www.it.uc3m.es/jaf/index.html\">Jesús Arias Fisteus</a>; 2001 Rebeca Díaz Redondo, Ana Fernández Vilas\n\
-    </p>\n", VERSION);
-
-#ifdef CGI_DEBUG
-  cgi_debug_write_state();
-#endif
-
-  fprintf(stdout, "</body>\n</html>\n");
-}
-
-#ifdef CGI_DEBUG
-static void cgi_debug_write_input()
-{
-  int i;
-  int c;
-
-  fprintf(stdout,"Content-Type:%s\n\n","text/plain");
-
-  while (1){
-    c=fgetc(stdin);
-    if (c==EOF) break;
-    fputc(c,stdout);
-  }
-}
-
-static void cgi_debug_write_state()
-{
-  fprintf(stdout,"<hr/><p>Internal state:</p>");
-  fprintf(stdout,"<ul>");
-  fprintf(stdout,"<li>Multipart input: %d</li>", cgi_multipart_input);
-  fprintf(stdout,"<li>HTML output: %d</li>", param_cgi_html_output);
-  fprintf(stdout,"</ul>");
-}
-#endif
-#endif
 
 
 

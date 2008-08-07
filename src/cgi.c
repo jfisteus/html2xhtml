@@ -21,10 +21,18 @@
 #include <stdlib.h>
 #include <string.h>
 
+#ifdef HAVE_CONFIG_H
+#include <config.h>
+#endif
+
 #include "tree.h"
 #include "cgi.h"
 #include "params.h"
 #include "dtd_util.h"
+#include "procesador.h"
+#include "mensajes.h"
+
+#ifdef WITH_CGI
 
 int cgi_status = CGI_ST_UNITIALIZED;
 
@@ -39,6 +47,13 @@ static int mult_skip_double_eol(const char **input, size_t *input_len);
 static int mult_param_value_len(const char *input, size_t avail);
 static int set_param(const char *name, size_t name_len,
 		     const char *value, size_t value_len);
+static void cgi_write_header(void);
+static void cgi_write_footer();
+
+#ifdef CGI_DEBUG
+static void cgi_debug_write_input(void);
+static void cgi_debug_write_state(void);
+#endif
 
 int cgi_check_request()
 {
@@ -91,6 +106,64 @@ int cgi_process_parameters(const char **input, size_t *input_len)
   }
 
   return error;
+}
+
+void cgi_write_error_bad_req()
+{
+  fprintf(stdout, "Content-Type:%s\n", "text/html");
+  
+  /* invalid request */
+  if (cgi_status == CGI_ERR_METHOD) {
+     /* method != POST */
+    fprintf(stdout, "Status:405 Method not allowed\n\n");
+    if (param_cgi_html_output) {
+      fprintf(stdout,"<html><head><title>html2xhtml-Error</title></head><body>\
+                      <h1>405 Method not allowed</h1></body></html>");
+    }
+  }
+  else {
+    fprintf(stdout,"Status:400 Bad request\n\n");
+    if (param_cgi_html_output) {
+      fprintf(stdout, "<html><head><title>html2xhtml-Error</title></head>\
+                       <body><h1>400 Bad Request</h1></body></html>");
+    }
+  }  
+}
+
+void cgi_write_output()
+{
+  fprintf(stdout, "Content-Type:%s; charset=iso-8859-1\n\n", "text/html");
+
+  if (param_cgi_html_output) 
+    cgi_write_header();
+
+  /* write the XHTML output */
+  if (writeOutput()) 
+    EXIT("Incorrect state in writeOutput()");
+
+  if (param_cgi_html_output)
+    cgi_write_footer();
+}
+
+void cgi_write_error(char *msg)
+{  
+  fprintf(stdout, "Content-Type:%s\n","text/html");
+  fprintf(stdout, "Status:400 Bad request\n\n");
+  fprintf(stdout, "<html><head><title>html2xhtml-Error</title></head><body>");
+  fprintf(stdout, "<h1>400 Bad Request</h1>");
+  fprintf(stdout, "<p>An error has been detected while parsing the input");
+  if (parser_num_linea > 0) 
+    fprintf(stdout, " at line %d. Please, ", parser_num_linea);
+  else fprintf(stdout, ". Please, ");
+  fprintf(stdout, "check that you have uploaded a HTML document.</p>");
+  if (msg)
+    fprintf(stdout, "<p>Error: %s</p>", msg);
+
+#ifdef CGI_DEBUG
+  cgi_debug_write_state();
+#endif
+
+  fprintf(stdout, "</body></html>");  
 }
 
 static int process_params_multipart(const char **input, size_t *input_len)
@@ -244,3 +317,95 @@ static int mult_skip_double_eol(const char **input, size_t *input_len)
 
   return skipped;
 }
+
+static void cgi_write_header()
+{
+  fprintf(stdout, "<?xml version=\"1.0\"");
+  if (document->encoding[0]) 
+    fprintf(stdout," encoding=\"%s\"", document->encoding);
+  fprintf(stdout,"?>\n\n");
+
+  fprintf(stdout,
+"<!DOCTYPE html\n\
+   PUBLIC \"-//W3C//DTD XHTML 1.0 Strict//EN\"\n\
+   \"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd\">\n\n");
+
+  fprintf(stdout,
+"<html xmlns=\"http://www.w3.org/1999/xhtml\">\n\
+  <head>\n\
+    <title>html2xhtml - page translated</title>\n\
+    <link type=\"text/css\" href=\"/jaf/xhtmlpedia/xhtmlpedia.css\" \
+rel=\"stylesheet\"/>\n\
+  </head>\n");
+  
+  fprintf(stdout,
+" <body>\n\
+    <table class=\"navigation\">\n\
+      <tr>\n\
+        <td class=\"nav-left\"><a href=\"/jaf/html2xhtml/\">back to main page\
+</a></td>\n\
+        <td class=\"nav-center\"><a href=\"/jaf/xhtmlpedia/index.html\">\
+go to the xhtmlpedia</a></td>\n\
+        <td class=\"nav-right\"><a href=\"/jaf/html2xhtml/download.html\">\
+download html2xhtml</a></td>\n\
+      </tr>\n\
+    </table>");
+
+  fprintf(stdout,
+"    <div class=\"title\">\n\
+      <h1>html2xhtml</h1>\n\
+      <p>The document has been converted</p>\n\
+    </div>\n");
+
+  fprintf(stdout,
+"    <p>The input document has been succesfully converted. If you want\n\
+      to save it in a file, copy and paste it in a text editor.\n\
+      You can also <a href=\"/jaf/html2xhtml/download.html\">download\n\
+      html2xhtml</a> and run it in your computer.</p>\n\
+    <pre class=\"document\" xml:space=\"preserve\">\n");
+}
+
+static void cgi_write_footer()
+{
+  fprintf(stdout,
+"</pre>\n\
+    <p class=\"boxed\">\n\
+    <img src=\"/jaf/html2xhtml/h2x.png\" alt=\"html2xhtml logo\" />\n\
+      <i>html2xhtml %s</i>, copyright 2001-2008 <a href=\
+\"http://www.it.uc3m.es/jaf/index.html\">Jesús Arias Fisteus</a>; \
+2001 Rebeca Díaz Redondo, Ana Fernández Vilas\n\
+    </p>\n", VERSION);
+
+#ifdef CGI_DEBUG
+  cgi_debug_write_state();
+#endif
+
+  fprintf(stdout, "</body>\n</html>\n");
+}
+
+#ifdef CGI_DEBUG
+static void cgi_debug_write_input()
+{
+  int i;
+  int c;
+
+  fprintf(stdout,"Content-Type:%s\n\n","text/plain");
+
+  while (1){
+    c=fgetc(stdin);
+    if (c==EOF) break;
+    fputc(c,stdout);
+  }
+}
+
+static void cgi_debug_write_state()
+{
+  fprintf(stdout,"<hr/><p>Internal state:</p>");
+  fprintf(stdout,"<ul>");
+  fprintf(stdout,"<li>CGI status: %d</li>", cgi_status);
+  fprintf(stdout,"<li>HTML output: %d</li>", param_cgi_html_output);
+  fprintf(stdout,"</ul>");
+}
+#endif
+
+#endif

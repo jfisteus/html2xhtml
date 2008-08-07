@@ -68,4 +68,20 @@ int cgi_check_request(void);
  */
 int cgi_process_parameters(const char **input, size_t *input_len);
 
+/*
+ * Writes the output of the CGI in HTML mode.
+ */
+void cgi_write_output(void);
+
+/*
+ * Writes an error output (general CGI error).
+ */
+void cgi_write_error_bad_req(void);
+
+/*
+ * Writes an error message about the conversion from HTML to XHTML
+ * itself.
+ */
+void cgi_write_error(char *msg);
+
 #endif
