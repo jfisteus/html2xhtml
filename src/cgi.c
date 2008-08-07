@@ -206,7 +206,34 @@ static int process_params_multipart(const char **input, size_t *input_len)
 
 static int process_params_query_string()
 {
-  return CGI_ERR_OTHER;
+  char *query_str;
+  int len;
+  int pos;
+  int name_pos, eq_pos;
+
+  query_str = getenv("QUERY_STRING");
+  if (query_str) {
+    len = strlen(query_str);
+    pos = 0;
+    while (pos < len) {
+      /* read one parameter */
+      name_pos = pos;
+      for (pos = pos + 1; pos < len && query_str[pos] != '='; pos++);
+      if (pos == len)
+	return CGI_ERR_PARAMS;
+      eq_pos = pos;
+      for (pos = pos + 1; pos < len && query_str[pos] != '&'; pos++);
+
+      /* process this parameter */
+      set_param(&query_str[name_pos], eq_pos - name_pos,
+		&query_str[eq_pos + 1], pos - eq_pos - 1);
+
+      /* advance to the next parameter */
+      pos++;
+    }
+  }
+
+  return CGI_OK;
 }
 
 static int set_param(const char *name, size_t name_len,
@@ -225,10 +252,14 @@ static int set_param(const char *name, size_t name_len,
     }
   } else if (name_len == 6) {
     /* param "output"/"salida" */
-    if ((!strncmp(name, "output", 6) || !strncmp(name, "salida", 6))
-	&& value_len == 5 && !strncmp(value, "plain", 5)) {
-      param_cgi_html_output = 0;
-      return 1;
+    if ((!strncmp(name, "output", 6) || !strncmp(name, "salida", 6))) {
+      if (value_len == 5 && !strncmp(value, "plain", 5)) {
+	param_cgi_html_output = 0;
+	return 1;
+      } else if (value_len == 4 && !strncmp(value, "html", 4)) {
+	param_cgi_html_output = 1;
+	return 1;
+      }
     }
   } else if (name_len == 9) {
     /* param "tablen" */

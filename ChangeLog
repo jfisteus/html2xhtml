@@ -1,3 +1,7 @@
+2008-08-07  Jesus Arias Fisteus <jaf@it.uc3m.es>
+
+	* html2xhtml New CGI code
+
 2008-07-28  Jesus Arias Fisteus <jaf@it.uc3m.es>
 
 	* html2xhtml First version of the test system
