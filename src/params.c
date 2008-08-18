@@ -23,6 +23,8 @@
 FILE *param_inputf;
 FILE *param_outputf;
 
+char *param_charset_in;
+char *param_charset_out;
 char *param_charset;
 char *param_charset_default;
 int   param_strict;
@@ -40,6 +42,8 @@ void params_set_defaults()
   param_outputf = stdout;
   param_inputf = stdin;
 
+  param_charset_in = NULL;
+  param_charset_out = NULL;
   param_charset = NULL;
   param_charset_default = "ISO-8859-1";
   param_strict = 1;

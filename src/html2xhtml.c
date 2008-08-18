@@ -87,13 +87,16 @@ int main(int argc,char **argv)
   if (cgi_status > 0)
     cgi_process_parameters(&preload_buffer, &preload_read);
 
-  charset_preload_to_input("ISO-8859-1", preload_read);
+  charset_auto_detect();
+  charset_preload_to_input(param_charset_in, preload_read);
   if (cgi_status == CGI_ST_MULTIPART)
     charset_cgi_boundary(boundary, boundary_len);
 #else
   /* process command line arguments */
   process_parameters(argc, argv); 
-  charset_init_input("ISO-8859-1", param_inputf);
+  charset_init_preload(param_inputf, &preload_read);
+  charset_auto_detect();
+  charset_preload_to_input(param_charset_in, preload_read);
 #endif
 
   /* intialize the converter */
@@ -141,60 +144,58 @@ static void process_parameters(int argc, char **argv)
 
   /* process command line arguments */
   for (i=1, fich=0; i<argc; i++) {
-    if (!strcmp(argv[i],"-e")) {
-      param_strict= 0;
-    } else if (!strcmp(argv[i],"-c") && ((i+1)<argc)) {
-      i++;
-      param_charset= argv[i];
-    } else if (!strcmp(argv[i],"-t") && ((i+1)<argc)) {
-      i++;
-      param_doctype= dtd_get_dtd_index(argv[i]);
-    } else if (!strcmp(argv[i],"-d") && ((i+1)<argc)) {
-      i++;
-      param_charset_default= argv[i];
-    } else if (!strcmp(argv[i],"-o") && ((i+1)<argc)) {
-      i++;
+    if (!strcmp(argv[i], "-e")) {
+      param_strict = 0;
+    } else if (!strcmp(argv[i], "-c") && ((i+1) < argc)) {
+      param_charset = argv[++i];
+    } else if (!strcmp(argv[i], "-t") && ((i+1) < argc)) {
+      param_doctype = dtd_get_dtd_index(argv[++i]);
+    } else if (!strcmp(argv[i], "-d") && ((i+1) < argc)) {
+      param_charset_default = argv[++i];
+    } else if (!strcmp(argv[i], "-o") && ((i+1) < argc)) {
       /* open the output file */
-      param_outputf = fopen(argv[i], "w");
+      param_outputf = fopen(argv[++i], "w");
       if (!param_outputf) {
 	perror("fopen");
 	EXIT("Could not open the output file for writing");
       }
-    } else if (!strcmp(argv[i],"-l") && ((i+1)<argc)) {
-      i++;
-      tmpnum= atoi(argv[i]);
+    } else if (!strcmp(argv[i], "-l") && ((i+1) < argc)) {
+      tmpnum= atoi(argv[++i]);
       if (tmpnum >= 40)
-	param_chars_per_line= tmpnum; 
-    } else if (!strcmp(argv[i],"-b") && ((i+1)<argc)) {
-      i++;
-      tmpnum= atoi(argv[i]);
+	param_chars_per_line = tmpnum; 
+    } else if (!strcmp(argv[i], "-b") && ((i+1) < argc)) {
+      tmpnum= atoi(argv[++i]);
       if (tmpnum >= 0 && tmpnum <= 16)
-	param_tab_len= tmpnum; 
-    } else if (!strcmp(argv[i],"--preserve-space-comments")) {
+	param_tab_len = tmpnum; 
+    } else if (!strcmp(argv[i], "--preserve-space-comments")) {
       param_pre_comments = 1;
-    } else if (!strcmp(argv[i],"--no-protect-cdata")) {
+    } else if (!strcmp(argv[i], "--no-protect-cdata")) {
       param_protect_cdata = 0;
-    } else if (!strcmp(argv[i],"--compact-block-elements")) {
+    } else if (!strcmp(argv[i], "--compact-block-elements")) {
       param_compact_block_elms = 1;
-    } else if (!strcmp(argv[i],"--empty_elm_tags_always")) {
+    } else if (!strcmp(argv[i], "--empty_elm_tags_always")) {
       param_empty_tags = 1;
     } else if (!fich && argv[i][0]!='-') {
-      fich= 1;
-      param_inputf = fopen(argv[i],"r");
+      fich = 1;
+      param_inputf = fopen(argv[i], "r");
       if (!param_inputf) {
 	perror("fopen");
 	EXIT("Could not open the input file for reading");
       }
-    } else if (!strcmp(argv[i],"--help") || !strcmp(argv[i],"-h")) {
+    } else if (!strcmp(argv[i], "--help") || !strcmp(argv[i], "-h")) {
       help();
       exit(0);
-    } else if (!strcmp(argv[i],"--version") || !strcmp(argv[i],"-v")) {
+    } else if (!strcmp(argv[i], "--version") || !strcmp(argv[i], "-v")) {
       print_version();
       exit(0);
-    } else if (!strcmp(argv[i],"-L")) {
+    } else if (!strcmp(argv[i], "-L")) {
       print_doctype_keys();
       exit(0);
-    }else {
+    } else if (!strcmp(argv[i], "-ie") && ((i+1) < argc)) {
+      param_charset_in = argv[++i];
+    } else if (!strcmp(argv[i], "-oe") && ((i+1) < argc)) {
+      param_charset_out = argv[++i];
+    } else {
       help();
       exit(1);
     }
@@ -206,7 +207,6 @@ int yyerror(char *e)
   EXIT(e);
   return 0; /* never reached */
 }
-
 
 void exit_on_error(char *msg)
 {
@@ -267,7 +267,6 @@ void print_version(void)
   fprintf(stderr, "DTD data based on DTDs as available on %s\n\n",
 	  DTD_SNAPSHOT_DATE);
 }
-
 
 
 

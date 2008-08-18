@@ -74,6 +74,13 @@ int charset_read(char *outbuf, size_t num, int interactive);
  */
 size_t charset_write(char *buf, size_t num);
 
+/*
+ * Tries to detect the input character encoding, if not set
+ * by the user. Sets the output encoding to the input encoding,
+ * unless specified an output encoding by the user.
+ */
+void charset_auto_detect();
+
 #ifdef WITH_CGI
 /*
  * Set the boundary (invoke only in 'input' mode).

@@ -33,6 +33,8 @@
 extern FILE *param_inputf;
 extern FILE *param_outputf;
 
+extern char *param_charset_in;
+extern char *param_charset_out;
 extern char *param_charset;
 extern char *param_charset_default;
 extern int   param_strict;

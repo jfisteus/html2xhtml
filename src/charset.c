@@ -25,6 +25,7 @@
  * UTF-8, which is used internally by the parser and the converter.
  *
  */
+#define _GNU_SOURCE
 
 #include <stdio.h>
 #include <iconv.h>
@@ -34,6 +35,7 @@
 #include "charset.h"
 #include "mensajes.h"
 #include "tree.h"
+#include "params.h"
 
 static iconv_t cd;
 static FILE *file;
@@ -276,6 +278,40 @@ size_t charset_write(char *buf, size_t num)
    * The caller must feed later the bytes not wrote. 
    */
   return num - n;
+}
+
+void charset_auto_detect() {
+  char *p;
+  int max;
+  int len;
+
+  if (state != preload) {
+    WARNING("Charset must be in preview mode in order to autodetect encoding");
+    return;
+  }
+
+  if (!param_charset_in && !strncmp(bufferpos, "<?xml", 5)) {
+    /* XML input, default UTF-8 */
+    p = memmem(bufferpos, avail < 100 ? avail : 100, "encoding", 8);
+    if (p) {
+      max = avail;
+      for ( ; max > 0 && p[0] != '\"'; p++, max--);
+      for (p++, len = 0; max > 0 && p[len] != '\"'; len++, max--);
+      if (max > 0) {
+	param_charset_in = tree_strdup_n(p, len);
+      }
+    }
+
+    if (!param_charset_in)
+      param_charset_in = tree_strdup("UTF-8");
+  } else if (!param_charset_in) {
+    /* HTML input, default ISO-8859-1 */
+    param_charset_in = tree_strdup("ISO-8859-1");
+  }
+
+  if (param_charset_in && !param_charset_out) {
+    param_charset_out = param_charset_in;
+  }
 }
 
 static void read_block()

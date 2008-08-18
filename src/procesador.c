@@ -98,7 +98,7 @@ static void set_attributes(tree_node_t *elm, xchar **atts);
 static void elm_close(tree_node_t *nodo);
 static int  insert_element(tree_node_t *nodo);
 static void insert_chardata(const xchar *ch, int len, node_type_t type);
-static void elm_meta_scan(tree_node_t *meta);
+/* static void elm_meta_scan(tree_node_t *meta); */
 static int  elm_check_prohibitions(int elmid);
 static int  elm_is_father(int elmid, tree_node_t *nodo);
 static int  text_contains_special_chars(const xchar *ch, int len);
@@ -202,10 +202,10 @@ void saxStartDocument(void)
     document= new_tree_document(doctype, -1);
   }
 
-  if (param_charset) 
-    strcpy(document->encoding, param_charset);
-  if (param_doctype != -1) 
-    doctype_set(param_doctype, 1);
+/*   if (param_charset)  */
+/*     strcpy(document->encoding, param_charset); */
+/*   if (param_doctype != -1)  */
+/*     doctype_set(param_doctype, 1); */
 }
 
 
@@ -228,10 +228,10 @@ void saxEndDocument(void)
 
   if (!document->inicio) EXIT("document discarded");
 
-  if (!document->encoding[0] && !is_ascii && param_charset_default) {
-    strcpy(document->encoding,param_charset_default);
-    INFORM("Default charset set");
-  }
+/*   if (!document->encoding[0] && !is_ascii && param_charset_default) { */
+/*     strcpy(document->encoding,param_charset_default); */
+/*     INFORM("Default charset set"); */
+/*   } */
 
 #ifdef SELLAR
   sellar_documento();
@@ -359,7 +359,7 @@ void saxStartElement(const xchar *fullname, xchar **atts)
   set_attributes(nodo, atts);
 
   /* si es <meta>, se comprueban atributos interesantes */
-  if (elm_ptr==ELMID_META) elm_meta_scan(nodo);
+/*   if (elm_ptr==ELMID_META) elm_meta_scan(nodo); */
 }
 
 
@@ -559,19 +559,20 @@ void saxDoctype(const xchar *data)
  */
 void saxXmlProcessingInstruction(const xchar *fullname, xchar **atts)
 {
-  xchar pi_name[ELM_NAME_LEN];
-  xchar att_name[ATT_NAME_LEN];
-  int i, j;
-  int encoding_set;
+/*   xchar pi_name[ELM_NAME_LEN]; */
+/*   xchar att_name[ATT_NAME_LEN]; */
+/*   int i, j; */
+/*   int encoding_set; */
 
 #ifdef MSG_DEBUG
 #ifndef PRO_NO_DEBUG
   EPRINTF1("SAX.xmlProcessingInstruction(%s", (char *) fullname);
   if (atts != NULL) {
-    for (i = 0;(atts[i] != NULL);i++) {
-      EPRINTF1(", %s='", atts[i++]);
-      if (atts[i] != NULL)
-	EPRINTF1("%s'", atts[i]);
+    int k;
+    for (k = 0;(atts[k] != NULL);k++) {
+      EPRINTF1(", %s='", atts[k++]);
+      if (atts[k] != NULL)
+	EPRINTF1("%s'", atts[k]);
     }
   }
   EPRINTF(")\n");
@@ -580,40 +581,40 @@ void saxXmlProcessingInstruction(const xchar *fullname, xchar **atts)
 
   if (state != ST_PARSING) EXIT("XML processing instruction in bad state");
 
-  encoding_set = 0;
+/*   encoding_set = 0; */
 
-  /* convert to lowercase the PI name */
-  xtolower(pi_name, fullname, ELM_NAME_LEN);
+/*   /\* convert to lowercase the PI name *\/ */
+/*   xtolower(pi_name, fullname, ELM_NAME_LEN); */
 
-  if (!strncmp("xml", pi_name, 4)) {
-    /* <?xml ... ?> Look for encoding */
-    if (atts) {
-      for (i=0; atts[i]; i+=2) {
-	xtolower(att_name, atts[i], ATT_NAME_LEN);
-	if (!strncmp("encoding", att_name, 9)) {
-	  if (!document->encoding[0] && xstrnlen(atts[i+1], 33) < 32) {
-	    /* convert encoding to uppercase */
-	    for (j=0; atts[i+1][j]; j++) {
-	      if ((atts[i+1][j]>='a')&&(atts[i+1][j]<='z'))
-		document->encoding[j]= atts[i+1][j] - 0x20;
-	      else 
-		document->encoding[j]= atts[i+1][j];
-	    }
-	    document->encoding[j]= 0;
-	    encoding_set = 1;
-	    DEBUG("saxXmlProcessingInstruction()");
-	    EPRINTF1("   encoding=%s\n",document->encoding);
-	  } else {
-	    INFORM("Discarded encoding in saxXmlProcessingInstruction()");
-	    EPRINTF1("   encoding=%s\n", atts[i+1]);	    
-	  }
-	}
-      } /* for */
-    } /* if (atts) */
-    if (!encoding_set) {
-      strcpy(document->encoding, "UTF-8");
-    }
-  } /* if <?xml */
+/*   if (!strncmp("xml", pi_name, 4)) { */
+/*     /\* <?xml ... ?> Look for encoding *\/ */
+/*     if (atts) { */
+/*       for (i=0; atts[i]; i+=2) { */
+/* 	xtolower(att_name, atts[i], ATT_NAME_LEN); */
+/* 	if (!strncmp("encoding", att_name, 9)) { */
+/* 	  if (!document->encoding[0] && xstrnlen(atts[i+1], 33) < 32) { */
+/* 	    /\* convert encoding to uppercase *\/ */
+/* 	    for (j=0; atts[i+1][j]; j++) { */
+/* 	      if ((atts[i+1][j]>='a')&&(atts[i+1][j]<='z')) */
+/* 		document->encoding[j]= atts[i+1][j] - 0x20; */
+/* 	      else  */
+/* 		document->encoding[j]= atts[i+1][j]; */
+/* 	    } */
+/* 	    document->encoding[j]= 0; */
+/* 	    encoding_set = 1; */
+/* 	    DEBUG("saxXmlProcessingInstruction()"); */
+/* 	    EPRINTF1("   encoding=%s\n",document->encoding); */
+/* 	  } else { */
+/* 	    INFORM("Discarded encoding in saxXmlProcessingInstruction()"); */
+/* 	    EPRINTF1("   encoding=%s\n", atts[i+1]);	     */
+/* 	  } */
+/* 	} */
+/*       } /\* for *\/ */
+/*     } /\* if (atts) *\/ */
+/*     if (!encoding_set) { */
+/*       strcpy(document->encoding, "UTF-8"); */
+/*     } */
+/*   } /\* if <?xml *\/ */
 }
 
 
@@ -1023,47 +1024,47 @@ static int text_contains_special_chars(const xchar *ch, int len)
  *    caracteres
  *
  */
-static void elm_meta_scan(tree_node_t *meta)
-{
-  att_node_t *att;
+/* static void elm_meta_scan(tree_node_t *meta) */
+/* { */
+/*   att_node_t *att; */
 
-  DEBUG("elm_meta_scan()");
+/*   DEBUG("elm_meta_scan()"); */
 
-  /* busca http-equiv */
-  att= tree_node_search_att(meta,ATTID_HTTP_EQUIV_0);
-  if (!att) att= tree_node_search_att(meta,ATTID_HTTP_EQUIV_1);
+/*   /\* busca http-equiv *\/ */
+/*   att= tree_node_search_att(meta,ATTID_HTTP_EQUIV_0); */
+/*   if (!att) att= tree_node_search_att(meta,ATTID_HTTP_EQUIV_1); */
 
-  if (att) {
-    char *attval,*cad;
-    att_node_t *content;
+/*   if (att) { */
+/*     char *attval,*cad; */
+/*     att_node_t *content; */
 
-    attval= tree_index_to_ptr(att->valor);
-    if (attval && !strcasecmp(attval,"Content-Type") 
-	&& ((content=tree_node_search_att(meta,ATTID_CONTENT)))){
+/*     attval= tree_index_to_ptr(att->valor); */
+/*     if (attval && !strcasecmp(attval,"Content-Type")  */
+/* 	&& ((content=tree_node_search_att(meta,ATTID_CONTENT)))){ */
      
-      attval= tree_index_to_ptr(content->valor);
-      if (attval && ((cad=strstr(attval,"charset=")))) {
-	for ( ; *cad!='='; cad++);
-	if (!document->encoding[0] && (xstrnlen(cad, 33)<32)) {
-	  int i;
-	  cad++;
-	  /* pasa a mayúsculas */
-	  for (i=0; cad[i]; i++)
-	    if ((cad[i]>='a')&&(cad[i]<='z'))
-	      document->encoding[i]= cad[i] - 0x20;
-	    else document->encoding[i]= cad[i];
-	  document->encoding[i]= 0;
+/*       attval= tree_index_to_ptr(content->valor); */
+/*       if (attval && ((cad=strstr(attval,"charset=")))) { */
+/* 	for ( ; *cad!='='; cad++); */
+/* 	if (!document->encoding[0] && (xstrnlen(cad, 33)<32)) { */
+/* 	  int i; */
+/* 	  cad++; */
+/* 	  /\* pasa a mayúsculas *\/ */
+/* 	  for (i=0; cad[i]; i++) */
+/* 	    if ((cad[i]>='a')&&(cad[i]<='z')) */
+/* 	      document->encoding[i]= cad[i] - 0x20; */
+/* 	    else document->encoding[i]= cad[i]; */
+/* 	  document->encoding[i]= 0; */
 
-	  DEBUG("elm_meta_scan()");
-	  EPRINTF1("   encoding=%s\n",document->encoding);
-	} else {
-	  INFORM("elm_meta_scan()");
-	  EPRINTF1("   se descarta encoding=%s\n",cad);
-	}
-      }
-    }
-  } /* if http-equiv */
-}
+/* 	  DEBUG("elm_meta_scan()"); */
+/* 	  EPRINTF1("   encoding=%s\n",document->encoding); */
+/* 	} else { */
+/* 	  INFORM("elm_meta_scan()"); */
+/* 	  EPRINTF1("   se descarta encoding=%s\n",cad); */
+/* 	} */
+/*       } */
+/*     } */
+/*   } /\* if http-equiv *\/ */
+/* } */
 
 
 
@@ -2019,13 +2020,14 @@ static void write_document(document_t *doc)
   xml_space_on = 0;
   inside_cdata_sec = 0;
 
-  cprintf_init("ISO-8859-1", param_outputf);
+  cprintf_init(param_charset_out, param_outputf);
 
   /* write <?xml... */
   cprintf("%s?xml version=\"1.0\"", lt);
-  if (document->encoding[0]) 
-    cprintf(" encoding=\"%s\"",document->encoding);
-  cprintf("?%s\n\n",gt);
+/*   if (document->encoding[0])  */
+/*     cprintf(" encoding=\"%s\"",document->encoding); */
+  cprintf(" encoding=\"%s\"", param_charset_out);
+  cprintf("?%s\n\n", gt);
 
   /* write <!DOCTYPE... */
   cprintf("%s!DOCTYPE html\n   %s\n   \"%s\" %s\n", 

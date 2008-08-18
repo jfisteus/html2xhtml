@@ -118,7 +118,7 @@ document_t *new_tree_document(int xhtml_type, int html_vers)
   doc->html_version= html_vers;
   doc->inicio= NULL;
 
-  doc->encoding[0]= 0;
+/*   doc->encoding[0]= 0; */
 
   return doc;
 }
@@ -478,16 +478,21 @@ void *tree_malloc(size_t size)
  */
 char *tree_strdup(const char *str)
 {
+  return tree_strdup_n(str, strlen(str));
+}
+
+char *tree_strdup_n(const char *str, size_t size)
+{
   char *dup;
   int i;
   
-  dup = (char*) tree_malloc(strlen(str) + 1);
+  dup = (char*) tree_malloc(size + 1);
 
   if (!dup) {
     EXIT("out of memory in tree_strdup()");
   }
 
-  for (i = 0; str[i]; i++) {
+  for (i = 0; i < size; i++) {
     dup[i] = str[i];
   }
   dup[i] = 0;

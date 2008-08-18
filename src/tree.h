@@ -141,7 +141,7 @@ typedef struct {
 
   int  xhtml_doctype;
   int  html_version;
-  char encoding[32];
+/*   char encoding[32]; */
 
 
   tree_node_t *inicio;  /* puntero al primer nodo del doc */
@@ -330,6 +330,14 @@ void *tree_malloc(size_t size);
  *
  */
 char *tree_strdup(const char *str);
+
+/*
+ * Sustituto para strdup(char *str)
+ * "str" puede no acabar en 0 (se reservan size + 1 chars).
+ * invoca a tree_malloc: no debe ser liberado con free()
+ *
+ */
+char *tree_strdup_n(const char *str, size_t size);
 
 /*
  * devuelve el número de bytes de memoria utilizados a través
