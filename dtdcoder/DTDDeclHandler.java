@@ -22,7 +22,7 @@
  * DTDDeclHandler.java
  *
  * Receives events from the DTD parser and stores data locally. At the end
- * generates the C source files with the gathered data. 
+ * generates the C source files with the gathered data.
  *
  */
 
@@ -185,7 +185,7 @@ class AttDecl {
                     return att;
             }
         }
-        
+
         /* not found */
         return null;
     }
@@ -309,7 +309,7 @@ class ElmDecl {
 
 
     /**
-     * Look in the vector for an element with a given name 
+     * Look in the vector for an element with a given name
      * Returns the element, or null if not found
      *
      */
@@ -473,7 +473,7 @@ class ElmDecl {
 
 
 /**
- *  Handler for DTD declarations 
+ *  Handler for DTD declarations
  *
  */
 class DTDDeclHandler implements DeclHandler {
@@ -492,16 +492,17 @@ class DTDDeclHandler implements DeclHandler {
     private String attBuffer = null;
 
 
-    /** list of key elements to be dumped in a macro in dtd.h */ 
+    /** list of key elements to be dumped in a macro in dtd.h */
     private String[] listKeyElms = new String [] {
         "html", "head", "body", "frameset", "style", "script", "meta", "p",
         "title", "pre", "frame", "applet", "a", "form", "iframe", "img", "map",
         "ul", "ol", "li", "table", "tr", "th", "td", "thead", "tbody", "object",
         "big", "small", "sub", "sup", "input", "select", "textarea", "label",
         "button", "fieldset", "isindex", "center", "u", "s", "strike",
-        "ins", "del", "area"};
-    
-    /** list of key attributes to be dumped in a macro in dtd.h */ 
+        "ins", "del", "area", "font", "basefont", "dir", "menu",
+        "ruby", "rb", "rbc", "rp", "rt", "rtc", "bdo"};
+
+    /** list of key attributes to be dumped in a macro in dtd.h */
     private String[] listKeyAtts = new String [] {
       "xml:space", "http-equiv", "content", "xmlns"};
 

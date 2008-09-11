@@ -19,7 +19,7 @@
 #include "dtd_types.h"
 #include "dtd_names.h"
 
-#define DTD_SNAPSHOT_DATE "2008-07-13 01:51:08+0200"
+#define DTD_SNAPSHOT_DATE "2008-09-11 18:55:09+0200"
 
 #define elm_data_num 97
 #define att_data_num 163
@@ -81,6 +81,17 @@ extern char ent_list[][25];
 #define ELMID_INS 33
 #define ELMID_DEL 34
 #define ELMID_AREA 67
+#define ELMID_FONT 61
+#define ELMID_BASEFONT 60
+#define ELMID_DIR 23
+#define ELMID_MENU 22
+#define ELMID_RUBY 91
+#define ELMID_RB 94
+#define ELMID_RBC 92
+#define ELMID_RP 96
+#define ELMID_RT 95
+#define ELMID_RTC 93
+#define ELMID_BDO 37
 #define ATTID_XML_SPACE 32
 #define ATTID_HTTP_EQUIV_0 8
 #define ATTID_HTTP_EQUIV_1 151
