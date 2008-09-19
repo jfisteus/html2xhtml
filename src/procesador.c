@@ -202,10 +202,10 @@ void saxStartDocument(void)
     document= new_tree_document(doctype, -1);
   }
 
-/*   if (param_charset)  */
-/*     strcpy(document->encoding, param_charset); */
-/*   if (param_doctype != -1)  */
-/*     doctype_set(param_doctype, 1); */
+/*   if (param_charset) */
+/*     strcpy(document->encoding, param_charset_out); */
+  if (param_doctype != -1)
+    doctype_set(param_doctype, 1);
 }
 
 
