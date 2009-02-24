@@ -27,6 +27,7 @@
  */
 #define _GNU_SOURCE
 
+#include <stdlib.h>
 #include <stdio.h>
 #include <iconv.h>
 #include <errno.h>
@@ -57,14 +58,14 @@ static int stop_step;
 static void detect_boundary(const char *buf, size_t *nread);
 #endif
 
-void charset_init_input(const char *charset_in, FILE *input_file)
+void charset_init_input(const charset_t *charset_in, FILE *input_file)
 {
   if (state != closed) {
     WARNING("Charset initialized, closing it now");
     charset_close();
   }
 
-  open_iconv(CHARSET_INTERNAL_ENC, charset_in);
+  open_iconv(CHARSET_INTERNAL_ENC, charset_in->iconv_name);
   bufferpos = buffer;
   avail = 0;
   file = input_file;
@@ -73,14 +74,14 @@ void charset_init_input(const char *charset_in, FILE *input_file)
   DEBUG("charset_init_input() executed");
 }
 
-void charset_init_output(const char *charset_out, FILE *output_file)
+void charset_init_output(const charset_t *charset_out, FILE *output_file)
 {
   if (state != closed) {
     WARNING("Charset initialized, closing it now");
     charset_close();
   }
 
-  open_iconv(charset_out, CHARSET_INTERNAL_ENC);
+  open_iconv(charset_out->iconv_name, CHARSET_INTERNAL_ENC);
   file = output_file;
   state = output;
 
@@ -104,13 +105,13 @@ char *charset_init_preload(FILE *input_file, size_t *bytes_read)
   return buffer;
 }
 
-void charset_preload_to_input(const char *charset_in, size_t bytes_avail)
+void charset_preload_to_input(const charset_t *charset_in, size_t bytes_avail)
 {
   if (state != preload) {
     EXIT("Not in preload state");
   }
 
-  open_iconv(CHARSET_INTERNAL_ENC, charset_in);
+  open_iconv(CHARSET_INTERNAL_ENC, charset_in->iconv_name);
   bufferpos = buffer + avail - bytes_avail;
   avail = bytes_avail;
   state = input;
@@ -298,19 +299,51 @@ void charset_auto_detect() {
       for ( ; max > 0 && p[0] != '\"'; p++, max--);
       for (p++, len = 0; max > 0 && p[len] != '\"'; len++, max--);
       if (max > 0) {
-	param_charset_in = tree_strdup_n(p, len);
+	char tmpchar = p[len];
+	p[len] = 0;
+	param_charset_in = charset_lookup_alias(p);
+	p[len] = tmpchar;
       }
     }
 
     if (!param_charset_in)
-      param_charset_in = tree_strdup("UTF-8");
+      param_charset_in = CHARSET_UTF_8;
   } else if (!param_charset_in) {
     /* HTML input, default ISO-8859-1 */
-    param_charset_in = tree_strdup("ISO-8859-1");
+    param_charset_in = CHARSET_ISO_8859_1;
   }
 
   if (param_charset_in && !param_charset_out) {
     param_charset_out = param_charset_in;
+  }
+}
+
+charset_t* charset_lookup_alias(const char* alias)
+{
+  int a, b, m;
+  int cmp;
+
+  /* Perform binary search to locate the alias */
+  a = 0;
+  b = CHARSET_ALIAS_NUM - 1;
+
+  while (a <= b) {
+    m = (a + b) / 2;
+    cmp = strcasecmp(charset_aliases[m].alias, alias);
+    if (!cmp) {
+      /* found! */
+      break;
+    } else if (cmp < 0) {
+      a = m + 1;
+    } else {
+      b = m - 1;
+    }
+  }
+
+  if (a <= b) {
+    return &charset_aliases[m];
+  } else {
+    return NULL;
   }
 }
 

@@ -29,18 +29,36 @@
 #ifndef CHARSET_H
 #define CHARSET_H
 
+#include <stdlib.h>
+#include <stdio.h>
+
+#include "charset_aliases.h"
+
 #define CHARSET_INTERNAL_ENC "UTF-8"
 #define CHARSET_BUFFER_SIZE 32768
 
 /*
+ * An alias for a charset, linked to the preferred alias of the
+ * charset and to the named used by iconv for it.
+ */
+typedef struct charset_alias {
+    char* alias;
+    char* preferred_name;
+    char* iconv_name;
+} charset_t;
+
+/* Array with all the supported charset aliases */
+extern charset_t charset_aliases[]; 
+
+/*
  * Set/reset the initial state of the charset converter for input mode
  */
-void charset_init_input(const char *charset_in, FILE *input_file);
+void charset_init_input(const charset_t *charset_in, FILE *input_file);
 
 /*
  * Set/reset the initial state of the charset converter for output mode
  */
-void charset_init_output(const char *charset_out, FILE *output_file);
+void charset_init_output(const charset_t *charset_out, FILE *output_file);
 
 /*
  * Set/reset preload mode. Loads a data block from input_file
@@ -54,7 +72,7 @@ char *charset_init_preload(FILE *input_file, size_t *bytes_read);
  * Changes from preload to input state. 'bytes_avail' bytes
  * are skipped in the next read operation.
  */
-void charset_preload_to_input(const char *charset_in, size_t bytes_avail);
+void charset_preload_to_input(const charset_t *charset_in, size_t bytes_avail);
 
 /*
  * Close the current charset converter
@@ -75,11 +93,18 @@ int charset_read(char *outbuf, size_t num, int interactive);
 size_t charset_write(char *buf, size_t num);
 
 /*
- * Tries to detect the input character encoding, if not set
+ * Try to detect the input character encoding, if not set
  * by the user. Sets the output encoding to the input encoding,
  * unless specified an output encoding by the user.
  */
 void charset_auto_detect();
+
+/*
+ * Return the charset_t structure associated to the
+ * given charset alias. Returns null if not found.
+ *
+ */
+charset_t* charset_lookup_alias(const char* alias);
 
 #ifdef WITH_CGI
 /*

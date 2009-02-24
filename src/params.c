@@ -23,8 +23,8 @@
 FILE *param_inputf;
 FILE *param_outputf;
 
-char *param_charset_in;
-char *param_charset_out;
+charset_t *param_charset_in;
+charset_t *param_charset_out;
 char *param_charset;
 char *param_charset_default;
 int   param_strict;

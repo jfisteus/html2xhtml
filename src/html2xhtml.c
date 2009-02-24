@@ -192,9 +192,17 @@ static void process_parameters(int argc, char **argv)
       print_doctype_keys();
       exit(0);
     } else if (!strcmp(argv[i], "-ie") && ((i+1) < argc)) {
-      param_charset_in = argv[++i];
+      param_charset_in = charset_lookup_alias(argv[++i]);
+      if (!param_charset_in) {
+	EPRINTF1("Trying to set input character set: %s\n", argv[i]);
+	EXIT("Unsupported character set");
+      }
     } else if (!strcmp(argv[i], "-oe") && ((i+1) < argc)) {
-      param_charset_out = argv[++i];
+      param_charset_out = charset_lookup_alias(argv[++i]);
+      if (!param_charset_out) {
+	EPRINTF1("Trying to set output character set: %s\n", argv[i]);
+	EXIT("Unsupported character set");
+      }
     } else {
       help();
       exit(1);

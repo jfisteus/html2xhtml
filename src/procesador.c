@@ -135,7 +135,7 @@ static int write_start_tag(tree_node_t* nodo);
 static int write_end_tag(tree_node_t* nodo);
 static int write_indent(int len, int new_line);
 static int write_plain_data(xchar* text, int len);
-static int cprintf_init(char *to_charset, FILE *file);
+static int cprintf_init(charset_t *to_charset, FILE *file);
 static int cprintf_close(void);
 static int cprintf(char *format, ...);
 static int cwrite(const char *buf, size_t num);
@@ -2026,7 +2026,7 @@ static void write_document(document_t *doc)
   cprintf("%s?xml version=\"1.0\"", lt);
 /*   if (document->encoding[0])  */
 /*     cprintf(" encoding=\"%s\"",document->encoding); */
-  cprintf(" encoding=\"%s\"", param_charset_out);
+  cprintf(" encoding=\"%s\"", param_charset_out->preferred_name);
   cprintf("?%s\n\n", gt);
 
   /* write <!DOCTYPE... */
@@ -2542,7 +2542,7 @@ static int write_indent(int len, int new_line)
     return len;
 }
 
-static int cprintf_init(char *to_charset, FILE *file)
+static int cprintf_init(charset_t *to_charset, FILE *file)
 {
   cbuffer_pos = 0;
   cbuffer_avail = CBUFFER_SIZE;
