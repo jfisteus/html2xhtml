@@ -48,6 +48,7 @@ static enum {closed, finished, eof, input, output, preload} state = closed;
 static void read_block(void);
 static void read_interactive(void);
 static void open_iconv(const char *to_charset, const char *from_charset);
+static int compare_aliases(const char* alias1, const char* alias2);
 
 #ifdef WITH_CGI
 static char *stop_string = NULL;
@@ -329,7 +330,7 @@ charset_t* charset_lookup_alias(const char* alias)
 
   while (a <= b) {
     m = (a + b) / 2;
-    cmp = strcasecmp(charset_aliases[m].alias, alias);
+    cmp = compare_aliases(charset_aliases[m].alias, alias);
     if (!cmp) {
       /* found! */
       break;
@@ -345,6 +346,38 @@ charset_t* charset_lookup_alias(const char* alias)
   } else {
     return NULL;
   }
+}
+
+/*
+ * Compare charset aliases. Characters "-" and "_" are computed as
+ * equivalent.
+ *
+ */
+int compare_aliases(const char* alias1, const char* alias2)
+{
+  int i;
+
+  for (i = 0; ; i++) {
+    if (!alias1[i] && !alias2[i]) {
+      return 0;
+    } else if (!alias1[i]) {
+      return -1;
+    } else if (!alias2[i]) {
+      return 1;
+    } else if ((alias1[i] == '_' || alias1[i] == '-')
+	       && (alias2[i] == '_' || alias2[i] == '-')) {
+      /* nothing, just continue in the loop */
+    } else {
+      int c1 = tolower(alias1[i]);
+      int c2 = tolower(alias2[i]);
+      if (c1 != c2) {
+	  return (c1 < c2 ? -1 : 1);
+      }
+    }
+  }
+
+  /* never should get here */
+  return 0;
 }
 
 static void read_block()
