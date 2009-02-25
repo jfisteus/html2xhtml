@@ -348,6 +348,19 @@ charset_t* charset_lookup_alias(const char* alias)
   }
 }
 
+void charset_dump_aliases(FILE* out)
+{
+  int i;
+
+  for (i = 0; i < CHARSET_ALIAS_NUM; i++) {
+    /* dump the charset alias only if it is the preferred name */
+    if (charset_aliases[i].alias == charset_aliases[i].preferred_name) {
+      fputs(charset_aliases[i].alias, out);
+      fputc('\n', out);
+    }
+  }
+}
+
 /*
  * Compare charset aliases. Characters "-" and "_" are computed as
  * equivalent.

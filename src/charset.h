@@ -106,6 +106,12 @@ void charset_auto_detect();
  */
 charset_t* charset_lookup_alias(const char* alias);
 
+/*
+ * Dump to 'out' the list of preferred names of the
+ * supported character sets.
+ */
+void charset_dump_aliases(FILE* out);
+
 #ifdef WITH_CGI
 /*
  * Set the boundary (invoke only in 'input' mode).

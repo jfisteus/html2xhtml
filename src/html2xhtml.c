@@ -203,6 +203,9 @@ static void process_parameters(int argc, char **argv)
 	EPRINTF1("Trying to set output character set: %s\n", argv[i]);
 	EXIT("Unsupported character set");
       }
+    } else if (!strcmp(argv[i], "-le")) {
+      charset_dump_aliases(stdout);
+      exit(0);
     } else {
       help();
       exit(1);
