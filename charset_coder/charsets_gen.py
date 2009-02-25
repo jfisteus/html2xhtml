@@ -147,6 +147,13 @@ def alias_position(alias, aliases):
     return -1
 
 def main():
+    # some hardcoded aliases
+    hardcoded_aliases = dict()
+    hardcoded_aliases["utf-8"] = ["utf8"]
+    hardcoded_aliases["utf-16"] = ["utf16"]
+    hardcoded_aliases["utf-7"] = ["utf7"]
+    hardcoded_aliases["iso-8859-1"] = ["iso-latin-1"]
+    
     # Process the list of character set labels obtained from "iconv -l"
     csets_iconv = []
     iconv_file = open(sys.argv[2])
@@ -179,6 +186,10 @@ def main():
 
     for charset in csets:
         charset.find_iconv_name(csets_iconv)
+        if charset.name in hardcoded_aliases:
+            charset.aliases.extend(hardcoded_aliases[charset.name])
+        elif charset.preferred_mime in hardcoded_aliases:
+            charset.aliases.extend(hardcoded_aliases[charset.preferred_mime])
 
     # Prepare the list of charsets to be handled
     aliases = []

@@ -80,29 +80,30 @@ iso-ir-18\0iso-ir-19\0iso-ir-199\0iso-ir-21\0iso-ir-226\0iso-ir-25\0\
 iso-ir-27\0iso-ir-37\0iso-ir-4\0iso-ir-49\0iso-ir-50\0iso-ir-51\0iso-ir-54\0\
 iso-ir-55\0iso-ir-57\0iso-ir-6\0iso-ir-60\0iso-ir-61\0iso-ir-69\0iso-ir-8-1\0\
 iso-ir-84\0iso-ir-85\0iso-ir-86\0iso-ir-88\0iso-ir-89\0iso-ir-9-1\0\
-iso-ir-90\0iso-ir-92\0iso-ir-98\0iso-ir-99\0iso5427cyrillic1981\0iso646-ca\0\
-iso646-ca2\0iso646-cn\0iso646-cu\0iso646-de\0iso646-dk\0iso646-es\0\
-iso646-es2\0iso646-fi\0iso646-fr\0iso646-fr1\0iso646-gb\0iso646-hu\0\
-iso646-it\0iso646-jp\0iso646-jp-ocr-b\0iso646-kr\0iso646-no\0iso646-no2\0\
-iso646-pt\0iso646-pt2\0iso646-se\0iso646-se2\0iso646-us\0iso646-yu\0\
-iso_10367-box\0iso_11548-1\0iso_2033-1983\0iso_5427\0iso_5427:1981\0\
-iso_5428:1980\0iso_646.irv:1991\0iso_8859-1\0iso_8859-10:1992\0\
-iso_8859-14\0iso_8859-14:1998\0iso_8859-15\0iso_8859-16\0iso_8859-16:2001\0\
-iso_8859-1:1987\0iso_8859-2\0iso_8859-2:1987\0iso_8859-3\0iso_8859-3:1988\0\
-iso_8859-4\0iso_8859-4:1988\0iso_8859-5\0iso_8859-5:1988\0iso_8859-6\0\
-iso_8859-6:1987\0iso_8859-7\0iso_8859-7:1987\0iso_8859-8\0iso_8859-8:1988\0\
-iso_8859-9\0iso_8859-9:1989\0iso_9036\0iso_tr_11548-1\0it\0\
-jis_c6220-1969-ro\0jis_c6229-1984-b\0jp\0jp-ocr-b\0js\0jus_i.b1.002\0koi8-e\0\
-koi8-r\0koi8-u\0ksc5636\0kz-1048\0l1\0l10\0l2\0l3\0l4\0l5\0l6\0l8\0latin-9\0\
-latin-greek\0latin-greek-1\0latin1\0latin10\0latin2\0latin3\0latin4\0latin5\0\
-latin6\0latin8\0mac\0macintosh\0ms936\0ms_kanji\0msz_7795.3\0naplps\0\
-nats-dano\0nats-sefi\0nc_nc00-10:81\0nf_z_62-010\0nf_z_62-010_(1973)\0no\0\
-no2\0ns_4551-1\0ns_4551-2\0pt\0pt154\0pt2\0ptcp154\0r8\0rk1048\0roman8\0se\0se2\0\
-sen_850200_b\0sen_850200_c\0shift_jis\0st_sev_358-88\0strk1048-2002\0t.61\0\
-t.61-8bit\0tis-620\0tscii\0uk\0us\0us-ascii\0utf-16\0utf-16be\0utf-16le\0\
-utf-32\0utf-32be\0utf-32le\0utf-7\0utf-8\0viscii\0windows-1250\0windows-1251\0\
-windows-1252\0windows-1253\0windows-1254\0windows-1255\0windows-1256\0\
-windows-1257\0windows-1258\0windows-31j\0windows-936\0yu\0";
+iso-ir-90\0iso-ir-92\0iso-ir-98\0iso-ir-99\0iso-latin-1\0\
+iso5427cyrillic1981\0iso646-ca\0iso646-ca2\0iso646-cn\0iso646-cu\0\
+iso646-de\0iso646-dk\0iso646-es\0iso646-es2\0iso646-fi\0iso646-fr\0\
+iso646-fr1\0iso646-gb\0iso646-hu\0iso646-it\0iso646-jp\0iso646-jp-ocr-b\0\
+iso646-kr\0iso646-no\0iso646-no2\0iso646-pt\0iso646-pt2\0iso646-se\0\
+iso646-se2\0iso646-us\0iso646-yu\0iso_10367-box\0iso_11548-1\0\
+iso_2033-1983\0iso_5427\0iso_5427:1981\0iso_5428:1980\0iso_646.irv:1991\0\
+iso_8859-1\0iso_8859-10:1992\0iso_8859-14\0iso_8859-14:1998\0iso_8859-15\0\
+iso_8859-16\0iso_8859-16:2001\0iso_8859-1:1987\0iso_8859-2\0\
+iso_8859-2:1987\0iso_8859-3\0iso_8859-3:1988\0iso_8859-4\0iso_8859-4:1988\0\
+iso_8859-5\0iso_8859-5:1988\0iso_8859-6\0iso_8859-6:1987\0iso_8859-7\0\
+iso_8859-7:1987\0iso_8859-8\0iso_8859-8:1988\0iso_8859-9\0iso_8859-9:1989\0\
+iso_9036\0iso_tr_11548-1\0it\0jis_c6220-1969-ro\0jis_c6229-1984-b\0jp\0\
+jp-ocr-b\0js\0jus_i.b1.002\0koi8-e\0koi8-r\0koi8-u\0ksc5636\0kz-1048\0l1\0l10\0\
+l2\0l3\0l4\0l5\0l6\0l8\0latin-9\0latin-greek\0latin-greek-1\0latin1\0latin10\0\
+latin2\0latin3\0latin4\0latin5\0latin6\0latin8\0mac\0macintosh\0ms936\0\
+ms_kanji\0msz_7795.3\0naplps\0nats-dano\0nats-sefi\0nc_nc00-10:81\0\
+nf_z_62-010\0nf_z_62-010_(1973)\0no\0no2\0ns_4551-1\0ns_4551-2\0pt\0pt154\0\
+pt2\0ptcp154\0r8\0rk1048\0roman8\0se\0se2\0sen_850200_b\0sen_850200_c\0\
+shift_jis\0st_sev_358-88\0strk1048-2002\0t.61\0t.61-8bit\0tis-620\0tscii\0uk\0\
+us\0us-ascii\0utf-16\0utf-16be\0utf-16le\0utf-32\0utf-32be\0utf-32le\0utf-7\0\
+utf-8\0utf16\0utf7\0utf8\0viscii\0windows-1250\0windows-1251\0windows-1252\0\
+windows-1253\0windows-1254\0windows-1255\0windows-1256\0windows-1257\0\
+windows-1258\0windows-31j\0windows-936\0yu\0";
 
 charset_t charset_aliases[] = {
     /* 437; ibm437; ibm437 */
@@ -136,15 +137,15 @@ charset_t charset_aliases[] = {
     /* ansi_x3.110-1983; ansi_x3.110-1983; ansi_x3.110-1983 */
     {&charset_buffer[56], &charset_buffer[56], &charset_buffer[56]},
     /* ansi_x3.4-1968; us-ascii; us-ascii */
-    {&charset_buffer[73], &charset_buffer[5623], &charset_buffer[5623]},
+    {&charset_buffer[73], &charset_buffer[5635], &charset_buffer[5635]},
     /* ansi_x3.4-1986; us-ascii; us-ascii */
-    {&charset_buffer[88], &charset_buffer[5623], &charset_buffer[5623]},
+    {&charset_buffer[88], &charset_buffer[5635], &charset_buffer[5635]},
     /* arabic; iso-8859-6; iso-8859-6 */
     {&charset_buffer[103], &charset_buffer[3743], &charset_buffer[3743]},
     /* arabic7; asmo_449; asmo_449 */
     {&charset_buffer[110], &charset_buffer[133], &charset_buffer[133]},
     /* ascii; us-ascii; us-ascii */
-    {&charset_buffer[118], &charset_buffer[5623], &charset_buffer[5623]},
+    {&charset_buffer[118], &charset_buffer[5635], &charset_buffer[5635]},
     /* asmo-708; iso-8859-6; iso-8859-6 */
     {&charset_buffer[124], &charset_buffer[3743], &charset_buffer[3743]},
     /* asmo_449; asmo_449; asmo_449 */
@@ -174,7 +175,7 @@ charset_t charset_aliases[] = {
     /* cp1026; ibm1026; ibm1026 */
     {&charset_buffer[206], &charset_buffer[3144], &charset_buffer[3144]},
     /* cp154; ptcp154; pt154 */
-    {&charset_buffer[213], &charset_buffer[5492], &charset_buffer[5482]},
+    {&charset_buffer[213], &charset_buffer[5504], &charset_buffer[5494]},
     /* cp273; ibm273; ibm273 */
     {&charset_buffer[219], &charset_buffer[3160], &charset_buffer[3160]},
     /* cp274; ibm274; ibm274 */
@@ -196,7 +197,7 @@ charset_t charset_aliases[] = {
     /* cp297; ibm297; ibm297 */
     {&charset_buffer[273], &charset_buffer[3230], &charset_buffer[3230]},
     /* cp367; us-ascii; us-ascii */
-    {&charset_buffer[279], &charset_buffer[5623], &charset_buffer[5623]},
+    {&charset_buffer[279], &charset_buffer[5635], &charset_buffer[5635]},
     /* cp420; ibm420; ibm420 */
     {&charset_buffer[285], &charset_buffer[3244], &charset_buffer[3244]},
     /* cp423; ibm423; ibm423 */
@@ -268,7 +269,7 @@ charset_t charset_aliases[] = {
     /* csa_z243.4-1985-2; csa_z243.4-1985-2; csa_z243.4-1985-2 */
     {&charset_buffer[511], &charset_buffer[511], &charset_buffer[511]},
     /* csascii; us-ascii; us-ascii */
-    {&charset_buffer[529], &charset_buffer[5623], &charset_buffer[5623]},
+    {&charset_buffer[529], &charset_buffer[5635], &charset_buffer[5635]},
     /* csbig5; big5; big5 */
     {&charset_buffer[537], &charset_buffer[142], &charset_buffer[142]},
     /* csbrf; brf; brf */
@@ -388,17 +389,17 @@ charset_t charset_aliases[] = {
     /* csibmebcdicatde; ebcdic-at-de; ebcdic-at-de */
     {&charset_buffer[1113], &charset_buffer[2351], &charset_buffer[2351]},
     /* csiso10367box; iso_10367-box; iso_10367-box */
-    {&charset_buffer[1129], &charset_buffer[4673], &charset_buffer[4673]},
+    {&charset_buffer[1129], &charset_buffer[4685], &charset_buffer[4685]},
     /* csiso103t618bit; t.61-8bit; t.61-8bit */
-    {&charset_buffer[1143], &charset_buffer[5593], &charset_buffer[5593]},
+    {&charset_buffer[1143], &charset_buffer[5605], &charset_buffer[5605]},
     /* csiso10swedish; sen_850200_b; sen_850200_b */
-    {&charset_buffer[1159], &charset_buffer[5524], &charset_buffer[5524]},
+    {&charset_buffer[1159], &charset_buffer[5536], &charset_buffer[5536]},
     /* csiso111ecmacyrillic; ecma-cyrillic; ecma-cyrillic */
     {&charset_buffer[1174], &charset_buffer[2915], &charset_buffer[2915]},
     /* csiso115481; iso-11548-1; iso_11548-1 */
-    {&charset_buffer[1195], &charset_buffer[3550], &charset_buffer[4687]},
+    {&charset_buffer[1195], &charset_buffer[3550], &charset_buffer[4699]},
     /* csiso11swedishfornames; sen_850200_c; sen_850200_c */
-    {&charset_buffer[1207], &charset_buffer[5537], &charset_buffer[5537]},
+    {&charset_buffer[1207], &charset_buffer[5549], &charset_buffer[5549]},
     /* csiso121canadian1; csa_z243.4-1985-1; csa_z243.4-1985-1 */
     {&charset_buffer[1230], &charset_buffer[493], &charset_buffer[493]},
     /* csiso122canadian2; csa_z243.4-1985-2; csa_z243.4-1985-2 */
@@ -406,29 +407,29 @@ charset_t charset_aliases[] = {
     /* csiso139csn369103; csn_369103; csn_369103 */
     {&charset_buffer[1266], &charset_buffer[2078], &charset_buffer[2078]},
     /* csiso141jusib1002; jus_i.b1.002; jus_i.b1.002 */
-    {&charset_buffer[1284], &charset_buffer[5174], &charset_buffer[5174]},
+    {&charset_buffer[1284], &charset_buffer[5186], &charset_buffer[5186]},
     /* csiso143iecp271; iec_p27-1; iec_p27-1 */
     {&charset_buffer[1302], &charset_buffer[3447], &charset_buffer[3447]},
     /* csiso14jisc6220ro; jis_c6220-1969-ro; jis_c6220-1969-ro */
-    {&charset_buffer[1318], &charset_buffer[5124], &charset_buffer[5124]},
+    {&charset_buffer[1318], &charset_buffer[5136], &charset_buffer[5136]},
     /* csiso150; greek-ccitt; greek-ccitt */
     {&charset_buffer[1336], &charset_buffer[3064], &charset_buffer[3064]},
     /* csiso150greekccitt; greek-ccitt; greek-ccitt */
     {&charset_buffer[1345], &charset_buffer[3064], &charset_buffer[3064]},
     /* csiso151cuba; nc_nc00-10:81; nc_nc00-10:81 */
-    {&charset_buffer[1364], &charset_buffer[5407], &charset_buffer[5407]},
+    {&charset_buffer[1364], &charset_buffer[5419], &charset_buffer[5419]},
     /* csiso153gost1976874; gost_19768-74; gost_19768-74 */
     {&charset_buffer[1377], &charset_buffer[3044], &charset_buffer[3044]},
     /* csiso15italian; it; it */
-    {&charset_buffer[1397], &charset_buffer[5121], &charset_buffer[5121]},
+    {&charset_buffer[1397], &charset_buffer[5133], &charset_buffer[5133]},
     /* csiso16portuguese; pt; pt */
-    {&charset_buffer[1412], &charset_buffer[5479], &charset_buffer[5479]},
+    {&charset_buffer[1412], &charset_buffer[5491], &charset_buffer[5491]},
     /* csiso17spanish; es; es */
     {&charset_buffer[1430], &charset_buffer[2938], &charset_buffer[2938]},
     /* csiso18greek7old; greek7-old; greek7-old */
     {&charset_buffer[1445], &charset_buffer[3083], &charset_buffer[3083]},
     /* csiso19latingreek; latin-greek; latin-greek */
-    {&charset_buffer[1462], &charset_buffer[5257], &charset_buffer[5257]},
+    {&charset_buffer[1462], &charset_buffer[5269], &charset_buffer[5269]},
     /* csiso2022jp; iso-2022-jp; iso-2022-jp */
     {&charset_buffer[1480], &charset_buffer[3590], &charset_buffer[3590]},
     /* csiso2022jp2; iso-2022-jp-2; iso-2022-jp-2 */
@@ -436,13 +437,13 @@ charset_t charset_aliases[] = {
     /* csiso2022kr; iso-2022-kr; iso-2022-kr */
     {&charset_buffer[1505], &charset_buffer[3616], &charset_buffer[3616]},
     /* csiso2033; iso_2033-1983; iso_2033-1983 */
-    {&charset_buffer[1517], &charset_buffer[4699], &charset_buffer[4699]},
+    {&charset_buffer[1517], &charset_buffer[4711], &charset_buffer[4711]},
     /* csiso21german; din_66003; din_66003 */
     {&charset_buffer[1527], &charset_buffer[2318], &charset_buffer[2318]},
     /* csiso25french; nf_z_62-010_(1973); nf_z_62-010_(1973) */
-    {&charset_buffer[1541], &charset_buffer[5433], &charset_buffer[5433]},
+    {&charset_buffer[1541], &charset_buffer[5445], &charset_buffer[5445]},
     /* csiso27latingreek1; latin-greek-1; latin-greek-1 */
-    {&charset_buffer[1555], &charset_buffer[5269], &charset_buffer[5269]},
+    {&charset_buffer[1555], &charset_buffer[5281], &charset_buffer[5281]},
     /* csiso49inis; inis; inis */
     {&charset_buffer[1574], &charset_buffer[3457], &charset_buffer[3457]},
     /* csiso4unitedkingdom; bs_4730; bs_4730 */
@@ -452,27 +453,27 @@ charset_t charset_aliases[] = {
     /* csiso51iniscyrillic; inis-cyrillic; inis-cyrillic */
     {&charset_buffer[1619], &charset_buffer[3469], &charset_buffer[3469]},
     /* csiso5427cyrillic; iso_5427; iso_5427 */
-    {&charset_buffer[1639], &charset_buffer[4713], &charset_buffer[4713]},
+    {&charset_buffer[1639], &charset_buffer[4725], &charset_buffer[4725]},
     /* csiso5428greek; iso_5428:1980; iso_5428:1980 */
-    {&charset_buffer[1657], &charset_buffer[4736], &charset_buffer[4736]},
+    {&charset_buffer[1657], &charset_buffer[4748], &charset_buffer[4748]},
     /* csiso57gb1988; gb_1988-80; gb_1988-80 */
     {&charset_buffer[1672], &charset_buffer[3029], &charset_buffer[3029]},
     /* csiso60danishnorwegian; ns_4551-1; ns_4551-1 */
-    {&charset_buffer[1686], &charset_buffer[5459], &charset_buffer[5459]},
+    {&charset_buffer[1686], &charset_buffer[5471], &charset_buffer[5471]},
     /* csiso60norwegian1; ns_4551-1; ns_4551-1 */
-    {&charset_buffer[1709], &charset_buffer[5459], &charset_buffer[5459]},
+    {&charset_buffer[1709], &charset_buffer[5471], &charset_buffer[5471]},
     /* csiso61norwegian2; ns_4551-2; ns_4551-2 */
-    {&charset_buffer[1727], &charset_buffer[5469], &charset_buffer[5469]},
+    {&charset_buffer[1727], &charset_buffer[5481], &charset_buffer[5481]},
     /* csiso646danish; ds_2089; ds_2089 */
     {&charset_buffer[1745], &charset_buffer[2338], &charset_buffer[2338]},
     /* csiso69french; nf_z_62-010; nf_z_62-010 */
-    {&charset_buffer[1760], &charset_buffer[5421], &charset_buffer[5421]},
+    {&charset_buffer[1760], &charset_buffer[5433], &charset_buffer[5433]},
     /* csiso84portuguese2; pt2; pt2 */
-    {&charset_buffer[1774], &charset_buffer[5488], &charset_buffer[5488]},
+    {&charset_buffer[1774], &charset_buffer[5500], &charset_buffer[5500]},
     /* csiso85spanish2; es2; es2 */
     {&charset_buffer[1793], &charset_buffer[2941], &charset_buffer[2941]},
     /* csiso86hungarian; msz_7795.3; msz_7795.3 */
-    {&charset_buffer[1809], &charset_buffer[5369], &charset_buffer[5369]},
+    {&charset_buffer[1809], &charset_buffer[5381], &charset_buffer[5381]},
     /* csiso88greek7; greek7; greek7 */
     {&charset_buffer[1826], &charset_buffer[3076], &charset_buffer[3076]},
     /* csiso89asmo449; asmo_449; asmo_449 */
@@ -480,7 +481,7 @@ charset_t charset_aliases[] = {
     /* csiso90; iso-ir-90; iso-ir-90 */
     {&charset_buffer[1855], &charset_buffer[4351], &charset_buffer[4351]},
     /* csiso92jisc62991984b; jis_c6229-1984-b; jis_c6229-1984-b */
-    {&charset_buffer[1863], &charset_buffer[5142], &charset_buffer[5142]},
+    {&charset_buffer[1863], &charset_buffer[5154], &charset_buffer[5154]},
     /* csiso99naplps; ansi_x3.110-1983; ansi_x3.110-1983 */
     {&charset_buffer[1884], &charset_buffer[56], &charset_buffer[56]},
     /* csisolatin1; iso-8859-1; iso-8859-1 */
@@ -504,19 +505,19 @@ charset_t charset_aliases[] = {
     /* csisolatinhebrew; iso-8859-8; iso-8859-8 */
     {&charset_buffer[2022], &charset_buffer[3765], &charset_buffer[3765]},
     /* cskoi8r; koi8-r; koi8-r */
-    {&charset_buffer[2039], &charset_buffer[5194], &charset_buffer[5194]},
+    {&charset_buffer[2039], &charset_buffer[5206], &charset_buffer[5206]},
     /* csksc5636; ksc5636; ksc5636 */
-    {&charset_buffer[2047], &charset_buffer[5208], &charset_buffer[5208]},
+    {&charset_buffer[2047], &charset_buffer[5220], &charset_buffer[5220]},
     /* cskz1048; kz-1048; strk1048-2002 */
-    {&charset_buffer[2057], &charset_buffer[5216], &charset_buffer[5574]},
+    {&charset_buffer[2057], &charset_buffer[5228], &charset_buffer[5586]},
     /* csmacintosh; macintosh; macintosh */
-    {&charset_buffer[2066], &charset_buffer[5344], &charset_buffer[5344]},
+    {&charset_buffer[2066], &charset_buffer[5356], &charset_buffer[5356]},
     /* csn_369103; csn_369103; csn_369103 */
     {&charset_buffer[2078], &charset_buffer[2078], &charset_buffer[2078]},
     /* csnatsdano; nats-dano; nats-dano */
-    {&charset_buffer[2089], &charset_buffer[5387], &charset_buffer[5387]},
+    {&charset_buffer[2089], &charset_buffer[5399], &charset_buffer[5399]},
     /* csnatssefi; nats-sefi; nats-sefi */
-    {&charset_buffer[2100], &charset_buffer[5397], &charset_buffer[5397]},
+    {&charset_buffer[2100], &charset_buffer[5409], &charset_buffer[5409]},
     /* cspc775baltic; ibm775; ibm775 */
     {&charset_buffer[2111], &charset_buffer[3279], &charset_buffer[3279]},
     /* cspc850multilingual; ibm850; ibm850 */
@@ -528,11 +529,11 @@ charset_t charset_aliases[] = {
     /* cspcp852; ibm852; ibm852 */
     {&charset_buffer[2181], &charset_buffer[3307], &charset_buffer[3307]},
     /* csptcp154; ptcp154; pt154 */
-    {&charset_buffer[2190], &charset_buffer[5492], &charset_buffer[5482]},
+    {&charset_buffer[2190], &charset_buffer[5504], &charset_buffer[5494]},
     /* csshiftjis; shift_jis; shift_jis */
-    {&charset_buffer[2200], &charset_buffer[5550], &charset_buffer[5550]},
+    {&charset_buffer[2200], &charset_buffer[5562], &charset_buffer[5562]},
     /* cstscii; tscii; tscii */
-    {&charset_buffer[2211], &charset_buffer[5611], &charset_buffer[5611]},
+    {&charset_buffer[2211], &charset_buffer[5623], &charset_buffer[5623]},
     /* csucs4; iso-10646-ucs-4; csucs4 */
     {&charset_buffer[2219], &charset_buffer[3509], &charset_buffer[2219]},
     /* csunicode; iso-10646-ucs-2; csunicode */
@@ -540,15 +541,15 @@ charset_t charset_aliases[] = {
     /* csunicodelatin1; iso-10646-unicode-latin1; iso-10646 */
     {&charset_buffer[2236], &charset_buffer[3525], &charset_buffer[3483]},
     /* csviscii; viscii; viscii */
-    {&charset_buffer[2252], &charset_buffer[5694], &charset_buffer[5694]},
+    {&charset_buffer[2252], &charset_buffer[5722], &charset_buffer[5722]},
     /* cswindows31j; windows-31j; windows-31j */
-    {&charset_buffer[2261], &charset_buffer[5818], &charset_buffer[5818]},
+    {&charset_buffer[2261], &charset_buffer[5846], &charset_buffer[5846]},
     /* cuba; nc_nc00-10:81; nc_nc00-10:81 */
-    {&charset_buffer[2274], &charset_buffer[5407], &charset_buffer[5407]},
+    {&charset_buffer[2274], &charset_buffer[5419], &charset_buffer[5419]},
     /* cyrillic; iso-8859-5; iso-8859-5 */
     {&charset_buffer[2279], &charset_buffer[3732], &charset_buffer[3732]},
     /* cyrillic-asian; ptcp154; pt154 */
-    {&charset_buffer[2288], &charset_buffer[5492], &charset_buffer[5482]},
+    {&charset_buffer[2288], &charset_buffer[5504], &charset_buffer[5494]},
     /* de; din_66003; din_66003 */
     {&charset_buffer[2303], &charset_buffer[2318], &charset_buffer[2318]},
     /* dec; dec-mcs; dec-mcs */
@@ -564,7 +565,7 @@ charset_t charset_aliases[] = {
     /* ds_2089; ds_2089; ds_2089 */
     {&charset_buffer[2338], &charset_buffer[2338], &charset_buffer[2338]},
     /* e13b; iso_2033-1983; iso_2033-1983 */
-    {&charset_buffer[2346], &charset_buffer[4699], &charset_buffer[4699]},
+    {&charset_buffer[2346], &charset_buffer[4711], &charset_buffer[4711]},
     /* ebcdic-at-de; ebcdic-at-de; ebcdic-at-de */
     {&charset_buffer[2351], &charset_buffer[2351], &charset_buffer[2351]},
     /* ebcdic-at-de-a; ebcdic-at-de-a; ebcdic-at-de-a */
@@ -670,9 +671,9 @@ charset_t charset_aliases[] = {
     /* extended_unix_code_packed_format_for_japanese; euc-jp; euc-jp */
     {&charset_buffer[2959], &charset_buffer[2945], &charset_buffer[2945]},
     /* fi; sen_850200_b; sen_850200_b */
-    {&charset_buffer[3005], &charset_buffer[5524], &charset_buffer[5524]},
+    {&charset_buffer[3005], &charset_buffer[5536], &charset_buffer[5536]},
     /* fr; nf_z_62-010; nf_z_62-010 */
-    {&charset_buffer[3008], &charset_buffer[5421], &charset_buffer[5421]},
+    {&charset_buffer[3008], &charset_buffer[5433], &charset_buffer[5433]},
     /* gb; bs_4730; bs_4730 */
     {&charset_buffer[3011], &charset_buffer[162], &charset_buffer[162]},
     /* gb18030; gb18030; gb18030 */
@@ -700,7 +701,7 @@ charset_t charset_aliases[] = {
     /* hp-roman8; hp-roman8; hp-roman8 */
     {&charset_buffer[3108], &charset_buffer[3108], &charset_buffer[3108]},
     /* hu; msz_7795.3; msz_7795.3 */
-    {&charset_buffer[3118], &charset_buffer[5369], &charset_buffer[5369]},
+    {&charset_buffer[3118], &charset_buffer[5381], &charset_buffer[5381]},
     /* ibm-1047; ibm1047; ibm1047 */
     {&charset_buffer[3121], &charset_buffer[3152], &charset_buffer[3152]},
     /* ibm037; ibm037; ibm037 */
@@ -734,7 +735,7 @@ charset_t charset_aliases[] = {
     /* ibm297; ibm297; ibm297 */
     {&charset_buffer[3230], &charset_buffer[3230], &charset_buffer[3230]},
     /* ibm367; us-ascii; us-ascii */
-    {&charset_buffer[3237], &charset_buffer[5623], &charset_buffer[5623]},
+    {&charset_buffer[3237], &charset_buffer[5635], &charset_buffer[5635]},
     /* ibm420; ibm420; ibm420 */
     {&charset_buffer[3244], &charset_buffer[3244], &charset_buffer[3244]},
     /* ibm423; ibm423; ibm423 */
@@ -810,7 +811,7 @@ charset_t charset_aliases[] = {
     /* iso-10646-unicode-latin1; iso-10646-unicode-latin1; iso-10646 */
     {&charset_buffer[3525], &charset_buffer[3525], &charset_buffer[3483]},
     /* iso-11548-1; iso-11548-1; iso_11548-1 */
-    {&charset_buffer[3550], &charset_buffer[3550], &charset_buffer[4687]},
+    {&charset_buffer[3550], &charset_buffer[3550], &charset_buffer[4699]},
     /* iso-2022-cn; iso-2022-cn; iso-2022-cn */
     {&charset_buffer[3562], &charset_buffer[3562], &charset_buffer[3562]},
     /* iso-2022-cn-ext; iso-2022-cn-ext; iso-2022-cn-ext */
@@ -852,17 +853,17 @@ charset_t charset_aliases[] = {
     /* iso-celtic; iso-8859-14; iso-8859-14 */
     {&charset_buffer[3787], &charset_buffer[3663], &charset_buffer[3663]},
     /* iso-ir-10; sen_850200_b; sen_850200_b */
-    {&charset_buffer[3798], &charset_buffer[5524], &charset_buffer[5524]},
+    {&charset_buffer[3798], &charset_buffer[5536], &charset_buffer[5536]},
     /* iso-ir-100; iso-8859-1; iso-8859-1 */
     {&charset_buffer[3808], &charset_buffer[3628], &charset_buffer[3628]},
     /* iso-ir-101; iso-8859-2; iso-8859-2 */
     {&charset_buffer[3819], &charset_buffer[3699], &charset_buffer[3699]},
     /* iso-ir-103; t.61-8bit; t.61-8bit */
-    {&charset_buffer[3830], &charset_buffer[5593], &charset_buffer[5593]},
+    {&charset_buffer[3830], &charset_buffer[5605], &charset_buffer[5605]},
     /* iso-ir-109; iso-8859-3; iso-8859-3 */
     {&charset_buffer[3841], &charset_buffer[3710], &charset_buffer[3710]},
     /* iso-ir-11; sen_850200_c; sen_850200_c */
-    {&charset_buffer[3852], &charset_buffer[5537], &charset_buffer[5537]},
+    {&charset_buffer[3852], &charset_buffer[5549], &charset_buffer[5549]},
     /* iso-ir-110; iso-8859-4; iso-8859-4 */
     {&charset_buffer[3862], &charset_buffer[3721], &charset_buffer[3721]},
     /* iso-ir-111; ecma-cyrillic; ecma-cyrillic */
@@ -880,9 +881,9 @@ charset_t charset_aliases[] = {
     /* iso-ir-139; csn_369103; csn_369103 */
     {&charset_buffer[3939], &charset_buffer[2078], &charset_buffer[2078]},
     /* iso-ir-14; jis_c6220-1969-ro; jis_c6220-1969-ro */
-    {&charset_buffer[3950], &charset_buffer[5124], &charset_buffer[5124]},
+    {&charset_buffer[3950], &charset_buffer[5136], &charset_buffer[5136]},
     /* iso-ir-141; jus_i.b1.002; jus_i.b1.002 */
-    {&charset_buffer[3960], &charset_buffer[5174], &charset_buffer[5174]},
+    {&charset_buffer[3960], &charset_buffer[5186], &charset_buffer[5186]},
     /* iso-ir-143; iec_p27-1; iec_p27-1 */
     {&charset_buffer[3971], &charset_buffer[3447], &charset_buffer[3447]},
     /* iso-ir-144; iso-8859-5; iso-8859-5 */
@@ -890,25 +891,25 @@ charset_t charset_aliases[] = {
     /* iso-ir-148; iso-8859-9; iso-8859-9 */
     {&charset_buffer[3993], &charset_buffer[3776], &charset_buffer[3776]},
     /* iso-ir-15; it; it */
-    {&charset_buffer[4004], &charset_buffer[5121], &charset_buffer[5121]},
+    {&charset_buffer[4004], &charset_buffer[5133], &charset_buffer[5133]},
     /* iso-ir-150; greek-ccitt; greek-ccitt */
     {&charset_buffer[4014], &charset_buffer[3064], &charset_buffer[3064]},
     /* iso-ir-151; nc_nc00-10:81; nc_nc00-10:81 */
-    {&charset_buffer[4025], &charset_buffer[5407], &charset_buffer[5407]},
+    {&charset_buffer[4025], &charset_buffer[5419], &charset_buffer[5419]},
     /* iso-ir-153; gost_19768-74; gost_19768-74 */
     {&charset_buffer[4036], &charset_buffer[3044], &charset_buffer[3044]},
     /* iso-ir-155; iso_10367-box; iso_10367-box */
-    {&charset_buffer[4047], &charset_buffer[4673], &charset_buffer[4673]},
+    {&charset_buffer[4047], &charset_buffer[4685], &charset_buffer[4685]},
     /* iso-ir-157; iso-8859-10; iso-8859-10 */
     {&charset_buffer[4058], &charset_buffer[3639], &charset_buffer[3639]},
     /* iso-ir-16; pt; pt */
-    {&charset_buffer[4069], &charset_buffer[5479], &charset_buffer[5479]},
+    {&charset_buffer[4069], &charset_buffer[5491], &charset_buffer[5491]},
     /* iso-ir-17; es; es */
     {&charset_buffer[4079], &charset_buffer[2938], &charset_buffer[2938]},
     /* iso-ir-18; greek7-old; greek7-old */
     {&charset_buffer[4089], &charset_buffer[3083], &charset_buffer[3083]},
     /* iso-ir-19; latin-greek; latin-greek */
-    {&charset_buffer[4099], &charset_buffer[5257], &charset_buffer[5257]},
+    {&charset_buffer[4099], &charset_buffer[5269], &charset_buffer[5269]},
     /* iso-ir-199; iso-8859-14; iso-8859-14 */
     {&charset_buffer[4109], &charset_buffer[3663], &charset_buffer[3663]},
     /* iso-ir-21; din_66003; din_66003 */
@@ -916,11 +917,11 @@ charset_t charset_aliases[] = {
     /* iso-ir-226; iso-8859-16; iso-8859-16 */
     {&charset_buffer[4130], &charset_buffer[3687], &charset_buffer[3687]},
     /* iso-ir-25; nf_z_62-010_(1973); nf_z_62-010_(1973) */
-    {&charset_buffer[4141], &charset_buffer[5433], &charset_buffer[5433]},
+    {&charset_buffer[4141], &charset_buffer[5445], &charset_buffer[5445]},
     /* iso-ir-27; latin-greek-1; latin-greek-1 */
-    {&charset_buffer[4151], &charset_buffer[5269], &charset_buffer[5269]},
+    {&charset_buffer[4151], &charset_buffer[5281], &charset_buffer[5281]},
     /* iso-ir-37; iso_5427; iso_5427 */
-    {&charset_buffer[4161], &charset_buffer[4713], &charset_buffer[4713]},
+    {&charset_buffer[4161], &charset_buffer[4725], &charset_buffer[4725]},
     /* iso-ir-4; bs_4730; bs_4730 */
     {&charset_buffer[4171], &charset_buffer[162], &charset_buffer[162]},
     /* iso-ir-49; inis; inis */
@@ -930,333 +931,341 @@ charset_t charset_aliases[] = {
     /* iso-ir-51; inis-cyrillic; inis-cyrillic */
     {&charset_buffer[4200], &charset_buffer[3469], &charset_buffer[3469]},
     /* iso-ir-54; iso_5427:1981; iso_5427:1981 */
-    {&charset_buffer[4210], &charset_buffer[4722], &charset_buffer[4722]},
+    {&charset_buffer[4210], &charset_buffer[4734], &charset_buffer[4734]},
     /* iso-ir-55; iso_5428:1980; iso_5428:1980 */
-    {&charset_buffer[4220], &charset_buffer[4736], &charset_buffer[4736]},
+    {&charset_buffer[4220], &charset_buffer[4748], &charset_buffer[4748]},
     /* iso-ir-57; gb_1988-80; gb_1988-80 */
     {&charset_buffer[4230], &charset_buffer[3029], &charset_buffer[3029]},
     /* iso-ir-6; us-ascii; us-ascii */
-    {&charset_buffer[4240], &charset_buffer[5623], &charset_buffer[5623]},
+    {&charset_buffer[4240], &charset_buffer[5635], &charset_buffer[5635]},
     /* iso-ir-60; ns_4551-1; ns_4551-1 */
-    {&charset_buffer[4249], &charset_buffer[5459], &charset_buffer[5459]},
+    {&charset_buffer[4249], &charset_buffer[5471], &charset_buffer[5471]},
     /* iso-ir-61; ns_4551-2; ns_4551-2 */
-    {&charset_buffer[4259], &charset_buffer[5469], &charset_buffer[5469]},
+    {&charset_buffer[4259], &charset_buffer[5481], &charset_buffer[5481]},
     /* iso-ir-69; nf_z_62-010; nf_z_62-010 */
-    {&charset_buffer[4269], &charset_buffer[5421], &charset_buffer[5421]},
+    {&charset_buffer[4269], &charset_buffer[5433], &charset_buffer[5433]},
     /* iso-ir-8-1; nats-sefi; nats-sefi */
-    {&charset_buffer[4279], &charset_buffer[5397], &charset_buffer[5397]},
+    {&charset_buffer[4279], &charset_buffer[5409], &charset_buffer[5409]},
     /* iso-ir-84; pt2; pt2 */
-    {&charset_buffer[4290], &charset_buffer[5488], &charset_buffer[5488]},
+    {&charset_buffer[4290], &charset_buffer[5500], &charset_buffer[5500]},
     /* iso-ir-85; es2; es2 */
     {&charset_buffer[4300], &charset_buffer[2941], &charset_buffer[2941]},
     /* iso-ir-86; msz_7795.3; msz_7795.3 */
-    {&charset_buffer[4310], &charset_buffer[5369], &charset_buffer[5369]},
+    {&charset_buffer[4310], &charset_buffer[5381], &charset_buffer[5381]},
     /* iso-ir-88; greek7; greek7 */
     {&charset_buffer[4320], &charset_buffer[3076], &charset_buffer[3076]},
     /* iso-ir-89; asmo_449; asmo_449 */
     {&charset_buffer[4330], &charset_buffer[133], &charset_buffer[133]},
     /* iso-ir-9-1; nats-dano; nats-dano */
-    {&charset_buffer[4340], &charset_buffer[5387], &charset_buffer[5387]},
+    {&charset_buffer[4340], &charset_buffer[5399], &charset_buffer[5399]},
     /* iso-ir-90; iso-ir-90; iso-ir-90 */
     {&charset_buffer[4351], &charset_buffer[4351], &charset_buffer[4351]},
     /* iso-ir-92; jis_c6229-1984-b; jis_c6229-1984-b */
-    {&charset_buffer[4361], &charset_buffer[5142], &charset_buffer[5142]},
+    {&charset_buffer[4361], &charset_buffer[5154], &charset_buffer[5154]},
     /* iso-ir-98; iso_2033-1983; iso_2033-1983 */
-    {&charset_buffer[4371], &charset_buffer[4699], &charset_buffer[4699]},
+    {&charset_buffer[4371], &charset_buffer[4711], &charset_buffer[4711]},
     /* iso-ir-99; ansi_x3.110-1983; ansi_x3.110-1983 */
     {&charset_buffer[4381], &charset_buffer[56], &charset_buffer[56]},
+    /* iso-latin-1; iso-8859-1; iso-8859-1 */
+    {&charset_buffer[4391], &charset_buffer[3628], &charset_buffer[3628]},
     /* iso5427cyrillic1981; iso_5427:1981; iso_5427:1981 */
-    {&charset_buffer[4391], &charset_buffer[4722], &charset_buffer[4722]},
+    {&charset_buffer[4403], &charset_buffer[4734], &charset_buffer[4734]},
     /* iso646-ca; csa_z243.4-1985-1; csa_z243.4-1985-1 */
-    {&charset_buffer[4411], &charset_buffer[493], &charset_buffer[493]},
+    {&charset_buffer[4423], &charset_buffer[493], &charset_buffer[493]},
     /* iso646-ca2; csa_z243.4-1985-2; csa_z243.4-1985-2 */
-    {&charset_buffer[4421], &charset_buffer[511], &charset_buffer[511]},
+    {&charset_buffer[4433], &charset_buffer[511], &charset_buffer[511]},
     /* iso646-cn; gb_1988-80; gb_1988-80 */
-    {&charset_buffer[4432], &charset_buffer[3029], &charset_buffer[3029]},
+    {&charset_buffer[4444], &charset_buffer[3029], &charset_buffer[3029]},
     /* iso646-cu; nc_nc00-10:81; nc_nc00-10:81 */
-    {&charset_buffer[4442], &charset_buffer[5407], &charset_buffer[5407]},
+    {&charset_buffer[4454], &charset_buffer[5419], &charset_buffer[5419]},
     /* iso646-de; din_66003; din_66003 */
-    {&charset_buffer[4452], &charset_buffer[2318], &charset_buffer[2318]},
+    {&charset_buffer[4464], &charset_buffer[2318], &charset_buffer[2318]},
     /* iso646-dk; ds_2089; ds_2089 */
-    {&charset_buffer[4462], &charset_buffer[2338], &charset_buffer[2338]},
+    {&charset_buffer[4474], &charset_buffer[2338], &charset_buffer[2338]},
     /* iso646-es; es; es */
-    {&charset_buffer[4472], &charset_buffer[2938], &charset_buffer[2938]},
+    {&charset_buffer[4484], &charset_buffer[2938], &charset_buffer[2938]},
     /* iso646-es2; es2; es2 */
-    {&charset_buffer[4482], &charset_buffer[2941], &charset_buffer[2941]},
+    {&charset_buffer[4494], &charset_buffer[2941], &charset_buffer[2941]},
     /* iso646-fi; sen_850200_b; sen_850200_b */
-    {&charset_buffer[4493], &charset_buffer[5524], &charset_buffer[5524]},
+    {&charset_buffer[4505], &charset_buffer[5536], &charset_buffer[5536]},
     /* iso646-fr; nf_z_62-010; nf_z_62-010 */
-    {&charset_buffer[4503], &charset_buffer[5421], &charset_buffer[5421]},
+    {&charset_buffer[4515], &charset_buffer[5433], &charset_buffer[5433]},
     /* iso646-fr1; nf_z_62-010_(1973); nf_z_62-010_(1973) */
-    {&charset_buffer[4513], &charset_buffer[5433], &charset_buffer[5433]},
+    {&charset_buffer[4525], &charset_buffer[5445], &charset_buffer[5445]},
     /* iso646-gb; bs_4730; bs_4730 */
-    {&charset_buffer[4524], &charset_buffer[162], &charset_buffer[162]},
+    {&charset_buffer[4536], &charset_buffer[162], &charset_buffer[162]},
     /* iso646-hu; msz_7795.3; msz_7795.3 */
-    {&charset_buffer[4534], &charset_buffer[5369], &charset_buffer[5369]},
+    {&charset_buffer[4546], &charset_buffer[5381], &charset_buffer[5381]},
     /* iso646-it; it; it */
-    {&charset_buffer[4544], &charset_buffer[5121], &charset_buffer[5121]},
+    {&charset_buffer[4556], &charset_buffer[5133], &charset_buffer[5133]},
     /* iso646-jp; jis_c6220-1969-ro; jis_c6220-1969-ro */
-    {&charset_buffer[4554], &charset_buffer[5124], &charset_buffer[5124]},
+    {&charset_buffer[4566], &charset_buffer[5136], &charset_buffer[5136]},
     /* iso646-jp-ocr-b; jis_c6229-1984-b; jis_c6229-1984-b */
-    {&charset_buffer[4564], &charset_buffer[5142], &charset_buffer[5142]},
+    {&charset_buffer[4576], &charset_buffer[5154], &charset_buffer[5154]},
     /* iso646-kr; ksc5636; ksc5636 */
-    {&charset_buffer[4580], &charset_buffer[5208], &charset_buffer[5208]},
+    {&charset_buffer[4592], &charset_buffer[5220], &charset_buffer[5220]},
     /* iso646-no; ns_4551-1; ns_4551-1 */
-    {&charset_buffer[4590], &charset_buffer[5459], &charset_buffer[5459]},
+    {&charset_buffer[4602], &charset_buffer[5471], &charset_buffer[5471]},
     /* iso646-no2; ns_4551-2; ns_4551-2 */
-    {&charset_buffer[4600], &charset_buffer[5469], &charset_buffer[5469]},
+    {&charset_buffer[4612], &charset_buffer[5481], &charset_buffer[5481]},
     /* iso646-pt; pt; pt */
-    {&charset_buffer[4611], &charset_buffer[5479], &charset_buffer[5479]},
+    {&charset_buffer[4623], &charset_buffer[5491], &charset_buffer[5491]},
     /* iso646-pt2; pt2; pt2 */
-    {&charset_buffer[4621], &charset_buffer[5488], &charset_buffer[5488]},
+    {&charset_buffer[4633], &charset_buffer[5500], &charset_buffer[5500]},
     /* iso646-se; sen_850200_b; sen_850200_b */
-    {&charset_buffer[4632], &charset_buffer[5524], &charset_buffer[5524]},
+    {&charset_buffer[4644], &charset_buffer[5536], &charset_buffer[5536]},
     /* iso646-se2; sen_850200_c; sen_850200_c */
-    {&charset_buffer[4642], &charset_buffer[5537], &charset_buffer[5537]},
+    {&charset_buffer[4654], &charset_buffer[5549], &charset_buffer[5549]},
     /* iso646-us; us-ascii; us-ascii */
-    {&charset_buffer[4653], &charset_buffer[5623], &charset_buffer[5623]},
+    {&charset_buffer[4665], &charset_buffer[5635], &charset_buffer[5635]},
     /* iso646-yu; jus_i.b1.002; jus_i.b1.002 */
-    {&charset_buffer[4663], &charset_buffer[5174], &charset_buffer[5174]},
+    {&charset_buffer[4675], &charset_buffer[5186], &charset_buffer[5186]},
     /* iso_10367-box; iso_10367-box; iso_10367-box */
-    {&charset_buffer[4673], &charset_buffer[4673], &charset_buffer[4673]},
+    {&charset_buffer[4685], &charset_buffer[4685], &charset_buffer[4685]},
     /* iso_11548-1; iso-11548-1; iso_11548-1 */
-    {&charset_buffer[4687], &charset_buffer[3550], &charset_buffer[4687]},
+    {&charset_buffer[4699], &charset_buffer[3550], &charset_buffer[4699]},
     /* iso_2033-1983; iso_2033-1983; iso_2033-1983 */
-    {&charset_buffer[4699], &charset_buffer[4699], &charset_buffer[4699]},
+    {&charset_buffer[4711], &charset_buffer[4711], &charset_buffer[4711]},
     /* iso_5427; iso_5427; iso_5427 */
-    {&charset_buffer[4713], &charset_buffer[4713], &charset_buffer[4713]},
+    {&charset_buffer[4725], &charset_buffer[4725], &charset_buffer[4725]},
     /* iso_5427:1981; iso_5427:1981; iso_5427:1981 */
-    {&charset_buffer[4722], &charset_buffer[4722], &charset_buffer[4722]},
+    {&charset_buffer[4734], &charset_buffer[4734], &charset_buffer[4734]},
     /* iso_5428:1980; iso_5428:1980; iso_5428:1980 */
-    {&charset_buffer[4736], &charset_buffer[4736], &charset_buffer[4736]},
+    {&charset_buffer[4748], &charset_buffer[4748], &charset_buffer[4748]},
     /* iso_646.irv:1991; us-ascii; us-ascii */
-    {&charset_buffer[4750], &charset_buffer[5623], &charset_buffer[5623]},
+    {&charset_buffer[4762], &charset_buffer[5635], &charset_buffer[5635]},
     /* iso_8859-1; iso-8859-1; iso-8859-1 */
-    {&charset_buffer[4767], &charset_buffer[3628], &charset_buffer[3628]},
+    {&charset_buffer[4779], &charset_buffer[3628], &charset_buffer[3628]},
     /* iso_8859-10:1992; iso-8859-10; iso-8859-10 */
-    {&charset_buffer[4778], &charset_buffer[3639], &charset_buffer[3639]},
+    {&charset_buffer[4790], &charset_buffer[3639], &charset_buffer[3639]},
     /* iso_8859-14; iso-8859-14; iso-8859-14 */
-    {&charset_buffer[4795], &charset_buffer[3663], &charset_buffer[3663]},
-    /* iso_8859-14:1998; iso-8859-14; iso-8859-14 */
     {&charset_buffer[4807], &charset_buffer[3663], &charset_buffer[3663]},
+    /* iso_8859-14:1998; iso-8859-14; iso-8859-14 */
+    {&charset_buffer[4819], &charset_buffer[3663], &charset_buffer[3663]},
     /* iso_8859-15; iso-8859-15; iso-8859-15 */
-    {&charset_buffer[4824], &charset_buffer[3675], &charset_buffer[3675]},
+    {&charset_buffer[4836], &charset_buffer[3675], &charset_buffer[3675]},
     /* iso_8859-16; iso-8859-16; iso-8859-16 */
-    {&charset_buffer[4836], &charset_buffer[3687], &charset_buffer[3687]},
-    /* iso_8859-16:2001; iso-8859-16; iso-8859-16 */
     {&charset_buffer[4848], &charset_buffer[3687], &charset_buffer[3687]},
+    /* iso_8859-16:2001; iso-8859-16; iso-8859-16 */
+    {&charset_buffer[4860], &charset_buffer[3687], &charset_buffer[3687]},
     /* iso_8859-1:1987; iso-8859-1; iso-8859-1 */
-    {&charset_buffer[4865], &charset_buffer[3628], &charset_buffer[3628]},
+    {&charset_buffer[4877], &charset_buffer[3628], &charset_buffer[3628]},
     /* iso_8859-2; iso-8859-2; iso-8859-2 */
-    {&charset_buffer[4881], &charset_buffer[3699], &charset_buffer[3699]},
+    {&charset_buffer[4893], &charset_buffer[3699], &charset_buffer[3699]},
     /* iso_8859-2:1987; iso-8859-2; iso-8859-2 */
-    {&charset_buffer[4892], &charset_buffer[3699], &charset_buffer[3699]},
+    {&charset_buffer[4904], &charset_buffer[3699], &charset_buffer[3699]},
     /* iso_8859-3; iso-8859-3; iso-8859-3 */
-    {&charset_buffer[4908], &charset_buffer[3710], &charset_buffer[3710]},
+    {&charset_buffer[4920], &charset_buffer[3710], &charset_buffer[3710]},
     /* iso_8859-3:1988; iso-8859-3; iso-8859-3 */
-    {&charset_buffer[4919], &charset_buffer[3710], &charset_buffer[3710]},
+    {&charset_buffer[4931], &charset_buffer[3710], &charset_buffer[3710]},
     /* iso_8859-4; iso-8859-4; iso-8859-4 */
-    {&charset_buffer[4935], &charset_buffer[3721], &charset_buffer[3721]},
+    {&charset_buffer[4947], &charset_buffer[3721], &charset_buffer[3721]},
     /* iso_8859-4:1988; iso-8859-4; iso-8859-4 */
-    {&charset_buffer[4946], &charset_buffer[3721], &charset_buffer[3721]},
+    {&charset_buffer[4958], &charset_buffer[3721], &charset_buffer[3721]},
     /* iso_8859-5; iso-8859-5; iso-8859-5 */
-    {&charset_buffer[4962], &charset_buffer[3732], &charset_buffer[3732]},
+    {&charset_buffer[4974], &charset_buffer[3732], &charset_buffer[3732]},
     /* iso_8859-5:1988; iso-8859-5; iso-8859-5 */
-    {&charset_buffer[4973], &charset_buffer[3732], &charset_buffer[3732]},
+    {&charset_buffer[4985], &charset_buffer[3732], &charset_buffer[3732]},
     /* iso_8859-6; iso-8859-6; iso-8859-6 */
-    {&charset_buffer[4989], &charset_buffer[3743], &charset_buffer[3743]},
+    {&charset_buffer[5001], &charset_buffer[3743], &charset_buffer[3743]},
     /* iso_8859-6:1987; iso-8859-6; iso-8859-6 */
-    {&charset_buffer[5000], &charset_buffer[3743], &charset_buffer[3743]},
+    {&charset_buffer[5012], &charset_buffer[3743], &charset_buffer[3743]},
     /* iso_8859-7; iso-8859-7; iso-8859-7 */
-    {&charset_buffer[5016], &charset_buffer[3754], &charset_buffer[3754]},
+    {&charset_buffer[5028], &charset_buffer[3754], &charset_buffer[3754]},
     /* iso_8859-7:1987; iso-8859-7; iso-8859-7 */
-    {&charset_buffer[5027], &charset_buffer[3754], &charset_buffer[3754]},
+    {&charset_buffer[5039], &charset_buffer[3754], &charset_buffer[3754]},
     /* iso_8859-8; iso-8859-8; iso-8859-8 */
-    {&charset_buffer[5043], &charset_buffer[3765], &charset_buffer[3765]},
+    {&charset_buffer[5055], &charset_buffer[3765], &charset_buffer[3765]},
     /* iso_8859-8:1988; iso-8859-8; iso-8859-8 */
-    {&charset_buffer[5054], &charset_buffer[3765], &charset_buffer[3765]},
+    {&charset_buffer[5066], &charset_buffer[3765], &charset_buffer[3765]},
     /* iso_8859-9; iso-8859-9; iso-8859-9 */
-    {&charset_buffer[5070], &charset_buffer[3776], &charset_buffer[3776]},
+    {&charset_buffer[5082], &charset_buffer[3776], &charset_buffer[3776]},
     /* iso_8859-9:1989; iso-8859-9; iso-8859-9 */
-    {&charset_buffer[5081], &charset_buffer[3776], &charset_buffer[3776]},
+    {&charset_buffer[5093], &charset_buffer[3776], &charset_buffer[3776]},
     /* iso_9036; asmo_449; asmo_449 */
-    {&charset_buffer[5097], &charset_buffer[133], &charset_buffer[133]},
+    {&charset_buffer[5109], &charset_buffer[133], &charset_buffer[133]},
     /* iso_tr_11548-1; iso-11548-1; iso_11548-1 */
-    {&charset_buffer[5106], &charset_buffer[3550], &charset_buffer[4687]},
+    {&charset_buffer[5118], &charset_buffer[3550], &charset_buffer[4699]},
     /* it; it; it */
-    {&charset_buffer[5121], &charset_buffer[5121], &charset_buffer[5121]},
+    {&charset_buffer[5133], &charset_buffer[5133], &charset_buffer[5133]},
     /* jis_c6220-1969-ro; jis_c6220-1969-ro; jis_c6220-1969-ro */
-    {&charset_buffer[5124], &charset_buffer[5124], &charset_buffer[5124]},
+    {&charset_buffer[5136], &charset_buffer[5136], &charset_buffer[5136]},
     /* jis_c6229-1984-b; jis_c6229-1984-b; jis_c6229-1984-b */
-    {&charset_buffer[5142], &charset_buffer[5142], &charset_buffer[5142]},
+    {&charset_buffer[5154], &charset_buffer[5154], &charset_buffer[5154]},
     /* jp; jis_c6220-1969-ro; jis_c6220-1969-ro */
-    {&charset_buffer[5159], &charset_buffer[5124], &charset_buffer[5124]},
+    {&charset_buffer[5171], &charset_buffer[5136], &charset_buffer[5136]},
     /* jp-ocr-b; jis_c6229-1984-b; jis_c6229-1984-b */
-    {&charset_buffer[5162], &charset_buffer[5142], &charset_buffer[5142]},
+    {&charset_buffer[5174], &charset_buffer[5154], &charset_buffer[5154]},
     /* js; jus_i.b1.002; jus_i.b1.002 */
-    {&charset_buffer[5171], &charset_buffer[5174], &charset_buffer[5174]},
+    {&charset_buffer[5183], &charset_buffer[5186], &charset_buffer[5186]},
     /* jus_i.b1.002; jus_i.b1.002; jus_i.b1.002 */
-    {&charset_buffer[5174], &charset_buffer[5174], &charset_buffer[5174]},
+    {&charset_buffer[5186], &charset_buffer[5186], &charset_buffer[5186]},
     /* koi8-e; ecma-cyrillic; ecma-cyrillic */
-    {&charset_buffer[5187], &charset_buffer[2915], &charset_buffer[2915]},
+    {&charset_buffer[5199], &charset_buffer[2915], &charset_buffer[2915]},
     /* koi8-r; koi8-r; koi8-r */
-    {&charset_buffer[5194], &charset_buffer[5194], &charset_buffer[5194]},
+    {&charset_buffer[5206], &charset_buffer[5206], &charset_buffer[5206]},
     /* koi8-u; koi8-u; koi8-u */
-    {&charset_buffer[5201], &charset_buffer[5201], &charset_buffer[5201]},
+    {&charset_buffer[5213], &charset_buffer[5213], &charset_buffer[5213]},
     /* ksc5636; ksc5636; ksc5636 */
-    {&charset_buffer[5208], &charset_buffer[5208], &charset_buffer[5208]},
+    {&charset_buffer[5220], &charset_buffer[5220], &charset_buffer[5220]},
     /* kz-1048; kz-1048; strk1048-2002 */
-    {&charset_buffer[5216], &charset_buffer[5216], &charset_buffer[5574]},
+    {&charset_buffer[5228], &charset_buffer[5228], &charset_buffer[5586]},
     /* l1; iso-8859-1; iso-8859-1 */
-    {&charset_buffer[5224], &charset_buffer[3628], &charset_buffer[3628]},
+    {&charset_buffer[5236], &charset_buffer[3628], &charset_buffer[3628]},
     /* l10; iso-8859-16; iso-8859-16 */
-    {&charset_buffer[5227], &charset_buffer[3687], &charset_buffer[3687]},
+    {&charset_buffer[5239], &charset_buffer[3687], &charset_buffer[3687]},
     /* l2; iso-8859-2; iso-8859-2 */
-    {&charset_buffer[5231], &charset_buffer[3699], &charset_buffer[3699]},
+    {&charset_buffer[5243], &charset_buffer[3699], &charset_buffer[3699]},
     /* l3; iso-8859-3; iso-8859-3 */
-    {&charset_buffer[5234], &charset_buffer[3710], &charset_buffer[3710]},
+    {&charset_buffer[5246], &charset_buffer[3710], &charset_buffer[3710]},
     /* l4; iso-8859-4; iso-8859-4 */
-    {&charset_buffer[5237], &charset_buffer[3721], &charset_buffer[3721]},
+    {&charset_buffer[5249], &charset_buffer[3721], &charset_buffer[3721]},
     /* l5; iso-8859-9; iso-8859-9 */
-    {&charset_buffer[5240], &charset_buffer[3776], &charset_buffer[3776]},
+    {&charset_buffer[5252], &charset_buffer[3776], &charset_buffer[3776]},
     /* l6; iso-8859-10; iso-8859-10 */
-    {&charset_buffer[5243], &charset_buffer[3639], &charset_buffer[3639]},
+    {&charset_buffer[5255], &charset_buffer[3639], &charset_buffer[3639]},
     /* l8; iso-8859-14; iso-8859-14 */
-    {&charset_buffer[5246], &charset_buffer[3663], &charset_buffer[3663]},
+    {&charset_buffer[5258], &charset_buffer[3663], &charset_buffer[3663]},
     /* latin-9; iso-8859-15; iso-8859-15 */
-    {&charset_buffer[5249], &charset_buffer[3675], &charset_buffer[3675]},
+    {&charset_buffer[5261], &charset_buffer[3675], &charset_buffer[3675]},
     /* latin-greek; latin-greek; latin-greek */
-    {&charset_buffer[5257], &charset_buffer[5257], &charset_buffer[5257]},
-    /* latin-greek-1; latin-greek-1; latin-greek-1 */
     {&charset_buffer[5269], &charset_buffer[5269], &charset_buffer[5269]},
+    /* latin-greek-1; latin-greek-1; latin-greek-1 */
+    {&charset_buffer[5281], &charset_buffer[5281], &charset_buffer[5281]},
     /* latin1; iso-8859-1; iso-8859-1 */
-    {&charset_buffer[5283], &charset_buffer[3628], &charset_buffer[3628]},
+    {&charset_buffer[5295], &charset_buffer[3628], &charset_buffer[3628]},
     /* latin10; iso-8859-16; iso-8859-16 */
-    {&charset_buffer[5290], &charset_buffer[3687], &charset_buffer[3687]},
+    {&charset_buffer[5302], &charset_buffer[3687], &charset_buffer[3687]},
     /* latin2; iso-8859-2; iso-8859-2 */
-    {&charset_buffer[5298], &charset_buffer[3699], &charset_buffer[3699]},
+    {&charset_buffer[5310], &charset_buffer[3699], &charset_buffer[3699]},
     /* latin3; iso-8859-3; iso-8859-3 */
-    {&charset_buffer[5305], &charset_buffer[3710], &charset_buffer[3710]},
+    {&charset_buffer[5317], &charset_buffer[3710], &charset_buffer[3710]},
     /* latin4; iso-8859-4; iso-8859-4 */
-    {&charset_buffer[5312], &charset_buffer[3721], &charset_buffer[3721]},
+    {&charset_buffer[5324], &charset_buffer[3721], &charset_buffer[3721]},
     /* latin5; iso-8859-9; iso-8859-9 */
-    {&charset_buffer[5319], &charset_buffer[3776], &charset_buffer[3776]},
+    {&charset_buffer[5331], &charset_buffer[3776], &charset_buffer[3776]},
     /* latin6; iso-8859-10; iso-8859-10 */
-    {&charset_buffer[5326], &charset_buffer[3639], &charset_buffer[3639]},
+    {&charset_buffer[5338], &charset_buffer[3639], &charset_buffer[3639]},
     /* latin8; iso-8859-14; iso-8859-14 */
-    {&charset_buffer[5333], &charset_buffer[3663], &charset_buffer[3663]},
+    {&charset_buffer[5345], &charset_buffer[3663], &charset_buffer[3663]},
     /* mac; macintosh; macintosh */
-    {&charset_buffer[5340], &charset_buffer[5344], &charset_buffer[5344]},
+    {&charset_buffer[5352], &charset_buffer[5356], &charset_buffer[5356]},
     /* macintosh; macintosh; macintosh */
-    {&charset_buffer[5344], &charset_buffer[5344], &charset_buffer[5344]},
+    {&charset_buffer[5356], &charset_buffer[5356], &charset_buffer[5356]},
     /* ms936; gbk; gbk */
-    {&charset_buffer[5354], &charset_buffer[3040], &charset_buffer[3040]},
+    {&charset_buffer[5366], &charset_buffer[3040], &charset_buffer[3040]},
     /* ms_kanji; shift_jis; shift_jis */
-    {&charset_buffer[5360], &charset_buffer[5550], &charset_buffer[5550]},
+    {&charset_buffer[5372], &charset_buffer[5562], &charset_buffer[5562]},
     /* msz_7795.3; msz_7795.3; msz_7795.3 */
-    {&charset_buffer[5369], &charset_buffer[5369], &charset_buffer[5369]},
+    {&charset_buffer[5381], &charset_buffer[5381], &charset_buffer[5381]},
     /* naplps; ansi_x3.110-1983; ansi_x3.110-1983 */
-    {&charset_buffer[5380], &charset_buffer[56], &charset_buffer[56]},
+    {&charset_buffer[5392], &charset_buffer[56], &charset_buffer[56]},
     /* nats-dano; nats-dano; nats-dano */
-    {&charset_buffer[5387], &charset_buffer[5387], &charset_buffer[5387]},
+    {&charset_buffer[5399], &charset_buffer[5399], &charset_buffer[5399]},
     /* nats-sefi; nats-sefi; nats-sefi */
-    {&charset_buffer[5397], &charset_buffer[5397], &charset_buffer[5397]},
+    {&charset_buffer[5409], &charset_buffer[5409], &charset_buffer[5409]},
     /* nc_nc00-10:81; nc_nc00-10:81; nc_nc00-10:81 */
-    {&charset_buffer[5407], &charset_buffer[5407], &charset_buffer[5407]},
+    {&charset_buffer[5419], &charset_buffer[5419], &charset_buffer[5419]},
     /* nf_z_62-010; nf_z_62-010; nf_z_62-010 */
-    {&charset_buffer[5421], &charset_buffer[5421], &charset_buffer[5421]},
-    /* nf_z_62-010_(1973); nf_z_62-010_(1973); nf_z_62-010_(1973) */
     {&charset_buffer[5433], &charset_buffer[5433], &charset_buffer[5433]},
+    /* nf_z_62-010_(1973); nf_z_62-010_(1973); nf_z_62-010_(1973) */
+    {&charset_buffer[5445], &charset_buffer[5445], &charset_buffer[5445]},
     /* no; ns_4551-1; ns_4551-1 */
-    {&charset_buffer[5452], &charset_buffer[5459], &charset_buffer[5459]},
+    {&charset_buffer[5464], &charset_buffer[5471], &charset_buffer[5471]},
     /* no2; ns_4551-2; ns_4551-2 */
-    {&charset_buffer[5455], &charset_buffer[5469], &charset_buffer[5469]},
+    {&charset_buffer[5467], &charset_buffer[5481], &charset_buffer[5481]},
     /* ns_4551-1; ns_4551-1; ns_4551-1 */
-    {&charset_buffer[5459], &charset_buffer[5459], &charset_buffer[5459]},
+    {&charset_buffer[5471], &charset_buffer[5471], &charset_buffer[5471]},
     /* ns_4551-2; ns_4551-2; ns_4551-2 */
-    {&charset_buffer[5469], &charset_buffer[5469], &charset_buffer[5469]},
+    {&charset_buffer[5481], &charset_buffer[5481], &charset_buffer[5481]},
     /* pt; pt; pt */
-    {&charset_buffer[5479], &charset_buffer[5479], &charset_buffer[5479]},
+    {&charset_buffer[5491], &charset_buffer[5491], &charset_buffer[5491]},
     /* pt154; ptcp154; pt154 */
-    {&charset_buffer[5482], &charset_buffer[5492], &charset_buffer[5482]},
+    {&charset_buffer[5494], &charset_buffer[5504], &charset_buffer[5494]},
     /* pt2; pt2; pt2 */
-    {&charset_buffer[5488], &charset_buffer[5488], &charset_buffer[5488]},
+    {&charset_buffer[5500], &charset_buffer[5500], &charset_buffer[5500]},
     /* ptcp154; ptcp154; pt154 */
-    {&charset_buffer[5492], &charset_buffer[5492], &charset_buffer[5482]},
+    {&charset_buffer[5504], &charset_buffer[5504], &charset_buffer[5494]},
     /* r8; hp-roman8; hp-roman8 */
-    {&charset_buffer[5500], &charset_buffer[3108], &charset_buffer[3108]},
+    {&charset_buffer[5512], &charset_buffer[3108], &charset_buffer[3108]},
     /* rk1048; kz-1048; strk1048-2002 */
-    {&charset_buffer[5503], &charset_buffer[5216], &charset_buffer[5574]},
+    {&charset_buffer[5515], &charset_buffer[5228], &charset_buffer[5586]},
     /* roman8; hp-roman8; hp-roman8 */
-    {&charset_buffer[5510], &charset_buffer[3108], &charset_buffer[3108]},
+    {&charset_buffer[5522], &charset_buffer[3108], &charset_buffer[3108]},
     /* se; sen_850200_b; sen_850200_b */
-    {&charset_buffer[5517], &charset_buffer[5524], &charset_buffer[5524]},
+    {&charset_buffer[5529], &charset_buffer[5536], &charset_buffer[5536]},
     /* se2; sen_850200_c; sen_850200_c */
-    {&charset_buffer[5520], &charset_buffer[5537], &charset_buffer[5537]},
+    {&charset_buffer[5532], &charset_buffer[5549], &charset_buffer[5549]},
     /* sen_850200_b; sen_850200_b; sen_850200_b */
-    {&charset_buffer[5524], &charset_buffer[5524], &charset_buffer[5524]},
+    {&charset_buffer[5536], &charset_buffer[5536], &charset_buffer[5536]},
     /* sen_850200_c; sen_850200_c; sen_850200_c */
-    {&charset_buffer[5537], &charset_buffer[5537], &charset_buffer[5537]},
+    {&charset_buffer[5549], &charset_buffer[5549], &charset_buffer[5549]},
     /* shift_jis; shift_jis; shift_jis */
-    {&charset_buffer[5550], &charset_buffer[5550], &charset_buffer[5550]},
+    {&charset_buffer[5562], &charset_buffer[5562], &charset_buffer[5562]},
     /* st_sev_358-88; gost_19768-74; gost_19768-74 */
-    {&charset_buffer[5560], &charset_buffer[3044], &charset_buffer[3044]},
+    {&charset_buffer[5572], &charset_buffer[3044], &charset_buffer[3044]},
     /* strk1048-2002; kz-1048; strk1048-2002 */
-    {&charset_buffer[5574], &charset_buffer[5216], &charset_buffer[5574]},
+    {&charset_buffer[5586], &charset_buffer[5228], &charset_buffer[5586]},
     /* t.61; t.61-8bit; t.61-8bit */
-    {&charset_buffer[5588], &charset_buffer[5593], &charset_buffer[5593]},
+    {&charset_buffer[5600], &charset_buffer[5605], &charset_buffer[5605]},
     /* t.61-8bit; t.61-8bit; t.61-8bit */
-    {&charset_buffer[5593], &charset_buffer[5593], &charset_buffer[5593]},
+    {&charset_buffer[5605], &charset_buffer[5605], &charset_buffer[5605]},
     /* tis-620; tis-620; tis-620 */
-    {&charset_buffer[5603], &charset_buffer[5603], &charset_buffer[5603]},
+    {&charset_buffer[5615], &charset_buffer[5615], &charset_buffer[5615]},
     /* tscii; tscii; tscii */
-    {&charset_buffer[5611], &charset_buffer[5611], &charset_buffer[5611]},
-    /* uk; bs_4730; bs_4730 */
-    {&charset_buffer[5617], &charset_buffer[162], &charset_buffer[162]},
-    /* us; us-ascii; us-ascii */
-    {&charset_buffer[5620], &charset_buffer[5623], &charset_buffer[5623]},
-    /* us-ascii; us-ascii; us-ascii */
     {&charset_buffer[5623], &charset_buffer[5623], &charset_buffer[5623]},
+    /* uk; bs_4730; bs_4730 */
+    {&charset_buffer[5629], &charset_buffer[162], &charset_buffer[162]},
+    /* us; us-ascii; us-ascii */
+    {&charset_buffer[5632], &charset_buffer[5635], &charset_buffer[5635]},
+    /* us-ascii; us-ascii; us-ascii */
+    {&charset_buffer[5635], &charset_buffer[5635], &charset_buffer[5635]},
     /* utf-16; utf-16; utf-16 */
-    {&charset_buffer[5632], &charset_buffer[5632], &charset_buffer[5632]},
+    {&charset_buffer[5644], &charset_buffer[5644], &charset_buffer[5644]},
     /* utf-16be; utf-16be; utf-16be */
-    {&charset_buffer[5639], &charset_buffer[5639], &charset_buffer[5639]},
+    {&charset_buffer[5651], &charset_buffer[5651], &charset_buffer[5651]},
     /* utf-16le; utf-16le; utf-16le */
-    {&charset_buffer[5648], &charset_buffer[5648], &charset_buffer[5648]},
+    {&charset_buffer[5660], &charset_buffer[5660], &charset_buffer[5660]},
     /* utf-32; utf-32; utf-32 */
-    {&charset_buffer[5657], &charset_buffer[5657], &charset_buffer[5657]},
+    {&charset_buffer[5669], &charset_buffer[5669], &charset_buffer[5669]},
     /* utf-32be; utf-32be; utf-32be */
-    {&charset_buffer[5664], &charset_buffer[5664], &charset_buffer[5664]},
+    {&charset_buffer[5676], &charset_buffer[5676], &charset_buffer[5676]},
     /* utf-32le; utf-32le; utf-32le */
-    {&charset_buffer[5673], &charset_buffer[5673], &charset_buffer[5673]},
+    {&charset_buffer[5685], &charset_buffer[5685], &charset_buffer[5685]},
     /* utf-7; utf-7; utf-7 */
-    {&charset_buffer[5682], &charset_buffer[5682], &charset_buffer[5682]},
-    /* utf-8; utf-8; utf-8 */
-    {&charset_buffer[5688], &charset_buffer[5688], &charset_buffer[5688]},
-    /* viscii; viscii; viscii */
     {&charset_buffer[5694], &charset_buffer[5694], &charset_buffer[5694]},
+    /* utf-8; utf-8; utf-8 */
+    {&charset_buffer[5700], &charset_buffer[5700], &charset_buffer[5700]},
+    /* utf16; utf-16; utf-16 */
+    {&charset_buffer[5706], &charset_buffer[5644], &charset_buffer[5644]},
+    /* utf7; utf-7; utf-7 */
+    {&charset_buffer[5712], &charset_buffer[5694], &charset_buffer[5694]},
+    /* utf8; utf-8; utf-8 */
+    {&charset_buffer[5717], &charset_buffer[5700], &charset_buffer[5700]},
+    /* viscii; viscii; viscii */
+    {&charset_buffer[5722], &charset_buffer[5722], &charset_buffer[5722]},
     /* windows-1250; windows-1250; windows-1250 */
-    {&charset_buffer[5701], &charset_buffer[5701], &charset_buffer[5701]},
+    {&charset_buffer[5729], &charset_buffer[5729], &charset_buffer[5729]},
     /* windows-1251; windows-1251; windows-1251 */
-    {&charset_buffer[5714], &charset_buffer[5714], &charset_buffer[5714]},
+    {&charset_buffer[5742], &charset_buffer[5742], &charset_buffer[5742]},
     /* windows-1252; windows-1252; windows-1252 */
-    {&charset_buffer[5727], &charset_buffer[5727], &charset_buffer[5727]},
+    {&charset_buffer[5755], &charset_buffer[5755], &charset_buffer[5755]},
     /* windows-1253; windows-1253; windows-1253 */
-    {&charset_buffer[5740], &charset_buffer[5740], &charset_buffer[5740]},
+    {&charset_buffer[5768], &charset_buffer[5768], &charset_buffer[5768]},
     /* windows-1254; windows-1254; windows-1254 */
-    {&charset_buffer[5753], &charset_buffer[5753], &charset_buffer[5753]},
+    {&charset_buffer[5781], &charset_buffer[5781], &charset_buffer[5781]},
     /* windows-1255; windows-1255; windows-1255 */
-    {&charset_buffer[5766], &charset_buffer[5766], &charset_buffer[5766]},
+    {&charset_buffer[5794], &charset_buffer[5794], &charset_buffer[5794]},
     /* windows-1256; windows-1256; windows-1256 */
-    {&charset_buffer[5779], &charset_buffer[5779], &charset_buffer[5779]},
+    {&charset_buffer[5807], &charset_buffer[5807], &charset_buffer[5807]},
     /* windows-1257; windows-1257; windows-1257 */
-    {&charset_buffer[5792], &charset_buffer[5792], &charset_buffer[5792]},
+    {&charset_buffer[5820], &charset_buffer[5820], &charset_buffer[5820]},
     /* windows-1258; windows-1258; windows-1258 */
-    {&charset_buffer[5805], &charset_buffer[5805], &charset_buffer[5805]},
+    {&charset_buffer[5833], &charset_buffer[5833], &charset_buffer[5833]},
     /* windows-31j; windows-31j; windows-31j */
-    {&charset_buffer[5818], &charset_buffer[5818], &charset_buffer[5818]},
+    {&charset_buffer[5846], &charset_buffer[5846], &charset_buffer[5846]},
     /* windows-936; gbk; gbk */
-    {&charset_buffer[5830], &charset_buffer[3040], &charset_buffer[3040]},
+    {&charset_buffer[5858], &charset_buffer[3040], &charset_buffer[3040]},
     /* yu; jus_i.b1.002; jus_i.b1.002 */
-    {&charset_buffer[5842], &charset_buffer[5174], &charset_buffer[5174]}
+    {&charset_buffer[5870], &charset_buffer[5186], &charset_buffer[5186]}
 };

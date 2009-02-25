@@ -11,8 +11,8 @@
  */
 
 /* Number of known aliases */
-#define CHARSET_ALIAS_NUM 577
+#define CHARSET_ALIAS_NUM 581
 
 /* Positions of aliases for some relevant character sets*/
 #define CHARSET_ISO_8859_1 &charset_aliases[358]
-#define CHARSET_UTF_8 &charset_aliases[563]
+#define CHARSET_UTF_8 &charset_aliases[564]
