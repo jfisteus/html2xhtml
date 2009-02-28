@@ -358,8 +358,16 @@ void saxStartElement(const xchar *fullname, xchar **atts)
   /* atributos */
   set_attributes(nodo, atts);
 
-  /* si es <meta>, se comprueban atributos interesantes */
-/*   if (elm_ptr==ELMID_META) elm_meta_scan(nodo); */
+  /* If meta with att-equiv, remove it: it is unnecessary in XML */
+  if (elm_ptr == ELMID_META) {
+    att_node_t* att = tree_node_search_att(nodo, ATTID_HTTP_EQUIV_0);
+    if (!att) {
+      att = tree_node_search_att(nodo, ATTID_HTTP_EQUIV_1);
+    }
+    if (att) {
+      tree_unlink_node(nodo);
+    }
+  }
 }
 
 
