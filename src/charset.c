@@ -364,6 +364,7 @@ charset_t* guess_charset()
   enum {none, be16, le16, be32, le32, u2143, u3412,
 	ebcdic, ascii_comp} guess = none;
   charset_t* charset = NULL;
+  unsigned char* buf = (unsigned char*) buffer;
 
   if (state != preload) {
     EXIT("Charset must be in preview mode in order to guess encoding");
@@ -371,45 +372,43 @@ charset_t* guess_charset()
   }
 
   /* First, look for the byte order mark (BOM) */
-  if (!bufferpos[0] && !bufferpos[1]
-      && ((bufferpos[2] == 0xfe && bufferpos[3] == 0xff)
-	  ||(bufferpos[2] == 0xff && bufferpos[3] == 0xfe))) {
+  if (!buf[0] && !buf[1] && ((buf[2] == 0xfe && buf[3] == 0xff)
+			     ||(buf[2] == 0xff && buf[3] == 0xfe))) {
     /* UCS-4 big-endian (1234) or unusual byte order (2143) */
     charset = CHARSET_UCS_4;
-  } else if ((bufferpos[0] == 0xff && bufferpos[1] == 0xfe)
-	     || (bufferpos[0] == 0xfe && bufferpos[1] == 0xff)) {
-    if (!bufferpos[2] && !bufferpos[3]) {
+  } else if ((buf[0] == 0xff && buf[1] == 0xfe)
+	     || (buf[0] == 0xfe && buf[1] == 0xff)) {
+    if (!buf[2] && !buf[3]) {
       /* UCS-4 little-endian (4321) or unusual order (3412) */
       charset = CHARSET_UCS_4;
     } else {
       /* UTF-16 little-endian or big-endian */
       charset = CHARSET_UTF_16;
     }
-  } else if (bufferpos[0] == 0xef && bufferpos[1] == 0xbb
-	     && bufferpos[2] == 0xbf) {
+  } else if (buf[0] == 0xef && buf[1] == 0xbb && buf[2] == 0xbf) {
     /* UTF-8 */
     charset = CHARSET_UTF_8;
   }
 
   /* If no BOM is found, try to guess by other means */
   if (!charset) {
-    if (!bufferpos[0]) {
-      if (!bufferpos[1]) {
-	if (bufferpos[2] == 0x3c && !bufferpos[3]) {
+    if (!buf[0]) {
+      if (!buf[1]) {
+	if (buf[2] == 0x3c && !buf[3]) {
 	  guess = u2143;
-	} else if (!bufferpos[2] && bufferpos[3] == 0x3c) {
+	} else if (!buf[2] && buf[3] == 0x3c) {
 	  guess = be32;
 	}
-      } else if (bufferpos[1] == 0x3c && !bufferpos[2]) {
-	if (!bufferpos[3]) {
+      } else if (buf[1] == 0x3c && !buf[2]) {
+	if (!buf[3]) {
 	  guess = u3412;
 	} else {
 	  guess = be16;
 	}
       }
-    } else if (bufferpos[0] = 0x3c) {
-      if (!bufferpos[1] && !bufferpos[3]) {
-	if (!bufferpos[2]) {
+    } else if (buf[0] = 0x3c) {
+      if (!buf[1] && !buf[3]) {
+	if (!buf[2]) {
 	  guess = le32;
 	} else {
 	  guess = le16;
@@ -417,8 +416,7 @@ charset_t* guess_charset()
       } else {
 	guess = ascii_comp;
       }
-    } else if (bufferpos[0] = 0x4c && bufferpos[1]
-	       && bufferpos[2] && bufferpos[3]) {
+    } else if (buf[0] = 0x4c && buf[1] && buf[2] && buf[3]) {
       guess = ebcdic;
     } else {
       /* By default, suppose it is ASCII-compatible */
