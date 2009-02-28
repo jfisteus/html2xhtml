@@ -16,3 +16,7 @@
 /* Positions of aliases for some relevant character sets*/
 #define CHARSET_ISO_8859_1 &charset_aliases[358]
 #define CHARSET_UTF_8 &charset_aliases[564]
+#define CHARSET_UTF_16 &charset_aliases[557]
+#define CHARSET_UTF_16BE &charset_aliases[558]
+#define CHARSET_UTF_16LE &charset_aliases[559]
+#define CHARSET_UCS_4 &charset_aliases[350]

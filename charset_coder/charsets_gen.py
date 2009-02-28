@@ -126,10 +126,19 @@ def dump_output(aliases, output_dir):
     out_h.write("/* Number of known aliases */\n")
     out_h.write("#define CHARSET_ALIAS_NUM %d\n\n"%len(aliases))
     out_h.write("/* Positions of aliases for some relevant character sets*/\n")
+
     latin1_pos = alias_position("iso-8859-1", aliases)
     utf8_pos = alias_position("utf-8", aliases)
+    utf16_pos = alias_position("utf-16", aliases)
+    utf16be_pos = alias_position("utf-16be", aliases)
+    utf16le_pos = alias_position("utf-16le", aliases)
+    ucs4_pos = alias_position("iso-10646-ucs-4", aliases)
     out_h.write("#define CHARSET_ISO_8859_1 &charset_aliases[%d]\n"%latin1_pos)
     out_h.write("#define CHARSET_UTF_8 &charset_aliases[%d]\n"%utf8_pos)
+    out_h.write("#define CHARSET_UTF_16 &charset_aliases[%d]\n"%utf16_pos)
+    out_h.write("#define CHARSET_UTF_16BE &charset_aliases[%d]\n"%utf16be_pos)
+    out_h.write("#define CHARSET_UTF_16LE &charset_aliases[%d]\n"%utf16le_pos)
+    out_h.write("#define CHARSET_UCS_4 &charset_aliases[%d]\n"%ucs4_pos)
     out_h.close()
 
 def locate_alias(alias, aliases):
