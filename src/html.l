@@ -38,7 +38,7 @@ int lexer_end_script(void);
 
 /* use a custom input module that makes charset convertion */
 #define YY_INPUT(buf, result, max_size) \
-  result = charset_read(buf, max_size, yy_current_buffer->yy_is_interactive);
+  result = charset_read(buf, max_size, YY_CURRENT_BUFFER_LVALUE->yy_is_interactive);
 
 %}
 
@@ -122,13 +122,13 @@ ATT_VAL2   ([^\"'\x09\x0a\x0d\x20\>\<])*
 <SCRIPT>\<\/{ESP}{NAME}{ESP}\>         {return lexer_end_script();}
 <SCRIPT>"<!--"                         {yylval.cad= yytext; return TOK_CDATA_SEC;}
 <SCRIPT>"</"                           {yylval.cad= yytext; return TOK_CDATA_SEC;}
-<SCRIPT>"]]>"                          {yylval.cad= tree_strdup("]]&gt;"); return TOK_CDATA_SEC;}
+<SCRIPT>"]]>"                          {yylval.cad= tree_strdup("\135\135&gt;"); return TOK_CDATA_SEC;}
 
 "<![CDATA["{CDATASEC}"]]>" {yylval.cad=cdata_sec(yytext);return TOK_CDATA_SEC;}
 
 &                   {yylval.cad= tree_strdup("&amp;"); return TOK_EREF;}
 \<                  {yylval.cad= tree_strdup("&lt;"); return TOK_EREF;}
-"]]>"               {yylval.cad= tree_strdup("]]&gt;"); return TOK_CDATA;}
+"]]>"               {yylval.cad= tree_strdup("\135\135&gt;"); return TOK_CDATA;}
 
 {BAD_CDATA}         {DEBUG("carácter descartado");}
 
