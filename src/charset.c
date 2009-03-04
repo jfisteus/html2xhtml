@@ -473,10 +473,10 @@ charset_t* guess_charset()
  * Returns NULL if nothing meaningful can be read (probably because
  * ini and step are incorrect)
  */
+#define SCAN_LEN 512
 charset_t* read_charset_decl(int ini, int step, int mode, charset_t* defaults)
 {
-  char tmp_buffer[256];
-  char* buf;
+  char buf[SCAN_LEN];
   int len, i;
   charset_t* charset = NULL;
 
@@ -489,15 +489,12 @@ charset_t* read_charset_decl(int ini, int step, int mode, charset_t* defaults)
     return NULL;
   }
 
-  if (step == 1) {
-    buf = buffer;
-    len = avail;
-  } else {
-    /* copy data to a temporal buffer; in order to make it 1 byte per byte */
-    buf = tmp_buffer;
-    for (i = ini, len = 0; i < avail && len < 256; i += step, len++) {
-      buf[len] = buffer[i];
-    }
+  /*
+   * Copy (lowercase) data to a temporal buffer,
+   * in order to make it 1 byte per byte
+   */
+  for (i = ini, len = 0; i < avail && len < SCAN_LEN; i += step, len++) {
+    buf[len] = tolower(buffer[i]);
   }
 
   /*
@@ -512,7 +509,11 @@ charset_t* read_charset_decl(int ini, int step, int mode, charset_t* defaults)
       if (i == len) {
 	return NULL;
       } else if (buf[i] == '?' && ++i < len && buf[i] == '>') {
-	charset = defaults;
+	if (defaults) {
+	  charset = defaults;
+	} else {
+	  charset = CHARSET_UTF_8;
+	}
       } else if (i + 7 < len && !strncmp(&buf[i], "encoding", 8)) {
 	int parse_ok = 0;
 	/* look for = */
@@ -546,12 +547,164 @@ charset_t* read_charset_decl(int ini, int step, int mode, charset_t* defaults)
       }
     }
   } else {
-    /* TODO: HTML */
-    charset = CHARSET_ISO_8859_1;
+    /* Stop early if http-equiv does not appear in the buffer */
+    char* pos = memmem(buf, len, "http-equiv", 10);
+    if (pos) {
+      /* 
+       * The text "http-equiv" appears in the document. Check that
+       * it is an attribute of meta and parse its value.
+       */
+      int found = 0;
+      int ini;
+      int meta_ini = 0;
+      enum {normal, tag_name, tag_attrs, att_val_double,
+	    att_val_simple, script, script_end, comment} scan_state = normal;
+      i = 0;
+      for ( ; i < len && !found; i++) {
+	char c = buf[i];
+	switch (scan_state) {
+	case normal:
+	  if (c == '<') {
+	    if (i + 3 < len && buf[i + 1] == '!' && buf[i + 2] == '-'
+		&& buf[i + 3] == '-') {
+	      scan_state = comment;
+	      i += 3;
+	    } else {
+	      scan_state = tag_name;
+	      ini = i + 1;
+	    }
+	  }
+	  break;
+	case tag_name:
+	  if (IS_SPACE(c)) {
+	    if (i - ini == 4 && !memcmp("meta", &buf[ini], 4)) {
+	      /* now look for the attributes http-equiv and content */
+	      scan_state = tag_attrs;
+	      meta_ini = i;
+	    }
+	  } else if (c == '>') {
+	    scan_state = normal;
+	  }  
+	  if ((IS_SPACE(c) || c == '>')
+	      && i - ini == 6 && !memcmp("script", &buf[ini], 6)) {
+	    /* do nothing until </script> */
+	      scan_state = script;
+	  }
+	  break;
+	case tag_attrs:
+	  if (c == '>') {
+	    scan_state = normal;
+	    if (meta_ini) {
+	      int j;
+	      char* attr;
+	      int attr_len;
+	      
+	      attr = memmem(&buf[meta_ini], i - meta_ini, "http-equiv", 9);
+	      if (attr) {
+		attr_len = len - (attr - buf);
+		for (j = 0; j < attr_len && attr[j] != '\''
+		       && attr[j] != '\"'; j++);
+		if (j < attr_len) {
+		  ini = j + 1;
+		  for (j = ini; j < attr_len && attr[j] != attr[ini - 1]; j++);
+		  if (j < i && j == ini + 12) {
+		    if (!memcmp("content-type", &attr[ini], 12)) {
+		      found = 1;
+		    }
+		  }
+		}
+	      }
+
+	      if (found) {
+		int content_found = 0;
+		attr = &buf[meta_ini];
+		attr_len = len - meta_ini;
+		while (attr && !content_found) {
+		  attr = memmem(attr, attr_len, "content", 7);
+		  if (attr) {
+		    attr_len = len - (attr - buf);
+		    if (attr_len > 7 && (IS_SPACE(attr[7]) || attr[7] == '=')) {
+		      content_found = 1;
+		    } else {
+		      attr += 7;
+		    }
+		  }
+		}
+		if (content_found) {
+		  for (j = 0; j < attr_len && attr[j] != '\''
+			 && attr[j] != '\"'; j++);
+		  if (j < attr_len) {
+		    ini = j + 1;
+		    for (j = ini; j < attr_len && attr[j] != attr[ini - 1];
+			 j++);
+		    if (j < attr_len) {
+		      char *charset_decl;
+		      attr[j] = 0;
+		      charset_decl = strstr(&attr[ini], "charset=");
+		      if (charset_decl) {
+			charset_decl += 8;
+			charset = charset_lookup_alias(charset_decl);
+			if (!charset) {
+			  WARNING("Unknown charset in meta/@ContentType");
+			}
+		      }
+		    }
+		  }
+		}
+	      }
+
+	      meta_ini = 0;
+	    }
+	  } else if (c == '\'') {
+	    scan_state = att_val_simple;
+	  } else if (c == '\"') {
+	    scan_state = att_val_double;
+	  }
+	  break;
+	case att_val_double:
+	  if (c == '\"') {
+	    scan_state = tag_attrs;
+	  }
+	  break;
+	case att_val_simple:
+	  if (c == '\'') {
+	    scan_state = tag_attrs;
+	  }
+	  break;
+	case script:
+	  if (c == '<' && i + 6 < len && !memcmp("script", &buf[ini], 6)) {
+	    scan_state = script_end;
+	    i += 6;
+	  }	  
+	  break;
+	case script_end:
+	  if (c == '>') {
+	    scan_state = normal;
+	  }
+	  break;
+	case comment:
+	  if (c == '-' && i + 2 < len && buf[i + 1] == '-'
+	      && buf[i + 2] == '>') {
+	    scan_state = normal;
+	    i += 2;
+	  }	  
+	  break;
+	}
+      }
+    }
+
+    /* By default, ISO-8859-1 */
+    if (!charset) {
+      if (!defaults || defaults == CHARSET_UTF_8) {
+	charset = CHARSET_ISO_8859_1;
+      } else {
+	charset = defaults;
+      }
+    }
   }
 
   return charset;
-}
+  }
 
 /*
  * Compare charset aliases. Characters "-" and "_" are computed as
