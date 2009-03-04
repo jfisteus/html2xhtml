@@ -427,9 +427,19 @@ charset_t* guess_charset()
     switch (guess) {
     case be16:
       charset = read_charset_decl(1, 2, MODE_ASCII, CHARSET_UTF_16BE);
+      if (charset == CHARSET_UTF_16) {
+	/* bad declaration in the HTML file; fix it */
+	INFORM("Input charset overridden to utf-16be");
+	charset = CHARSET_UTF_16BE;
+      }
       break;
     case le16:
       charset = read_charset_decl(0, 2, MODE_ASCII, CHARSET_UTF_16LE);
+      if (charset == CHARSET_UTF_16) {
+	/* bad declaration in the HTML file; fix it */
+	INFORM("Input charset overridden to utf-16le");
+	charset = CHARSET_UTF_16LE;
+      }
       break;
     case be32:
       charset = read_charset_decl(3, 4, MODE_ASCII, CHARSET_UCS_4);
