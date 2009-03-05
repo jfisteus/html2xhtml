@@ -4,7 +4,11 @@ REFDIR=reference
 ODIR=tmp-test
 H2X=../src/html2xhtml
 FAIL_FILE=fails
+MISSING_FILE=missings
 FAILS=
+MISSING=
+
+exit_code=0
 
 keys=`$H2X -L`
 
@@ -15,38 +19,53 @@ mkdir $ODIR
 
 for file in `find -name "*.html"`
 do
-    for key in $keys
-    do
-	grep $REFDIR/${file}-${key}.fail -e $key >/dev/null 2>/dev/null
-	success_expected=$?
-	if ! $H2X -t $key $file -o $ODIR/${file}-${key}.out 2>/dev/null
-	then
-	    if [ ! $success_expected -eq 0 ]
+    if ls $REFDIR/${file}-*.ref $REFDIR/${file}-*.fail >&/dev/null
+    then
+	for key in $keys
+	do
+	    grep $REFDIR/${file}-${key}.fail -e $key >/dev/null 2>/dev/null
+	    success_expected=$?
+	    if ! $H2X -t $key $file -o $ODIR/${file}-${key}.out 2>/dev/null
 	    then
-		echo "FAIL: ${file} / ${key} - html2xhtml failed to write output"
-		FAILS="$FAILS ${file}-${key}"
+		if [ ! $success_expected -eq 0 ]
+		then
+		    echo "FAIL: ${file} / ${key} - html2xhtml failed to write output"
+		    FAILS="$FAILS ${file}-${key}"
+		else
+		    echo "-OK-: ${file} / ${key}"
+		fi
 	    else
-		echo "-OK-: ${file} / ${key}"
+		if [ $success_expected -eq 0 ]
+		then
+		    echo "FAIL: ${file} / ${key} - html2xhtml expected to fail"
+		    FAILS="$FAILS ${file}-${key}"
+		else
+		    if diff $REFDIR/${file}-${key}.ref $ODIR/${file}-${key}.out >/dev/null
+		    then
+			echo "-OK-: ${file} / ${key}"
+		    else
+			echo "FAIL: ${file} / ${key} - different output"
+			FAILS="$FAILS ${file}-${key}"
+		    fi
+		fi
 	    fi
-	else
-	   if [ $success_expected -eq 0 ]
-	   then
-	       echo "FAIL: ${file} / ${key} - html2xhtml expected to fail"
-	       FAILS="$FAILS ${file}-${key}"
-	   else
-	       if diff $REFDIR/${file}-${key}.ref $ODIR/${file}-${key}.out >/dev/null
-	       then
-		   echo "-OK-: ${file} / ${key}"
-	       else
-		   echo "FAIL: ${file} / ${key} - different output"
-		   FAILS="$FAILS ${file}-${key}"
-	       fi
-	   fi
-	fi
-    done
+	done
+    else
+	echo "REFERENCE MISSING ${file}"
+	MISSING="$MISSING ${file}"
+    fi
 done
 
-rm -f $FAIL_FILE
+if [ ! "$MISSING" == "" ]
+then
+    echo "Some references missing:"
+    for fail in $MISSING
+    do
+	echo "$fail"
+	echo "$fail" >>$MISSING_FILE
+    done
+    exit_code=2
+fi
 
 if [ ! "$FAILS" == "" ]
 then
@@ -56,5 +75,7 @@ then
 	echo "$fail"
 	echo "$fail" >>$FAIL_FILE
     done
-    exit 1
+    exit_code=1
 fi
+
+exit $exit_code
