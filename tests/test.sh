@@ -19,7 +19,7 @@ mkdir $ODIR
 
 for file in `find -name "*.html"`
 do
-    if ls $REFDIR/${file}-*.ref $REFDIR/${file}-*.fail >&/dev/null
+    if ls $REFDIR/${file}-*.* >&/dev/null
     then
 	for key in $keys
 	do
