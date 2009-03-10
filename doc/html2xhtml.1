@@ -43,14 +43,6 @@ the HTML input is read from standard input.
 Output XHTML file. The file is overwritten if it
 exists. If not provided, the output is written to
 standard output.
-.IP \fB-c\ \fIinput-encoding\fR 20
-Encoding of the input HTML file. Overrides automatic
-input encoding detection (please, read the note about
-input encodings bellow).
-.IP \fB-d\ \fIdefault-input-encoding\fR 20
-Default input encoding, if it is not declared
-in the input file. By default, ISO-8859-1
-(please, read the note about input encodings bellow).
 .IP \fB-e\fR 20
 Instructs the program to propagate input chunks to 
 the output even if it is unable to adapt them to
@@ -88,6 +80,15 @@ XHTML Mobile Profile
  o \fIprint-1.0\fR
 XHTML Print 1.0
 .br 
+.IP \fB--ics\ \fIinput_charset\fR 20
+Character set of the input document. This option overrides the
+default input character set detection mechanism.
+.IP \fB--ocs\ \fIoutput_charset\fR 20
+Character set for the output XHTML document. If this option is not
+present, the character set of the input is used as default.
+.IP \fB--lcs\fR 20
+Dump the list of available character set aliases and exit html2xhtml.
+No conversion is performed when this option is present.
 .IP \fB-l\ \fIline_length\fR 20
 Number of characters per line. The default value is 80.
 It must be greater or equal to 40, otherwise the 
@@ -124,20 +125,31 @@ with the empty element tag, even if it si not declared
 as empty in the DTD. This option can cause problems
 when the XHTML document is opened by browsers in
 HTML (tag soup) mode.
+.IP \fB--help\fR 20
+Show a brief help message and exit.
+.IP \fB--version\fR 20
+Show the version number and exit.
 
-.SH NOTE ON CHARACTER ENCODINGS
+.SH NOTE ON CHARACTER SETS
 
-Html2xhtml does not perform any character encoding conversion.
-The character encoding of the input is propagated to the
-output. The options that set character encodings only declare
-them in the output XHTML file.
+Since version 1.1.2, html2xhtml is able to parse and write
+HTML and XHTML documents using the most popular character sets / encodings.
+It is also able to read the input document using a given
+character set and generate an output that uses a different
+character set. The iconv implementation in the GNU C library
+is used with that purpose.
 .PP
-This program only works for input encodings that code every ASCI
-character (0-127) only with one byte. This includes, for example,
-ISO-8859-1, ISO-8859-15, UTF-8. However, the program does not work
-for encoding UTF-16. For converting UTF-16 files, please convert it 
-first to UTF-8. UTF-8 is not guaranteed to work always properly, and
-more testing is required.
+Any IANA-registered character set that is supported by the
+iconv library may be used. When naming a character set, any
+IANA--approved alias for it may be used. The full list of
+aliases recognised by html2xhtml can be obtained with the
+\fB--lcs\fR command-line option.
+.PP
+If the character set of the input document is not specified,
+html2xhtml tries to guess it automatically.
+If the character set of the output document is not specified,
+html2xhtml writes the output using the same character set
+as the input document.
 .SH ACKNOWLEDGMENTS
 .na 
 .nf
@@ -152,7 +164,7 @@ advised by:
 Rebeca Diaz Redondo
 Ana Fernandez Vilas
 .PP
-Copyright 2000-2007 by Jesus Arias Fisteus, Rebeca Diaz Redondo, Ana
+Copyright 2000-2009 by Jesus Arias Fisteus, Rebeca Diaz Redondo, Ana
 Fernandez Vilas.
 
 

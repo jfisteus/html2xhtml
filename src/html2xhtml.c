@@ -187,19 +187,19 @@ static void process_parameters(int argc, char **argv)
     } else if (!strcmp(argv[i], "-L")) {
       print_doctype_keys();
       exit(0);
-    } else if (!strcmp(argv[i], "-ie") && ((i+1) < argc)) {
+    } else if (!strcmp(argv[i], "--ics") && ((i+1) < argc)) {
       param_charset_in = charset_lookup_alias(argv[++i]);
       if (!param_charset_in) {
 	EPRINTF1("Trying to set input character set: %s\n", argv[i]);
 	EXIT("Unsupported character set");
       }
-    } else if (!strcmp(argv[i], "-oe") && ((i+1) < argc)) {
+    } else if (!strcmp(argv[i], "--ocs") && ((i+1) < argc)) {
       param_charset_out = charset_lookup_alias(argv[++i]);
       if (!param_charset_out) {
 	EPRINTF1("Trying to set output character set: %s\n", argv[i]);
 	EXIT("Unsupported character set");
       }
-    } else if (!strcmp(argv[i], "-le")) {
+    } else if (!strcmp(argv[i], "--lcs")) {
       charset_dump_aliases(stdout);
       exit(0);
     } else {
@@ -243,6 +243,7 @@ static void help(void)
   fprintf(stderr, "html2xhtml [<input_html_file>] [-c <input_encoding>]\n"); 
   fprintf(stderr, "           [-d <input_encoding>] [-t <output_doctype_key>] [-e]\n");
   fprintf(stderr, "           [-o <output_file>]\n");
+  fprintf(stderr, "           [--ics <input_charset>] [--ocs <output_charset>]\n");
   fprintf(stderr, "           [-l <line_length>] [-b <tab_length>]\n");
   fprintf(stderr, "           [--preserve-space-comments] [--no-protect-cdata]\n");
   fprintf(stderr, "           [--compact-block-elements] [--empty_elm_tags_always]\n");
