@@ -117,12 +117,18 @@ inline element (or character data) and the end tag
 of the block element. By default, if this option is
 not set, a new line character and indentation is
 written between them.
-.IP \fB--empty_elm_tags_always\fR 20
+.IP \fB--compact-empty-elm-tags\fR 20
+Do not write a whitespace before the slash for empty element
+tags (i.e. write "<br/>" instead of the default "<br />").
+Note that although both notations are correct in XML,
+the XHTML 1.0 standard recommends the latter to improve
+compatibility with old browsers.
+.IP \fB--empty-elm-tags-always\fR 20
 By default, empty element tags are written only for
 elements declared as empty in the DTD. This option
 makes any element not having content to be written
-with the empty element tag, even if it si not declared
-as empty in the DTD. This option can cause problems
+with the empty element tag, even if it is not declared
+as empty in the DTD. This option may cause problems
 when the XHTML document is opened by browsers in
 HTML (tag soup) mode.
 .IP \fB--help\fR 20

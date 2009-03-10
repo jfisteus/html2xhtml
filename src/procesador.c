@@ -2410,7 +2410,11 @@ static int write_start_tag(tree_node_t* nodo)
 
   if ((param_empty_tags && !nodo->cont.elemento.hijo)
       || elm_list[ELM_ID(nodo)].contenttype[doctype] == CONTTYPE_EMPTY) {
-    num += cprintf("/");
+    if (!param_compact_empty_elm_tags) {
+      num += cprintf(" /");
+    } else {
+      num += cprintf("/");
+    }
     chars_in_line++;
   }
   

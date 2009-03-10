@@ -44,6 +44,7 @@ extern int   param_pre_comments; /* preserve spacing inside comments */
 extern int   param_protect_cdata;
 extern int   param_cgi_html_output;
 extern int   param_compact_block_elms;
+extern int   param_compact_empty_elm_tags;
 extern int   param_empty_tags;
 
 void params_set_defaults(void);

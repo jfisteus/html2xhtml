@@ -169,7 +169,9 @@ static void process_parameters(int argc, char **argv)
       param_protect_cdata = 0;
     } else if (!strcmp(argv[i], "--compact-block-elements")) {
       param_compact_block_elms = 1;
-    } else if (!strcmp(argv[i], "--empty_elm_tags_always")) {
+    } else if (!strcmp(argv[i], "--compact-empty-elem-tags")) {
+      param_compact_empty_elm_tags = 1;
+    } else if (!strcmp(argv[i], "--empty-elm-tags-always")) {
       param_empty_tags = 1;
     } else if (!fich && argv[i][0]!='-') {
       fich = 1;
@@ -246,7 +248,8 @@ static void help(void)
   fprintf(stderr, "           [--ics <input_charset>] [--ocs <output_charset>]\n");
   fprintf(stderr, "           [-l <line_length>] [-b <tab_length>]\n");
   fprintf(stderr, "           [--preserve-space-comments] [--no-protect-cdata]\n");
-  fprintf(stderr, "           [--compact-block-elements] [--empty_elm_tags_always]\n");
+  fprintf(stderr, "           [--compact-block-elements] [--empty-elm-tags-always]\n");
+  fprintf(stderr, "           [--compact-empty-elm-tags]\n");
   fprintf(stderr, "\n");
   print_doctypes();
 }

@@ -33,6 +33,7 @@ int   param_pre_comments; /* preserve spacing inside comments */
 int   param_protect_cdata;
 int   param_cgi_html_output;
 int   param_compact_block_elms;
+int   param_compact_empty_elm_tags;
 int   param_empty_tags;
 
 void params_set_defaults()
@@ -49,6 +50,7 @@ void params_set_defaults()
   param_pre_comments = 0;
   param_protect_cdata = 1;
   param_compact_block_elms = 0;
+  param_compact_empty_elm_tags = 0;
   param_cgi_html_output = 0;
   param_empty_tags = 0;
 }
