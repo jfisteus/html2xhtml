@@ -146,12 +146,8 @@ static void process_parameters(int argc, char **argv)
   for (i=1, fich=0; i<argc; i++) {
     if (!strcmp(argv[i], "-e")) {
       param_strict = 0;
-    } else if (!strcmp(argv[i], "-c") && ((i+1) < argc)) {
-      param_charset = argv[++i];
     } else if (!strcmp(argv[i], "-t") && ((i+1) < argc)) {
       param_doctype = dtd_get_dtd_index(argv[++i]);
-    } else if (!strcmp(argv[i], "-d") && ((i+1) < argc)) {
-      param_charset_default = argv[++i];
     } else if (!strcmp(argv[i], "-o") && ((i+1) < argc)) {
       /* open the output file */
       param_outputf = fopen(argv[++i], "w");

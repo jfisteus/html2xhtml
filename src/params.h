@@ -36,8 +36,6 @@ extern FILE *param_outputf;
 
 extern charset_t *param_charset_in;
 extern charset_t *param_charset_out;
-extern char *param_charset;
-extern char *param_charset_default;
 extern int   param_strict;
 extern int   param_doctype;
 extern int   param_chars_per_line;

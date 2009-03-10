@@ -25,8 +25,6 @@ FILE *param_outputf;
 
 charset_t *param_charset_in;
 charset_t *param_charset_out;
-char *param_charset;
-char *param_charset_default;
 int   param_strict;
 int   param_doctype;
 int   param_chars_per_line;
@@ -44,8 +42,6 @@ void params_set_defaults()
 
   param_charset_in = NULL;
   param_charset_out = NULL;
-  param_charset = NULL;
-  param_charset_default = "ISO-8859-1";
   param_strict = 1;
   param_doctype = -1;
   param_chars_per_line = 80;
