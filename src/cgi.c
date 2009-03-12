@@ -31,6 +31,7 @@
 #include "dtd_util.h"
 #include "procesador.h"
 #include "mensajes.h"
+#include "charset.h"
 
 #ifdef WITH_CGI
 
@@ -132,7 +133,8 @@ void cgi_write_error_bad_req()
 
 void cgi_write_output()
 {
-  fprintf(stdout, "Content-Type:%s; charset=iso-8859-1\n\n", "text/html");
+  fprintf(stdout, "Content-Type:text/html; charset=%s\n\n",
+	  param_charset_out->preferred_name);
 
   if (param_cgi_html_output) 
     cgi_write_header();
@@ -172,6 +174,8 @@ static int process_params_multipart(const char **input, size_t *input_len)
   const char *param_name;
   int param_name_len;
   int param_value_len;
+
+  param_charset_out = CHARSET_UTF_8;
 
   while (!html_found) {
     /* skip the boundary */
@@ -352,8 +356,7 @@ static int mult_skip_double_eol(const char **input, size_t *input_len)
 static void cgi_write_header()
 {
   fprintf(stdout, "<?xml version=\"1.0\"");
-  if (document->encoding[0]) 
-    fprintf(stdout," encoding=\"%s\"", document->encoding);
+  fprintf(stdout," encoding=\"%s\"", param_charset_out->preferred_name);
   fprintf(stdout,"?>\n\n");
 
   fprintf(stdout,
@@ -402,7 +405,7 @@ static void cgi_write_footer()
 "</pre>\n\
     <p class=\"boxed\">\n\
     <img src=\"/jaf/html2xhtml/h2x.png\" alt=\"html2xhtml logo\" />\n\
-      <i>html2xhtml %s</i>, copyright 2001-2008 <a href=\
+      <i>html2xhtml %s</i>, copyright 2001-2009 <a href=\
 \"http://www.it.uc3m.es/jaf/index.html\">Jesús Arias Fisteus</a>; \
 2001 Rebeca Díaz Redondo, Ana Fernández Vilas\n\
     </p>\n", VERSION);

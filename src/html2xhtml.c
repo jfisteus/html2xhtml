@@ -87,7 +87,7 @@ int main(int argc,char **argv)
   if (cgi_status > 0)
     cgi_process_parameters(&preload_buffer, &preload_read);
 
-  charset_auto_detect();
+  charset_auto_detect(preload_read);
   charset_preload_to_input(param_charset_in, preload_read);
   if (cgi_status == CGI_ST_MULTIPART)
     charset_cgi_boundary(boundary, boundary_len);
@@ -95,7 +95,7 @@ int main(int argc,char **argv)
   /* process command line arguments */
   process_parameters(argc, argv); 
   charset_init_preload(param_inputf, &preload_read);
-  charset_auto_detect();
+  charset_auto_detect(preload_read);
   charset_preload_to_input(param_charset_in, preload_read);
 #endif
 

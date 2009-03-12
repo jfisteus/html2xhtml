@@ -96,8 +96,10 @@ size_t charset_write(char *buf, size_t num);
  * Try to detect the input character encoding, if not set
  * by the user. Sets the output encoding to the input encoding,
  * unless specified an output encoding by the user.
+ * Assume that only the last bytes_avail bytes of the buffer contain
+ * the input HTML file (useful if in multipart/form-data CGI mode).
  */
-void charset_auto_detect();
+void charset_auto_detect(size_t bytes_avail);
 
 /*
  * Return the charset_t structure associated to the

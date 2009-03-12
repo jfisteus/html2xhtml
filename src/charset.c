@@ -49,7 +49,7 @@ static void read_block(void);
 static void read_interactive(void);
 static void open_iconv(const char *to_charset, const char *from_charset);
 static int compare_aliases(const char* alias1, const char* alias2);
-static charset_t* guess_charset(void);
+static charset_t* guess_charset(size_t begin_pos);
 
 #define MODE_ASCII 0
 #define MODE_EBCDIC 1
@@ -290,14 +290,14 @@ size_t charset_write(char *buf, size_t num)
   return num - n;
 }
 
-void charset_auto_detect() {
+void charset_auto_detect(size_t bytes_avail) {
   if (state != preload) {
     WARNING("Charset must be in preview mode in order to autodetect encoding");
     return;
   }
 
   if (!param_charset_in) {
-    param_charset_in = guess_charset();
+    param_charset_in = guess_charset(avail - bytes_avail);
   }
 
   if (!param_charset_in) {
@@ -359,15 +359,20 @@ void charset_dump_aliases(FILE* out)
 /*
  * Guess input charset based on http://www.w3.org/TR/REC-xml/#sec-guessing
  */
-charset_t* guess_charset()
+charset_t* guess_charset(size_t begin_pos)
 {
   enum {none, be16, le16, be32, le32, u2143, u3412,
 	ebcdic, ascii_comp} guess = none;
   charset_t* charset = NULL;
-  unsigned char* buf = (unsigned char*) buffer;
+  unsigned char* buf = (unsigned char*) &buffer[begin_pos];
 
   if (state != preload) {
     EXIT("Charset must be in preview mode in order to guess encoding");
+    return NULL;
+  }
+
+  if (avail - begin_pos < 4) {
+    EXIT("Too small preload buffer");
     return NULL;
   }
 
@@ -442,22 +447,22 @@ charset_t* guess_charset()
       }
       break;
     case be32:
-      charset = read_charset_decl(3, 4, MODE_ASCII, CHARSET_UCS_4);
+      charset = read_charset_decl(begin_pos + 3, 4, MODE_ASCII, CHARSET_UCS_4);
       break;
     case le32:
-      charset = read_charset_decl(0, 4, MODE_ASCII, CHARSET_UCS_4);
+      charset = read_charset_decl(begin_pos, 4, MODE_ASCII, CHARSET_UCS_4);
       break;
     case u2143:
-      charset = read_charset_decl(2, 4, MODE_ASCII, CHARSET_UCS_4);
+      charset = read_charset_decl(begin_pos + 2, 4, MODE_ASCII, CHARSET_UCS_4);
       break;
     case u3412:
-      charset = read_charset_decl(1, 4, MODE_ASCII, CHARSET_UCS_4);
+      charset = read_charset_decl(begin_pos + 1, 4, MODE_ASCII, CHARSET_UCS_4);
       break;
     case ebcdic:
-      charset = read_charset_decl(0, 1, MODE_EBCDIC, NULL);
+      charset = read_charset_decl(begin_pos, 1, MODE_EBCDIC, NULL);
       break;
     case ascii_comp:
-      charset = read_charset_decl(0, 1, MODE_ASCII, CHARSET_UTF_8);
+      charset = read_charset_decl(begin_pos, 1, MODE_ASCII, CHARSET_UTF_8);
       break;
     case none:
       /* It should never happen */
@@ -495,8 +500,8 @@ charset_t* read_charset_decl(int ini, int step, int mode, charset_t* defaults)
     return NULL;
   }
 
-  if (state != preload || avail < 16) {
-    return NULL;
+  if (state != preload || (avail - ini) < 16 * step) {
+    return defaults;
   }
 
   /*
