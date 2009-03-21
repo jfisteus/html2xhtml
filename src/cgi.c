@@ -50,6 +50,7 @@ static int set_param(const char *name, size_t name_len,
 		     const char *value, size_t value_len);
 static void cgi_write_header(void);
 static void cgi_write_footer();
+static charset_t* lookup_charset(const char* alias, size_t alias_len);
 
 #ifdef CGI_DEBUG
 static void cgi_debug_write_input(void);
@@ -81,7 +82,7 @@ int cgi_check_request()
       boundary = tree_strdup(&type[30]);
       boundary_len = strlen(boundary);
       cgi_status = CGI_ST_MULTIPART;
-    } else if (!strncmp(type,"text/html", 9))
+    } else if (!strncmp(type, MIME_TYPE_HTML, MIME_TYPE_HTML_LEN))
       cgi_status = CGI_ST_DIRECT;
     else
       cgi_status = CGI_ERR_OTHER;
@@ -111,7 +112,7 @@ int cgi_process_parameters(const char **input, size_t *input_len)
 
 void cgi_write_error_bad_req()
 {
-  fprintf(stdout, "Content-Type:%s\n", "text/html");
+  fprintf(stdout, "Content-Type:%s\n", MIME_TYPE_HTML);
   
   /* invalid request */
   if (cgi_status == CGI_ERR_METHOD) {
@@ -133,11 +134,14 @@ void cgi_write_error_bad_req()
 
 void cgi_write_output()
 {
-  fprintf(stdout, "Content-Type:text/html; charset=%s\n\n",
-	  param_charset_out->preferred_name);
-
-  if (param_cgi_html_output) 
+  if (param_cgi_html_output) {
+    fprintf(stdout, "Content-Type:%s; charset=%s\n\n", MIME_TYPE_HTML,
+	    param_charset_out->preferred_name);
     cgi_write_header();
+  } else {
+    fprintf(stdout, "Content-Type:%s; charset=%s\n\n", MIME_TYPE_XHTML,
+	    param_charset_out->preferred_name);
+  }
 
   /* write the XHTML output */
   if (writeOutput()) 
@@ -149,7 +153,7 @@ void cgi_write_output()
 
 void cgi_write_error(char *msg)
 {  
-  fprintf(stdout, "Content-Type:%s\n","text/html");
+  fprintf(stdout, "Content-Type:%s\n", MIME_TYPE_HTML);
   fprintf(stdout, "Status:400 Bad request\n\n");
   fprintf(stdout, "<html><head><title>html2xhtml-Error</title></head><body>");
   fprintf(stdout, "<h1>400 Bad Request</h1>");
@@ -174,8 +178,6 @@ static int process_params_multipart(const char **input, size_t *input_len)
   const char *param_name;
   int param_name_len;
   int param_value_len;
-
-  param_charset_out = CHARSET_UTF_8;
 
   while (!html_found) {
     /* skip the boundary */
@@ -204,6 +206,9 @@ static int process_params_multipart(const char **input, size_t *input_len)
       *input_len -= param_value_len + 2;
     }
   }
+
+  if (param_cgi_html_output)
+    param_charset_out = CHARSET_UTF_8;
 
   return CGI_OK;
 }
@@ -266,7 +271,7 @@ static int set_param(const char *name, size_t name_len,
       }
     }
   } else if (name_len == 9) {
-    /* param "tablen" */
+    /* param "tablength" */
     if (!strncmp(name, "tablength", 9)) {
       char num[value_len + 1];
       memcpy(num, value, value_len);
@@ -289,6 +294,48 @@ static int set_param(const char *name, size_t name_len,
 	return 1;
       }
     }
+  } else if (name_len == 13) {
+    if (!strncmp(name, "input-charset", 13)) {
+      param_charset_in = lookup_charset(value, value_len);
+    }
+  } else if (name_len == 14) {
+    if (!strncmp(name, "output-charset", 14)) {
+      param_charset_out = lookup_charset(value, value_len);
+    }
+  } else if (name_len == 16) {
+    if (!strncmp(name, "no-protect-cdata", 16)) {
+      if (value_len == 1 && value[0] == '1')
+	param_protect_cdata = 0;
+    }
+  } else if (name_len == 21) {
+    if (!strncmp(name, "empty-elm-tags-always", 21)) {
+      if (value_len == 1 && value[0] == '1')
+	param_empty_tags = 1;
+    }
+  } else if (name_len == 22) {
+    if (!strncmp(name, "compact-block-elements", 22)) {
+      if (value_len == 1 && value[0] == '1')
+	param_compact_block_elms = 1;
+    }
+  } else if (name_len == 23) {
+    if (!strncmp(name, "preserve-space-comments", 23)) {
+      if (value_len == 1 && value[0] == '1')
+	param_pre_comments = 1;
+    } else if (!strncmp(name, "compact-empty-elem-tags", 23)) {
+      if (value_len == 1 && value[0] == '1')
+	param_compact_empty_elm_tags = 1;
+    }
+  }
+}
+
+static charset_t* lookup_charset(const char* alias, size_t alias_len) {
+  char aliasz[64];
+  if (alias_len < 64) {
+    memcpy(aliasz, alias, alias_len);
+    aliasz[alias_len] = 0;
+    return charset_lookup_alias(aliasz);
+  } else {
+    return NULL;
   }
 }
 
