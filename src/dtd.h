@@ -19,12 +19,12 @@
 #include "dtd_types.h"
 #include "dtd_names.h"
 
-#define DTD_SNAPSHOT_DATE "2008-09-11 18:55:09+0200"
+#define DTD_SNAPSHOT_DATE "2009-03-26 00:12:44+0100"
 
 #define elm_data_num 97
 #define att_data_num 163
 #define ent_data_num 254
-#define elm_buffer_num 3027
+#define elm_buffer_num 3011
 #define att_buffer_num 1050
 
 /* variables declared in dtd.c */
@@ -92,6 +92,11 @@ extern char ent_list[][25];
 #define ELMID_RT 95
 #define ELMID_RTC 93
 #define ELMID_BDO 37
+#define ELMID_DIV 12
+#define ELMID_SPAN 36
+#define ELMID_DL 25
+#define ELMID_HR 29
+#define ELMID_CAPTION 80
 #define ATTID_XML_SPACE 32
 #define ATTID_HTTP_EQUIV_0 8
 #define ATTID_HTTP_EQUIV_1 151

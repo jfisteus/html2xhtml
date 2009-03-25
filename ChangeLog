@@ -1,3 +1,7 @@
+2009-03-26  Jesus Arias Fisteus <jaf@it.uc3m.es>
+
+	* html2xhtml Updated DTD data.
+
 2009-03-25  Jesus Arias Fisteus <jaf@it.uc3m.es>
 
 	* html2xhtml Redesigned CGI-handling code. Support to both
