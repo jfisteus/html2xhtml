@@ -43,7 +43,7 @@ extern int boundary_len;
 #define CGI_ERR_PARAMS -3
 #define CGI_ERR_OTHER -9
 
-#define MIME_TYPE_XHTML "application/xml+xhtml"
+#define MIME_TYPE_XHTML "application/xhtml+xml"
 #define MIME_TYPE_HTML  "text/html"
 #define MIME_TYPE_XHTML_LEN 21
 #define MIME_TYPE_HTML_LEN  9

@@ -13,6 +13,7 @@
 run_gdb=0
 encoding=multipart
 query_string=
+mime=text/html
 
 while [ $# -gt 1 ]
 do
@@ -20,6 +21,7 @@ do
 	"-d") run_gdb=1 ;;
 	"-t") encoding=direct ;;
         "-q") shift; query_string=$1 ;;
+        "-x") mime="application/xhtml+xml" ;;
 	*) echo "Error in parameters" >&2
            exit 1 ;;
     esac
@@ -66,7 +68,7 @@ then
 else
     export REQUEST_METHOD=POST
     export QUERY_STRING=$query_string
-    export CONTENT_TYPE="text/html"
+    export CONTENT_TYPE=$mime
     export CONTENT_LENGTH=9999
     cat $1 >$TMPFILE
 fi

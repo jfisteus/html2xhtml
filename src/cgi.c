@@ -76,13 +76,16 @@ int cgi_check_request()
 
     if (strcasecmp(method, "POST"))
       cgi_status = CGI_ERR_METHOD;
-    else if (length <= 0) {
+    else if (length <= 0)
       cgi_status = CGI_ERR_OTHER;
-    } else if (!strncmp(type, "multipart/form-data; boundary=", 30)) {
+    else if (!strncmp(type, "multipart/form-data; boundary=", 30)) {
       boundary = tree_strdup(&type[30]);
       boundary_len = strlen(boundary);
       cgi_status = CGI_ST_MULTIPART;
-    } else if (!strncmp(type, MIME_TYPE_HTML, MIME_TYPE_HTML_LEN))
+    } else if ((!strncmp(type, MIME_TYPE_HTML, MIME_TYPE_HTML_LEN)
+		&& !type[MIME_TYPE_HTML_LEN])
+	       || !strncmp(type, MIME_TYPE_XHTML, MIME_TYPE_XHTML_LEN)
+		&& !type[MIME_TYPE_XHTML_LEN])
       cgi_status = CGI_ST_DIRECT;
     else
       cgi_status = CGI_ERR_OTHER;
