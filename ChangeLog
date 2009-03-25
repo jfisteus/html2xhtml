@@ -1,10 +1,21 @@
-2008-08-07  Jesus Arias Fisteus <jaf@it.uc3m.es>
+2009-03-25  Jesus Arias Fisteus <jaf@it.uc3m.es>
 
-	* html2xhtml New CGI code
+	* html2xhtml Redesigned CGI-handling code. Support to both
+	multipart/form-data input and direct (text/html) input.
+
+2009-03-10  Jesus Arias Fisteus <jaf@it.uc3m.es>
+
+	* html2xhtml New --compact-empty-elem-tags option. Renamed
+	option --empty-elm-tags-always.
+	* html2xhtml Support for many input/output character sets using iconv.
+
+2009-03-03  Jesus Arias Fisteus <jaf@it.uc3m.es>
+
+	* html2xhtml Adapted the lexer to recent flex versions (2.5.35)
 
 2008-07-28  Jesus Arias Fisteus <jaf@it.uc3m.es>
 
-	* html2xhtml First version of the test system
+	* html2xhtml New test system, to help to detect regressions.
 
 2008-07-27  Jesus Arias Fisteus <jaf@it.uc3m.es>
 
