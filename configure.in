@@ -26,5 +26,5 @@ AC_FUNC_MALLOC
 AC_FUNC_REALLOC
 AC_CHECK_FUNCS([strcasecmp strstr])
 
-AC_CONFIG_FILES([Makefile src/Makefile doc/Makefile dtdcoder/Makefile charset_coder/Makefile])
+AC_CONFIG_FILES([Makefile src/Makefile doc/Makefile dtdcoder/Makefile charset_coder/Makefile tests/Makefile])
 AC_OUTPUT
