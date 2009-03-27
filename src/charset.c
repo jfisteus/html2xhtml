@@ -25,7 +25,9 @@
  * UTF-8, which is used internally by the parser and the converter.
  *
  */
-#define _GNU_SOURCE
+
+/* included first to define _GNU_SOURCE if necessary */
+#include "xchar.h"
 
 #include <stdlib.h>
 #include <stdio.h>

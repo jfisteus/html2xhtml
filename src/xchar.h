@@ -42,6 +42,8 @@
 #ifndef XCHAR_H
 #define XCHAR_H
 
+#include "../config.h"
+
 #include <stdlib.h>
 
 /* en principio, como estaba */
@@ -69,5 +71,9 @@ size_t xstrnlen(const xchar *str, int maxlen);
  */
 size_t xstrsize(const xchar *str);
 
+#ifndef HAVE_MEMMEM
+void *memmem (const void *__haystack, size_t __haystacklen,
+	      const void *__needle, size_t __needlelen);
+#endif
 
 #endif
