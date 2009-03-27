@@ -30,3 +30,4 @@ aclocal.m4
 src/html.c
 src/htmlgr.c
 src/htmlgr.h
+config.rpath
