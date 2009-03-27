@@ -841,11 +841,16 @@ static void open_iconv(const char *to_charset, const char *from_charset)
   cd = iconv_open(to_charset, from_charset);
   if (cd == (iconv_t) -1) {
     /* Something went wrong.  */
-    if (errno == EINVAL)
-      error(0, 0, "Error: conversion from '%s' to '%s' not available",
-	    from_charset, to_charset);
-    else
-      perror ("iconv_open");
+
+    /* error from error.h is not portable, and therefore should not be used 
+     * This is a temporary fix, until a replacement for error is provided
+     */
+/*     if (errno == EINVAL) */
+/*       error(0, 0, "Error: conversion from '%s' to '%s' not available", */
+/* 	    from_charset, to_charset); */
+/*     else */
+
+    perror ("iconv_open");
 
     if (fclose(file) != 0)
       perror ("fclose");
