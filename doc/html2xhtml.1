@@ -131,6 +131,10 @@ with the empty element tag, even if it is not declared
 as empty in the DTD. This option may cause problems
 when the XHTML document is opened by browsers in
 HTML (tag soup) mode.
+.IP \fB--dos-eol\fR 20
+Write the output XHTML file with DOS--style (CRLF) end of line,
+instead of the default UNIX--style end of line.
+Both end of line styles are allowed by the XML recommendation.
 .IP \fB--help\fR 20
 Show a brief help message and exit.
 .IP \fB--version\fR 20
@@ -156,6 +160,21 @@ html2xhtml tries to guess it automatically.
 If the character set of the output document is not specified,
 html2xhtml writes the output using the same character set
 as the input document.
+
+.SH NOTE ON END OF LINE CHARACTES
+
+By default, the UNIX-style one-byte end of line is used. It can
+be changed to DOS-style CRLF end of line with the
+\fB--dos-eol\fR command-line option.
+.PP
+However, when the program is compiled in the MinGW environment
+and the output is sent to standard output, the output is automatically
+converted by the environment to CRLF by default. Do not use the
+\fB--dos-eol\fR command-line option in that situation.
+When the output is sent to a file with the \fB-o\fR command-line
+option, the output is as expected (UNIX-style by default), and
+the \fB--dos-eol\fR option may be used.
+
 .SH ACKNOWLEDGMENTS
 .na 
 .nf

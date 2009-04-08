@@ -156,12 +156,15 @@ static char gt_escaped[]="&gt;";
 static char lt_normal[]="<";
 static char amp_normal[]="&";
 static char gt_normal[]=">";
+static char eol_unix[] = {0x0a, 0};
+static char eol_dos[] = {0x0a, 0x0d, 0};
 
 /* escaped or normal characters */
 static char* lt;
 static char* amp;
 static char* gt;
-static char eol[] = "\n";
+static char* eol;
+static size_t eol_len; /* initialized to strlen(eol) in writeOutput */
 
 static int escape_chars;
 
@@ -660,6 +663,12 @@ int writeOutput()
     lt= lt_escaped;
     amp= amp_escaped;
   }
+
+  if (!param_crlf_eol)
+    eol = eol_unix;
+  else
+    eol = eol_dos;
+  eol_len = strlen(eol);
 
   /* vuelca la salida */
   write_document(document);
@@ -2035,11 +2044,11 @@ static void write_document(document_t *doc)
 /*   if (document->encoding[0])  */
 /*     cprintf(" encoding=\"%s\"",document->encoding); */
   cprintf(" encoding=\"%s\"", param_charset_out->preferred_name);
-  cprintf("?%s\n\n", gt);
+  cprintf("?%s%s%s", gt, eol, eol);
 
   /* write <!DOCTYPE... */
-  cprintf("%s!DOCTYPE html\n   %s\n   \"%s\" %s\n", 
-	  lt, doctype_string[doctype], dtd_string[doctype], gt);
+  cprintf("%s!DOCTYPE html%s   %s%s   \"%s\" %s%s",
+	  lt, eol, doctype_string[doctype], eol, dtd_string[doctype], gt, eol);
   
   p = doc->inicio;
   indent = 0;
@@ -2497,12 +2506,12 @@ static int write_plain_data(xchar* text, int len)
       i++;
       chars_in_line++;
     } else if (text[i] == 0x0a) {
-      cputc('\n');
+      cwrite(eol, eol_len);
       num++;
       i++;
       chars_in_line = 0;
     } else if (text[i] == 0x0d) {
-      cputc('\n');
+      cwrite(eol, eol_len);
       num++;
       chars_in_line = 0;
       if (i + 1 < len && text[i + 1] == 0x0a) {

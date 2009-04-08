@@ -150,7 +150,7 @@ static void process_parameters(int argc, char **argv)
       param_doctype = dtd_get_dtd_index(argv[++i]);
     } else if (!strcmp(argv[i], "-o") && ((i+1) < argc)) {
       /* open the output file */
-      param_outputf = fopen(argv[++i], "w");
+      param_outputf = fopen(argv[++i], "wb");
       if (!param_outputf) {
 	perror("fopen");
 	EXIT("Could not open the output file for writing");
@@ -173,6 +173,8 @@ static void process_parameters(int argc, char **argv)
       param_compact_empty_elm_tags = 1;
     } else if (!strcmp(argv[i], "--empty-elm-tags-always")) {
       param_empty_tags = 1;
+    } else if (!strcmp(argv[i], "--dos-eol")) {
+      param_crlf_eol = 1;
     } else if (!fich && argv[i][0]!='-') {
       fich = 1;
       param_inputf = fopen(argv[i], "r");
@@ -249,7 +251,7 @@ static void help(void)
   fprintf(stderr, "           [-l <line_length>] [-b <tab_length>]\n");
   fprintf(stderr, "           [--preserve-space-comments] [--no-protect-cdata]\n");
   fprintf(stderr, "           [--compact-block-elements] [--empty-elm-tags-always]\n");
-  fprintf(stderr, "           [--compact-empty-elm-tags]\n");
+  fprintf(stderr, "           [--compact-empty-elm-tags] [--dos-eol]\n");
   fprintf(stderr, "\n");
   print_doctypes();
 }

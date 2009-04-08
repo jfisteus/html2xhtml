@@ -46,6 +46,7 @@ extern int   param_cgi_html_output;
 extern int   param_compact_block_elms;
 extern int   param_compact_empty_elm_tags;
 extern int   param_empty_tags;
+extern int   param_crlf_eol;
 
 void params_set_defaults(void);
 

@@ -273,6 +273,12 @@ static int set_param(const char *name, size_t name_len,
 	return 1;
       }
     }
+  } else if (name_len == 7) {
+    /* param "dos-eol" */
+    if (!strncmp(name, "dos-eol", 7)) {
+      if (value_len == 1 && value[0] == '1')
+	param_crlf_eol = 1;
+    }
   } else if (name_len == 9) {
     /* param "tablength" */
     if (!strncmp(name, "tablength", 9)) {
