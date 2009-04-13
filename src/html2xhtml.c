@@ -244,8 +244,7 @@ static void help(void)
 {
   print_version();
   fprintf(stderr, "Usage:\n");
-  fprintf(stderr, "html2xhtml [<input_html_file>] [-c <input_encoding>]\n"); 
-  fprintf(stderr, "           [-d <input_encoding>] [-t <output_doctype_key>] [-e]\n");
+  fprintf(stderr, "html2xhtml [<input_html_file>] [-t <output_doctype_key>] [-e]\n");
   fprintf(stderr, "           [-o <output_file>]\n");
   fprintf(stderr, "           [--ics <input_charset>] [--ocs <output_charset>]\n");
   fprintf(stderr, "           [-l <line_length>] [-b <tab_length>]\n");
