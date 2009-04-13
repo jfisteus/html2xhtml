@@ -1,0 +1,36 @@
+This directory contains HTML test files and the supposed output
+html2xhtml should produce for them (compressed in
+reference.tar.gz). In order to run these tests, type:
+
+$ make test
+
+or
+
+$ ./test.sh
+
+Each HTML file is processed once for each document type supported y
+html2xhtml.
+
+The script dumps the list of correct and failing tests. For tests that
+fail, the script test_diff.sh shows the differences between the
+reference file and the actual output of the program for every document
+type. For example:
+
+$ ./test_diff.sh test-utf8-count-1.html
+
+After running the tests, the outputs of html2xhtml are in the
+"tmp-test" directory and the references are in the "reference"
+directory.
+
+Finally, the directory can be cleaned up with:
+
+$ make clean
+
+or
+
+$ ./test_clean.sh
+
+NOTE: Tests that produce the output in UTF-16 may not currently work
+properly, because two byte orderings are possible, but the reference
+files use a specific byte ordering. The test system will be improved
+to allow byte-order independent comparison.

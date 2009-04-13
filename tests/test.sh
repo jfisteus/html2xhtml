@@ -2,7 +2,8 @@
 
 REFDIR=reference
 ODIR=tmp-test
-H2X=../src/html2xhtml
+H2X_DIR=../src
+H2X=$H2X_DIR/html2xhtml
 FAIL_FILE=fails
 MISSING_FILE=missings
 FAILS=
@@ -12,9 +13,9 @@ exit_code=0
 
 keys=`$H2X -L`
 
+make -C $H2X_DIR
 ./test_clean.sh
 tar xzf $REFDIR.tar.gz
-
 mkdir $ODIR
 
 for file in `find -name "*.html"`

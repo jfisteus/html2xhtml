@@ -1,4 +1,4 @@
-EXTRA_DIST = *.sh *.html reference.tar.gz
+EXTRA_DIST = *.sh *.html reference.tar.gz README
 
 CLEANFILES = tmp-test/* fails reference/*
 
