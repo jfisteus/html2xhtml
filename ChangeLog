@@ -1,3 +1,13 @@
+2009-04-13  Jesus Arias Fisteus <jaf@it.uc3m.es>
+
+	* html2xhtml Released as 1.1.2-rc1
+
+2009-04-08  Jesus Arias Fisteus <jaf@it.uc3m.es>
+
+	* html2xhtml End-of-line (UNIX-like or DOS-like) characters can be
+	chosen with a command-line parameter.
+	* html2xhtml Improved documentation.
+
 2009-03-26  Jesus Arias Fisteus <jaf@it.uc3m.es>
 
 	* html2xhtml Updated DTD data.
