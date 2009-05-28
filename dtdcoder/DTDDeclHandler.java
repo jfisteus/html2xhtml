@@ -500,7 +500,8 @@ class DTDDeclHandler implements DeclHandler {
         "big", "small", "sub", "sup", "input", "select", "textarea", "label",
         "button", "fieldset", "isindex", "center", "u", "s", "strike",
         "ins", "del", "area", "font", "basefont", "dir", "menu",
-        "ruby", "rb", "rbc", "rp", "rt", "rtc", "bdo"};
+        "ruby", "rb", "rbc", "rp", "rt", "rtc", "bdo", "div", "span",
+        "dl", "hr", "caption"};
 
     /** list of key attributes to be dumped in a macro in dtd.h */
     private String[] listKeyAtts = new String [] {
