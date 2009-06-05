@@ -228,8 +228,12 @@ void exit_on_error(char *msg)
   } else { 
 #endif
 
+#ifdef MSG_DEBUG
     fprintf(stderr,"!!%s(%d)[l%d]: %s\n",__FILE__,__LINE__,
 	    parser_num_linea,msg);
+#else
+    fprintf(stderr,"Error [line %d]: %s\n", parser_num_linea, msg);    
+#endif
     write_end_messages();
 
 #ifdef WITH_CGI
