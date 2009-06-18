@@ -207,6 +207,22 @@ int charset_read(char *outbuf, size_t num, int interactive)
 	    avail = 0;
 	  }
 	}
+	else if (errno == EILSEQ) {
+	  /* Invalid byte sequence found in the input */
+	  if (outbuf_max >= 3) {
+	    /* Dump the Unicode replacement character U+FFFD, which
+	     * is represented as 0xEF 0xBF 0xBD in UTF-8.
+	     */
+	    outbuf[0] = 0xef;
+	    outbuf[1] = 0xbf;
+	    outbuf[2] = 0xbd;
+	    outbuf += 3;
+	    outbuf_max -= 3;
+	    bufferpos++;
+	    avail--;
+	    convert_more = 1;
+	  }
+	}
 	else if (errno != E2BIG) {
 	  /* It is a real problem. Stop the conversion. */
 	  perror("inconv");
@@ -245,7 +261,7 @@ size_t charset_write(char *buf, size_t num)
   int wrote;
 
   DEBUG("in charset_write()");
-  EPRINTF1("    write %d bytes\n", num); 
+  EPRINTF1("    write %d bytes\n", num);
 
   if (state != output)
     return;
@@ -267,6 +283,20 @@ size_t charset_write(char *buf, size_t num)
 	/* The output buffer is full; no problem, just 
 	 * write and convert again
 	 */
+	convert_again = 1;
+      }
+      else if (errno == EILSEQ) {
+	/* UTF-8 character that cannot be represented in
+	 * the output charset. Skip the character and continue.
+	 */
+	bufpos++;
+	n--;
+	while (n > 0 && (char)(bufpos[0] & 0xC0) == (char)0x80) {
+	  bufpos++;
+	  n--;
+	}
+	WARNING("Skipped a character: cannot be converted to output charset\n\
+Use UTF-8 or UTF-16 output to avoid the problem.");
 	convert_again = 1;
       }
       else {

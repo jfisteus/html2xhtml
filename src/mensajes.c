@@ -42,6 +42,6 @@ void write_end_messages(void)
 	   num_warning, num_inform, tree_allocated_memory());
 
   if (num_warning) 
-    fprintf(stderr, "WARNING: the output file might not be valid XHTML\n");
+    fprintf(stderr, "WARNING: output file might not be valid XHTML or content might have been lost from the input\n");
 }
 
