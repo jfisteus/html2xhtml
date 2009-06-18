@@ -274,9 +274,11 @@ void saxStartElement(const xchar *fullname, xchar **atts)
 #endif
 #endif
 
-
-  if (state!=ST_PARSING) EXIT("bad state");
-
+  if (state!=ST_PARSING) {
+    if (state == ST_END)
+      INFORM("Element discarded after the html end tag");
+    return;
+  }
 
   /* se pasa a minúsculas */
   xtolower(elm_name,fullname,ELM_NAME_LEN);
@@ -387,7 +389,7 @@ void saxEndElement(const xchar *name)
 
   EPRINTF1("SAX.endElement(%s)\n",name);
 
-  if (state!=ST_PARSING) EXIT("bad state");
+  if (state!=ST_PARSING) return;
 
   xtolower(elm_name,name,ELM_NAME_LEN);
   if ((elm_ptr= dtd_elm_search(elm_name))<0) {
@@ -524,7 +526,7 @@ void saxComment(const xchar *value)
   EPRINTF1("SAX.comment(%s)\n",value);
 
   if (state!=ST_PARSING) {
-    INFORM("comentarios obivados");
+    INFORM("Comment discarded");
     return;
   }
   
@@ -551,7 +553,8 @@ void saxDoctype(const xchar *data)
   fprintf(stderr, "SAX.doctype(");
 #endif
 
-  if (state!=ST_PARSING) EXIT("bad state");
+  if (state!=ST_PARSING) return;
+
   if (!doctype_detected) {
     doctype_detected= 1;
     /* try to guess the document type */
@@ -589,8 +592,6 @@ void saxXmlProcessingInstruction(const xchar *fullname, xchar **atts)
   EPRINTF(")\n");
 #endif
 #endif
-
-  if (state != ST_PARSING) EXIT("XML processing instruction in bad state");
 
 /*   encoding_set = 0; */
 
@@ -1760,12 +1761,12 @@ static int err_html_struct(document_t *document, int elm_id)
 
   default:
     /* elemento de HEAD */
-    if (!head && dtd_can_be_child(elm_id,ELMID_HEAD,doctype)) {
+    if (!head && !body && dtd_can_be_child(elm_id,ELMID_HEAD,doctype)) {
       /* se abre <html><head> */
       /* establece un nodo para el elemento html */
       if (!html) html= err_aux_insert_elm(ELMID_HTML,NULL,0);	
       /* establece un nodo para el elemento head */
-      if (!head) head= err_aux_insert_elm(ELMID_HEAD,NULL,0);
+      head= err_aux_insert_elm(ELMID_HEAD,NULL,0);
       ok=1;
       DEBUG("err_html_struct()");
       EPRINTF("   [ERR] introducido <html> <head>\n");
