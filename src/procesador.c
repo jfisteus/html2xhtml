@@ -134,6 +134,7 @@ static int write_comment(tree_node_t *node);
 static int write_start_tag(tree_node_t* nodo);
 static int write_end_tag(tree_node_t* nodo);
 static int write_indent(int len, int new_line);
+static int write_indent_internal(int len, int new_line, int ignore_xml_space);
 static int write_plain_data(xchar* text, int len);
 static int cprintf_init(charset_t *to_charset, FILE *file);
 static int cprintf_close(void);
@@ -2411,10 +2412,8 @@ static int write_start_tag(tree_node_t* nodo)
       if (inline_on 
 	  && (3 + strlen(att_list[att->att_id].name) 
 	      + strlen(value) + chars_in_line) > param_chars_per_line) {
-	num += write_indent(indent, 1);
-      }
-      
-      if (chars_in_line != indent) {
+	num += write_indent_internal(indent, 1, 1);
+      } else {
 	cputc(' ');
 	num++;
 	chars_in_line++;
@@ -2598,9 +2597,14 @@ static int write_plain_data(xchar* text, int len)
 
 static int write_indent(int len, int new_line)
 {
+  write_indent_internal(len, new_line, 0);
+}
+
+static int write_indent_internal(int len, int new_line, int ignore_xml_space)
+{
   int i;
 
-  if (xml_space_on) {
+  if (xml_space_on && !ignore_xml_space) {
     return 0;
   }
 
