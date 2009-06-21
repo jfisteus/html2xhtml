@@ -97,6 +97,7 @@ extern char ent_list[][25];
 #define ELMID_DL 25
 #define ELMID_HR 29
 #define ELMID_CAPTION 80
+#define ELMID_BASE 3
 #define ATTID_XML_SPACE 32
 #define ATTID_HTTP_EQUIV_0 8
 #define ATTID_HTTP_EQUIV_1 151

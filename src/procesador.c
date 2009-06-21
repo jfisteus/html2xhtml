@@ -119,7 +119,7 @@ static int err_elm_desconocido(const xchar *nombre);
 
 /* auxiliares */
 static tree_node_t* err_aux_insert_elm(int elm_id, const xchar *content, int len);
-
+static int remove_duplicate_elm(int elmid, tree_node_t* parent, int hijos[]);
 static xchar* check_and_fix_att_value(xchar* value);
 
 /* new output functions */
@@ -1264,6 +1264,7 @@ static int err_content_invalid(tree_node_t* nodo, int hijos[], int num_hijos)
 {
   tree_node_t* actual_bak= actual_element;
   int corregido= 0;
+  int check_again = 0;
 
   DEBUG("[ERR] err_content_invalid()");
 
@@ -1307,20 +1308,45 @@ static int err_content_invalid(tree_node_t* nodo, int hijos[], int num_hijos)
 
   case ELMID_HEAD:
     {
-      /* HEAD: ¿falta TITLE? */
-      int *h= tree_malloc((num_hijos+1)*sizeof(int));
+      int num_title = 0;
+      int num_base = 0;
       int i;
-      h[0]= ELMID_TITLE;
-      for (i=0;i<num_hijos;i++) h[i+1]= hijos[i];
-      if (dtd_is_child_valid(ELM_PTR(nodo).contentspec[doctype],
-			     h,num_hijos+1)==1) {
-	tree_node_t *title;
-	title= new_tree_node(Node_element);
-	title->cont.elemento.elm_id= ELMID_TITLE;
-	link_node(title,nodo,LINK_MODE_FIRST_CHILD);
-	corregido= 1;
+      int* h;
+
+      /* Count the number of title and base elements */
+      for (i = 0; i < num_hijos; i++) {
+	if (hijos[i] == ELMID_TITLE)
+	  num_title++;
+	else if (hijos[i] == ELMID_BASE) {
+	  num_base++;
+	}
       }
-/*       free(h); */
+
+      if (num_title == 0) {
+	/* Element title missing */
+	h= tree_malloc((num_hijos + 1)*sizeof(int));
+	for (i = 0; i < num_hijos; i++)
+	  h[i + 1] = hijos[i];
+	h[0]= ELMID_TITLE;
+	if (dtd_is_child_valid(ELM_PTR(nodo).contentspec[doctype],
+			       h, num_hijos + 1) == 1) {
+	  tree_node_t* title;
+	  title = new_tree_node(Node_element);
+	  title->cont.elemento.elm_id = ELMID_TITLE;
+	  link_node(title, nodo, LINK_MODE_FIRST_CHILD);
+	  corregido = 1;
+	}
+      } else if (num_title > 1) {
+	/* More than one title, keep only the first one */
+	num_hijos -= remove_duplicate_elm(ELMID_TITLE, nodo, hijos);
+	check_again = 1;
+      }
+
+      if (num_base > 1) {
+	/* More than one base, keep only the first one */
+	num_hijos -= remove_duplicate_elm(ELMID_BASE, nodo, hijos);
+	check_again = 1;
+      }
       break;
     }
     
@@ -1383,6 +1409,10 @@ static int err_content_invalid(tree_node_t* nodo, int hijos[], int num_hijos)
     }
   }
 
+  if (!corregido && check_again) {
+    corregido = dtd_is_child_valid(ELM_PTR(nodo).contentspec[doctype],
+				   hijos, num_hijos);
+  }
 
   if (!corregido && param_strict) {
     /* se descarta el elemento */
@@ -1392,11 +1422,36 @@ static int err_content_invalid(tree_node_t* nodo, int hijos[], int num_hijos)
     corregido= 1;
   }
 
-
   return corregido;
 }
 
+static int remove_duplicate_elm(int elmid, tree_node_t* parent, int hijos[])
+{
+  tree_node_t* p;
+  tree_node_t* next;
+  int keep_node;
+  int removed;
+  int i;
 
+  removed = 0;
+  keep_node = 1;
+  for (i = 0, p = parent->cont.elemento.hijo; p; i++) {
+    next = p->sig;
+    if (p->tipo == Node_element && ELM_ID(p) == elmid) {
+      if (!keep_node) {
+	tree_unlink_node(p);
+	removed++;
+      } else {
+	keep_node = 0;
+      }
+    } else {
+      hijos[i - removed] = hijos[i];
+    }
+    p = next;
+  }
+
+  return removed;
+}
 
 
 
