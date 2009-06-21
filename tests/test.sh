@@ -5,7 +5,7 @@ ODIR=tmp-test
 H2X_DIR=../src
 H2X=$H2X_DIR/html2xhtml
 FAIL_FILE=fails
-MISSING_FILE=missings
+MISSING_FILE=missing
 FAILS=
 MISSING=
 

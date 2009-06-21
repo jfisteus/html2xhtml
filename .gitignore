@@ -6,6 +6,7 @@ configure
 tests/tmp-test
 tests/reference
 tests/fails
+tests/missing
 dtdquery
 html2xhtml
 http_listener
