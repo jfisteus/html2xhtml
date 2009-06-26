@@ -1533,6 +1533,23 @@ static int err_child_no_valid(tree_node_t* nodo)
       actual_element= p;
       insertado= 1;
       DEBUG("[ERR] insertado elemento p como padre");
+    } else if (ELM_ID(actual_element) == ELMID_HTML
+	       && (actual = tree_search_elm_child(actual_element, ELMID_BODY))) {
+      if (dtd_can_be_child(ELM_ID(nodo), ELMID_BODY, doctype)) {
+	/* Insert the new element inside the body element */
+	actual_element = actual;
+	insertado = 1;
+      } else if (dtd_can_be_child(ELM_ID(nodo), ELMID_P, doctype)) {
+	/* Insert the new element inside a new p element inside the
+	 * body element.
+	 */
+	tree_node_t *p;
+	p= new_tree_node(Node_element);
+	p->cont.elemento.elm_id= ELMID_P;
+	link_node(p, actual, LINK_MODE_CHILD);
+	actual_element = p;
+	insertado = 1;
+      }
     }
   }
 
