@@ -68,7 +68,7 @@ CDATASEC_END ((\/\/)?(\]\]\>))
 CHAR_REF   (((&#{DIGIT}+)\;)|(&#x({DIGIT}|[a-f]|[A-F])+)\;)
 ENTITY_REF (&{NAME}\;)
 REF        ({CHAR_REF}|{ENTITY_REF})
-ATT_VAL    (\"([^\>\"]|{REF})*\")|('([^\>']|{REF}])*')
+ATT_VAL    (\"([^\"]|{REF})*\")|('([^']|{REF}])*')
 ATT_VAL2   ([^\"'\x09\x0a\x0d\x20\>\<])*
 
 
