@@ -57,10 +57,14 @@ void exit_on_error(char *msg);
 
 #define EXIT(msg)   {exit_on_error(msg);}
 
+#ifdef MSG_DEBUG
 #define WARNING(msg) {fprintf(stderr,"WARNING(%s,%d)[l%d]: %s\n",__FILE__,\
                       __LINE__,parser_num_linea,msg);\
                       num_warning++;}
-
+#else
+#define WARNING(msg) {fprintf(stderr,"Warning [line %d]: %s\n",\
+                      parser_num_linea,msg); num_warning++;}
+#endif
 
 
 /* 

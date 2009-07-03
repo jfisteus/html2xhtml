@@ -9,6 +9,9 @@
 #include "procesador.h"
 #include "tree.h"
 
+/* define to 1 and set variable yydebug to 1 to get debug messages */
+#define YYDEBUG 0
+
 /* lista de atributos del elemento actual */
 #define MAX_ELEMENT_ATTRIBUTES  255
 static void setAttributeData(char *data);
@@ -59,6 +62,7 @@ html:
 | html whitespace
 | html ref
 | html xmldecl
+| html error
 ;
 
 doctype: TOK_DOCTYPE {
@@ -145,6 +149,7 @@ ref: TOK_EREF {
 
 xmlpi_end: TOK_XMLPI_END
 | TOK_STAG_END
+| TOK_EMPTYTAG_END
 ;
 
 xmldecl: TOK_XMLPI_INI attributes xmlpi_end {   
@@ -157,7 +162,8 @@ xmldecl: TOK_XMLPI_INI attributes xmlpi_end {
 
 
 attributes: 
-| attributes attribute 
+| attributes attribute
+| attributes error
 ;
 
 attribute: TOK_ATT_NAME TOK_ATT_EQ TOK_ATT_VALUE {

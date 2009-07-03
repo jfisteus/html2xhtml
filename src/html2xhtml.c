@@ -48,7 +48,6 @@
 #include "cgi.h"
 #endif
 
-
 /* parser Yacc / lex */
 int yyparse(void);
 void parser_set_input(FILE *input);  /* in html.l */
@@ -65,6 +64,7 @@ int main(int argc,char **argv)
 {
   size_t preload_read;
   const char *preload_buffer;
+  int yyparse_result;
 
   tree_init();
 
@@ -105,7 +105,12 @@ int main(int argc,char **argv)
     parser_set_input(param_inputf);
 
   /* parse the input file and convert it */
-  yyparse();
+  yyparse_result = yyparse();
+
+  if (yyparse_result) {
+    EXIT("Unrecoverable parse error");
+  }
+
   charset_close();
   saxEndDocument();
 
@@ -215,8 +220,9 @@ static void process_parameters(int argc, char **argv)
 
 int yyerror(char *e)
 {
-  EXIT(e);
-  return 0; /* never reached */
+  /* Let bison's error recovery mechanisms work */
+  WARNING(e);
+  return 0;
 }
 
 void exit_on_error(char *msg)
