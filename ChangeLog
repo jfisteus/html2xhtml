@@ -2,6 +2,7 @@
 
 	* html2xhtml More robust HTML parser, using the Bison's error
 	recovery mechanism.
+	* html2xhtml Released as 1.1.2-rc3
 
 2009-07-02  Jesus Arias Fisteus <jaf@it.uc3m.es>
 
