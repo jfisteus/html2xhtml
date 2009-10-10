@@ -5,7 +5,7 @@
 #noinst_java_JAVA = DTDCoder.java DTDDeclHandler.java
 #JAVAROOT = .
 
-DTD_SRC = DTDCoder.java DTDDeclHandler.java
+DTD_SRC = DTDCoder.java DTDDeclHandler.java XHTMLEntityResolver.java
 DTDLIB_DEST = ../src
 DTD_TEMPLATES = template-transitional.xhtml template-strict.xhtml \
 	template-frameset.xhtml template-11.xhtml \

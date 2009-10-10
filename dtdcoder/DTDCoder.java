@@ -31,8 +31,9 @@ import java.io.IOException;
 import java.io.PrintWriter;
 
 import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.SAXParser;
-import javax.xml.parsers.SAXParserFactory;
+import org.xml.sax.helpers.XMLReaderFactory;
+import org.xml.sax.SAXException;
+import org.xml.sax.XMLReader;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -71,7 +72,7 @@ public class DTDCoder
             e.printStackTrace();
         }
     }
-    
+
     public DTDData[] processIndexFile(String indice)
     {
         DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
@@ -97,35 +98,23 @@ public class DTDCoder
 
     public void processDtd(DTDData dtd, DTDDeclHandler handler)
     {
+        XMLReader reader;
         System.out.println("Processing DTD " + dtd.getKey()
                            +  "; from template " + dtd.getTemplateFile());
 
-        
-        SAXParserFactory factory = SAXParserFactory.newInstance();
-        factory.setValidating(true);
+         try {
+             XHTMLEntityResolver resolver = new XHTMLEntityResolver(dtd.getDtdUrl());
+             reader = XMLReaderFactory.createXMLReader();
+             reader.setProperty("http://xml.org/sax/properties/declaration-handler",
+                                handler);
+             reader.setEntityResolver(resolver);
+             reader.parse(dtd.getTemplateFile());
+         } catch (SAXException se) {
+             se.printStackTrace();
+         } catch (IOException ioe) {
+             ioe.printStackTrace();
+         }
 
-        try {
-            SAXParser parser = factory.newSAXParser();
-            parser.setProperty("http://xml.org/sax/properties/declaration-handler",
-                               handler);
-            parser.parse(dtd.getTemplateFile(), this);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-        /* 
-         * The code above does not work properly on some buggy JDK 1.4 versions.
-         * Xerces could be used intead (uncomment the following lines)
-         */
-
-//      try {
-//          XMLReader parser = XMLReaderFactory.createXMLReader("org.apache.xerces.parsers.SAXParser");
-//          parser.setProperty("http://xml.org/sax/properties/declaration-handler",
-//                             handler);
-//          parser.parse(dtd.getTemplateFile());
-//      } catch (Exception e) {
-//          e.printStackTrace();
-//      }
 
     }
 
@@ -258,7 +247,7 @@ public class DTDCoder
         out.println(" */");
         out.println();
     }
-    
+
     class DTDData
     {
         private String key;

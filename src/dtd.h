@@ -19,7 +19,7 @@
 #include "dtd_types.h"
 #include "dtd_names.h"
 
-#define DTD_SNAPSHOT_DATE "2009-05-28 12:43:29+0200"
+#define DTD_SNAPSHOT_DATE "2009-10-11 01:21:08+0200"
 
 #define elm_data_num 97
 #define att_data_num 163
