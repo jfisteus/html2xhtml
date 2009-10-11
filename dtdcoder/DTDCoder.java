@@ -56,10 +56,11 @@ public class DTDCoder
         DTDCoder coder = new DTDCoder();
         DTDData[] dtds = coder.processIndexFile(argv[0]);
         DTDDeclHandler handler= new DTDDeclHandler(dtds.length);
+        XHTMLEntityResolver resolver = new XHTMLEntityResolver();
 
         for (int i = 0; i < dtds.length; i++) {
             handler.setDtd(i);
-            coder.processDtd(dtds[i], handler);
+            coder.processDtd(dtds[i], handler, resolver);
         }
 
         // escribe dtd.c y dtd.h
@@ -96,14 +97,15 @@ public class DTDCoder
     }
 
 
-    public void processDtd(DTDData dtd, DTDDeclHandler handler)
+    public void processDtd(DTDData dtd, DTDDeclHandler handler,
+                           XHTMLEntityResolver resolver)
     {
         XMLReader reader;
         System.out.println("Processing DTD " + dtd.getKey()
                            +  "; from template " + dtd.getTemplateFile());
 
          try {
-             XHTMLEntityResolver resolver = new XHTMLEntityResolver(dtd.getDtdUrl());
+             resolver.setBaseURL(dtd.getDtdUrl());
              reader = XMLReaderFactory.createXMLReader();
              reader.setProperty("http://xml.org/sax/properties/declaration-handler",
                                 handler);
