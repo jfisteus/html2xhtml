@@ -285,7 +285,11 @@ static void print_doctype_keys(void)
 
 void print_version(void)
 {
+#ifndef WITH_CGI
   fprintf(stderr, "html2xhtml version %s\n", VERSION);
+#else
+  fprintf(stderr, "html2xhtml version %s [cgi-enabled]\n", VERSION);
+#endif
   fprintf(stderr, "DTD data based on DTDs as available on %s\n\n",
 	  DTD_SNAPSHOT_DATE);
 }
