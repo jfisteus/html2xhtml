@@ -1,3 +1,13 @@
+2009-11-05  Jesus Arias Fisteus <jaf@it.uc3m.es>
+
+	* html2xhtml Released as stable, version 1.1.2
+
+2009-10-11  Jesus Arias Fisteus <jaf@it.uc3m.es>
+
+	* html2xhtml The DTD coder module implements now a cache of
+	downloaded DTD entities. The User-Agent header of that feature
+	has also been changed to avoid being blocked by W3C servers.
+
 2009-07-03  Jesus Arias Fisteus <jaf@it.uc3m.es>
 
 	* html2xhtml More robust HTML parser, using the Bison's error
