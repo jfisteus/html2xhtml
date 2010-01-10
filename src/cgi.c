@@ -415,62 +415,71 @@ static void cgi_write_header()
   fprintf(stdout," encoding=\"%s\"", param_charset_out->preferred_name);
   fprintf(stdout,"?>\n\n");
 
-  fprintf(stdout,
-"<!DOCTYPE html\n\
+  fprintf(stdout, "\
+<!DOCTYPE html\n\
    PUBLIC \"-//W3C//DTD XHTML 1.0 Strict//EN\"\n\
    \"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd\">\n\n");
 
-  fprintf(stdout,
-"<html xmlns=\"http://www.w3.org/1999/xhtml\">\n\
-  <head>\n\
-    <title>html2xhtml - page translated</title>\n\
-    <link type=\"text/css\" href=\"/jaf/xhtmlpedia/xhtmlpedia.css\" \
-rel=\"stylesheet\"/>\n\
-  </head>\n");
+  fprintf(stdout, "\
+<html xmlns='http://www.w3.org/1999/xhtml'>\n\
+   <head>\n\
+     <title>html2xhtml - page converted</title>\n\
+     <link type='text/css' href='../html2xhtml/html2xhtml.css' \
+rel='stylesheet'/>\n\
+   </head>\n");
   
-  fprintf(stdout,
-" <body>\n\
-    <table class=\"navigation\">\n\
-      <tr>\n\
-        <td class=\"nav-left\"><a href=\"/jaf/html2xhtml/\">back to main page\
-</a></td>\n\
-        <td class=\"nav-center\"><a href=\"/jaf/xhtmlpedia/index.html\">\
-go to the xhtmlpedia</a></td>\n\
-        <td class=\"nav-right\"><a href=\"/jaf/html2xhtml/download.html\">\
-download html2xhtml</a></td>\n\
-      </tr>\n\
-    </table>");
+  fprintf(stdout, "\
+  <body>\n\
+    <div id='container'>\n");
 
-  fprintf(stdout,
-"    <div class=\"title\">\n\
-      <h1>html2xhtml</h1>\n\
-      <p>The document has been converted</p>\n\
-    </div>\n");
+  fprintf(stdout, "\
+      <div id='top'>\n\
+        <h1>html2xhtml</h1>\n\
+        <p>The document has been converted</p>\n\
+      </div>\n");
 
-  fprintf(stdout,
-"    <p>The input document has been succesfully converted. If you want\n\
-      to save it in a file, copy and paste it in a text editor.\n\
-      You can also <a href=\"/jaf/html2xhtml/download.html\">download\n\
-      html2xhtml</a> and run it in your computer.</p>\n\
-    <pre class=\"document\" xml:space=\"preserve\">\n");
+  fprintf(stdout, "\
+      <div id='leftnav'>\n\
+	<ul id='menu'>\n\
+	  <li><a href='../html2xhtml/'>Main page</a></li>\n\
+	  <li><a href='../html2xhtml/download.html'>Download</a></li>\n\
+	  <li><a href='../html2xhtml/advanced.html'>Online conversion</a></li>\n\
+	  <li><a href='../html2xhtml/web-api.html'>Web API</a></li>\n\
+	  <li><a href='../html2xhtml/news.html'>News</a></li>\n\
+	  <li><a href='../xhtmlpedia/'>Xhtmlpedia</a></li>\n\
+	</ul>\n\
+      </div>\n");
+
+  fprintf(stdout, "\
+      <div id='content'>\n\
+        <p>The input document has been succesfully converted. If you want\n\
+          to save it in a file, copy and paste it in a text editor.</p>\n\
+        <pre class='document' xml:space='preserve'>\n");
 }
 
 static void cgi_write_footer()
 {
-  fprintf(stdout,
-"</pre>\n\
-    <p class=\"boxed\">\n\
-    <img src=\"/jaf/html2xhtml/h2x.png\" alt=\"html2xhtml logo\" />\n\
-      <i>html2xhtml %s</i>, copyright 2001-2009 <a href=\
-\"http://www.it.uc3m.es/jaf/index.html\">Jesús Arias Fisteus</a>; \
+  fprintf(stdout, "\
+</pre>\n\
+        <p>Remember that you can also\n\
+          <a href='../html2xhtml/download.html'>download\n\
+          html2xhtml</a> and run it in your computer, or invoke\n\
+          the service from your own programs through its\n\
+          <a href='../html2xhtml/web-api.html'>Web API</a>.</p>\n\
+      </div>\n\
+      <div id='footer'>\n\
+        <img src='..(/html2xhtml/h2x.png' alt='html2xhtml logo' />\n\
+        <i>html2xhtml %s</i>, copyright 2001-2010 <a href=\
+'http://www.it.uc3m.es/jaf/index.html'>Jesús Arias Fisteus</a>; \
 2001 Rebeca Díaz Redondo, Ana Fernández Vilas\n\
-    </p>\n", VERSION);
+      </div>\n\
+    </div>\n", VERSION);
 
 #ifdef CGI_DEBUG
   cgi_debug_write_state();
 #endif
 
-  fprintf(stdout, "</body>\n</html>\n");
+  fprintf(stdout, "  </body>\n</html>\n");
 }
 
 #ifdef CGI_DEBUG
