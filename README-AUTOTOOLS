@@ -1,0 +1,2 @@
+Run libtoolize if the version of libtool changes.
+Run autoreconf when necessary.
