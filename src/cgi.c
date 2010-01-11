@@ -305,11 +305,24 @@ static int set_param(const char *name, size_t name_len,
     }
   } else if (name_len == 13) {
     if (!strncmp(name, "input-charset", 13)) {
-      param_charset_in = lookup_charset(value, value_len);
+      if (value_len == 4 && !strncmp(value, "auto", 4)) {
+	/* input charset auto-detection; explicited for cases
+	 * when this parameter is received from a Web form
+	 * (there needs to be an "auto" option in the form).
+	 */
+	param_charset_in = NULL;
+      } else {
+	param_charset_in = lookup_charset(value, value_len);
+      }
     }
   } else if (name_len == 14) {
     if (!strncmp(name, "output-charset", 14)) {
-      param_charset_out = lookup_charset(value, value_len);
+      if (value_len == 4 && !strncmp(value, "auto", 4)) {
+	/* output charset: same as input */
+	param_charset_out = NULL;
+      } else {
+	param_charset_out = lookup_charset(value, value_len);
+      }
     }
   } else if (name_len == 16) {
     if (!strncmp(name, "no-protect-cdata", 16)) {
