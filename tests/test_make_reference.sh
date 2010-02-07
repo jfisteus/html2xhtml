@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 ODIR=reference
 H2X=../src/html2xhtml
