@@ -452,19 +452,17 @@ rel='stylesheet'/>\n\
       </div>\n");
 
   fprintf(stdout, "\
-      <div id='leftnav'>\n\
-	<ul id='menu'>\n\
-	  <li><a href='../html2xhtml/'>Main page</a></li>\n\
-	  <li><a href='../html2xhtml/download.html'>Download</a></li>\n\
-	  <li><a href='../html2xhtml/advanced.html'>Online conversion</a></li>\n\
-	  <li><a href='../html2xhtml/web-api.html'>Web API</a></li>\n\
-	  <li><a href='../html2xhtml/news.html'>News</a></li>\n\
-	  <li><a href='../xhtmlpedia/'>Xhtmlpedia</a></li>\n\
-	</ul>\n\
-      </div>\n");
+      <div id='content-left-aligned'>\n\
+        <p>\n\
+	  <a href='../html2xhtml/'>Main page</a> | \n\
+	  <a href='../html2xhtml/download.html'>Download</a> |\n\
+	  <a href='../html2xhtml/advanced.html'>Online conversion</a> |\n\
+	  <a href='../html2xhtml/web-api.html'>Web API</a> |\n\
+	  <a href='../html2xhtml/news.html'>News</a> |\n\
+	  <a href='../xhtmlpedia/'>Xhtmlpedia</a>\n\
+        </p>\n");
 
   fprintf(stdout, "\
-      <div id='content'>\n\
         <p>The input document has been succesfully converted. If you want\n\
           to save it in a file, copy and paste it in a text editor.</p>\n\
         <pre class='document' xml:space='preserve'>\n");
@@ -481,7 +479,7 @@ static void cgi_write_footer()
           <a href='../html2xhtml/web-api.html'>Web API</a>.</p>\n\
       </div>\n\
       <div id='footer'>\n\
-        <img src='..(/html2xhtml/h2x.png' alt='html2xhtml logo' />\n\
+        <img src='../html2xhtml/h2x.png' alt='html2xhtml logo' />\n\
         <i>html2xhtml %s</i>, copyright 2001-2010 <a href=\
 'http://www.it.uc3m.es/jaf/index.html'>Jesús Arias Fisteus</a>; \
 2001 Rebeca Díaz Redondo, Ana Fernández Vilas\n\
