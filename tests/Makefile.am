@@ -1,6 +1,6 @@
 EXTRA_DIST = *.sh *.html reference.tar.gz README
 
-CLEANFILES = tmp-test/* fails reference/*
+CLEANFILES = tmp-test/* fails missing reference/*
 
 test:
 	./test.sh
