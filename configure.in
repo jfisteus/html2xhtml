@@ -4,7 +4,7 @@ AC_INIT
 AC_CONFIG_SRCDIR([configure.in])
 
 AC_CONFIG_HEADERS([config.h])
-AM_INIT_AUTOMAKE(html2xhtml, 1.1.2-1)
+AM_INIT_AUTOMAKE(html2xhtml, 1.1.2-2)
 
 AC_LANG([C])
 AC_PROG_CC

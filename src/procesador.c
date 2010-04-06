@@ -2660,15 +2660,15 @@ static int cprintf_close()
 static int cprintf(char *format, ...)
 {
   va_list ap;
-  size_t written;
-  size_t chars_written;  
+  int written;
+  int chars_written;
 
   va_start(ap, format);
   written = vsnprintf(&cbuffer[cbuffer_pos], cbuffer_avail, format, ap); 
   va_end(ap);
 
   /* buffer overflow? */
-  if (written >= cbuffer_avail) {
+  if (written >= cbuffer_avail || written < 0) {
     if (written >= CBUFFER_SIZE) {
       EXIT("Output buffer overflow");
     }
@@ -2681,10 +2681,15 @@ static int cprintf(char *format, ...)
     va_end(ap);
   }
 
-  if (written < 0) {
-    perror("vsnprintf()");
-    EXIT("Error when writing output");
-  }
+  /*
+   * Commented out because earlier versions of vsnprintf return -1
+   * when the buffer overflows, which is not the C99-compliant behaviour of
+   * glibc from version 2.1. See the written < 0 check above.
+   */
+/*   if (written < 0) { */
+/*     perror("vsnprintf()"); */
+/*     EXIT("Error when writing output"); */
+/*   } */
 
   /* count the number of UTF-8 chars (written is in bytes, not chars) */
   chars_written = ccount_utf8_chars(&cbuffer[cbuffer_pos], written);
