@@ -1,3 +1,12 @@
+html2xhtml is licensed under the GNU GENERAL PUBLIC LICENSE version 2
+or later, shown below.
+
+snprintf.c and snprintf.h have been copied from the snprintf project
+available at http://www.ijs.si/software/snprintf/. It is distributed
+under The Frontier Artistic License Version 1.0 shown in the file
+LICENSE-snprintf.txt
+
+==============================================================================
 		    GNU GENERAL PUBLIC LICENSE
 		       Version 2, June 1991
 

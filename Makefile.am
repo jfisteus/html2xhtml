@@ -3,4 +3,4 @@
 # AUTOMAKE_OPTIONS = foreign 1.4
 
 SUBDIRS = src doc dtdcoder charset_coder tests
-
+EXTRA_DIST = LICENSE-snprintf.txt

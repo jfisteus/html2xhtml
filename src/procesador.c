@@ -59,6 +59,7 @@
 #include "xchar.h"
 #include "charset.h"
 #include "params.h"
+#include "snprintf.h"
 
 #ifdef SELLAR
 #define SELLO "translated by html2xhtml - http://www.it.uc3m.es/jaf/html2xhtml/"
@@ -2668,7 +2669,7 @@ static int cprintf(char *format, ...)
   va_end(ap);
 
   /* buffer overflow? */
-  if (written >= cbuffer_avail || written < 0) {
+  if (written >= cbuffer_avail) {
     if (written >= CBUFFER_SIZE) {
       EXIT("Output buffer overflow");
     }
@@ -2681,15 +2682,10 @@ static int cprintf(char *format, ...)
     va_end(ap);
   }
 
-  /*
-   * Commented out because earlier versions of vsnprintf return -1
-   * when the buffer overflows, which is not the C99-compliant behaviour of
-   * glibc from version 2.1. See the written < 0 check above.
-   */
-/*   if (written < 0) { */
-/*     perror("vsnprintf()"); */
-/*     EXIT("Error when writing output"); */
-/*   } */
+  if (written < 0) {
+    perror("vsnprintf()");
+    EXIT("Error when writing output");
+  }
 
   /* count the number of UTF-8 chars (written is in bytes, not chars) */
   chars_written = ccount_utf8_chars(&cbuffer[cbuffer_pos], written);
