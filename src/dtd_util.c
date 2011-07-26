@@ -237,23 +237,28 @@ int dtd_att_search_list_id(int att_id, const int *in)
 int  dtd_att_is_valid(int att_id, xchar *value)
 {
   att_data_t *att;
+
+  att = &att_list[att_id];
+  return dtd_att_is_valid_by_type(att->attType, att->defaultDecl,
+				  att->defaults, value);
+}
+
+int  dtd_att_is_valid_by_type(int att_type, defaultDecl_t default_decl,
+			      int defaults, xchar *value)
+{
   char *valores;
   char str[256];
   int valid;
-
-
-  att= &att_list[att_id];
-  
 
   /* 
    * si contenttype>=0, tenemos una lista de posibles valores
    * y se comprueba si está entre ellos
    *
    */
-  if (att->attType>=0) {
+  if (att_type>=0) {
     int i,k;
 
-    valores= dtd_att_read_buffer(att->attType);
+    valores= dtd_att_read_buffer(att_type);
 
     /* valores[0] es '(' */
     i= 1;
@@ -296,7 +301,7 @@ int  dtd_att_is_valid(int att_id, xchar *value)
    * asociada a su tipo
    *
    */
-  switch (att->attType) {
+  switch (att_type) {
   case ATTTYPE_CDATA:
     if (!makeXmlCdata(value)) return 0;
     break;
@@ -309,7 +314,7 @@ int  dtd_att_is_valid(int att_id, xchar *value)
     break;
   case ATTTYPE_IDREFS:
   case ATTTYPE_NMTOKENS:
-    if (!makeXmlNames(value,att->attType)) return 0;
+    if (!makeXmlNames(value,att_type)) return 0;
     break;
   }
 
@@ -319,12 +324,12 @@ int  dtd_att_is_valid(int att_id, xchar *value)
    * caso tenemos que comprobar que adquiera ese valor
    *
    */
-  if (att->defaultDecl==DEFDECL_FIXED) {
-    if (!strcmp(value,dtd_att_read_buffer(att->defaults))) return 1;
+  if (default_decl==DEFDECL_FIXED) {
+    if (!strcmp(value,dtd_att_read_buffer(defaults))) return 1;
     else {
       xchar lowercase[128];
       xtolower(lowercase,value,128);
-      if (!strcmp(lowercase,dtd_att_read_buffer(att->defaults))) return 1;
+      if (!strcmp(lowercase,dtd_att_read_buffer(defaults))) return 1;
       else return 0;
     }
   }

@@ -149,6 +149,8 @@ char *dtd_att_read_buffer(int buff_ptr);
  *
  */
 int  dtd_att_is_valid(int att_id, xchar *value);
+int  dtd_att_is_valid_by_type(int att_type, defaultDecl_t default_decl,
+			      int defaults, xchar *value);
 
 
 
