@@ -36,6 +36,7 @@ int   param_compact_block_elms;
 int   param_compact_empty_elm_tags;
 int   param_empty_tags;
 int   param_crlf_eol;
+int   param_generate_snippet;
 
 void params_set_defaults()
 {
@@ -55,5 +56,6 @@ void params_set_defaults()
   param_cgi_html_output = 0;
   param_empty_tags = 0;
   param_crlf_eol = 0;
+  param_generate_snippet = 0;
 }
 
