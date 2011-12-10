@@ -211,6 +211,8 @@ static void process_parameters(int argc, char **argv)
     } else if (!strcmp(argv[i], "--lcs")) {
       charset_dump_aliases(stdout);
       exit(0);
+    } else if (!strcmp(argv[i], "--generate-snippet")) {
+      param_generate_snippet = 1;
     } else {
       help();
       exit(1);

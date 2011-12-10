@@ -47,6 +47,7 @@ extern int   param_compact_block_elms;
 extern int   param_compact_empty_elm_tags;
 extern int   param_empty_tags;
 extern int   param_crlf_eol;
+extern int   param_generate_snippet;
 
 void params_set_defaults(void);
 
