@@ -2106,6 +2106,7 @@ static int cbuffer_avail;
 static void write_document(document_t *doc)
 {
   tree_node_t *p;
+  tree_node_t *body;
   int indent;
 
   indent = 0;
@@ -2128,8 +2129,18 @@ static void write_document(document_t *doc)
   }
   p = doc->inicio;
   indent = 0;
-  write_node(p);
-  cprintf(eol);
+  if (!param_generate_snippet) {
+    write_node(p);
+    cprintf(eol);
+  } else {
+    body = tree_search_elm_child(doc->inicio, ELMID_BODY);
+    if (body) {
+      for (p = body->cont.elemento.hijo; p; p = p->sig) {
+        write_node(p);
+      }
+      cprintf(eol);
+    }
+  }
 
   cprintf_close();
 }
@@ -2159,16 +2170,6 @@ static int write_node(tree_node_t *node)
   return len;
 }
 
-static int should_write_element(tree_node_t* nodo)
-{
-    return !(param_generate_snippet && (ELM_ID(nodo) == ELMID_HEAD));
-}
-
-static int should_write_tags(tree_node_t* nodo)
-{
-    return !(param_generate_snippet && (ELM_ID(nodo) == ELMID_HTML
-                                        || ELM_ID(nodo) == ELMID_BODY));
-}
 
 static int write_element(tree_node_t *elm)
 {
@@ -2176,12 +2177,7 @@ static int write_element(tree_node_t *elm)
   tree_node_t *n;
   int is_block;
   int xml_space_activated;
-  int writes_tags;
 
-  if (!should_write_element(elm))
-    return 0;
-    
-  writes_tags = should_write_tags(elm);
   is_block = dtd_elm_is_block(ELM_ID(elm));
 
   /* activate "xml:space preserve" if necessary */
@@ -2200,50 +2196,45 @@ static int write_element(tree_node_t *elm)
   }
 
   /* write start tag */
-//  if (param_generate_snippet && elm == html
-  if (writes_tags) {
-    if (is_block) {
-       len += write_indent(indent, 1);
-       inline_on = 0;
-    } else {
-      if (!inline_on) {
-        inline_on = 1;
-        whitespace_needed = 0;
-        if (!param_compact_block_elms)
-      len += write_indent(indent, 1);
-      }
+  if (is_block) {
+     len += write_indent(indent, 1);
+     inline_on = 0;
+  } else {
+    if (!inline_on) {
+      inline_on = 1;
+      whitespace_needed = 0;
+      if (!param_compact_block_elms)
+	len += write_indent(indent, 1);
     }
-    len += write_start_tag(elm);
   }
+  len += write_start_tag(elm);
 
   /* process children nodes */
   n = elm->cont.elemento.hijo;
-  if (is_block && writes_tags)
+  if (is_block)
     indent += param_tab_len;
   while (n) {
     len += write_node(n);
     n = n->sig;
   }
-  if (is_block && writes_tags)
+  if (is_block)
     indent -= param_tab_len;
 
   /* write end tag if not empty */
-  if (writes_tags) {
-    if (elm->cont.elemento.hijo) {
+  if (elm->cont.elemento.hijo) {
     if (is_block) {
       if (inline_on) {
-    inline_on = 0;
-    if (!param_compact_block_elms)
-      len += write_indent(indent, 1);
+	inline_on = 0;
+	if (!param_compact_block_elms)
+	  len += write_indent(indent, 1);
       } else {
-    len += write_indent(indent, 1);
+	len += write_indent(indent, 1);
       }
     }
     len += write_end_tag(elm);
-    } else if (!param_empty_tags
-         && elm_list[ELM_ID(elm)].contenttype[doctype] != CONTTYPE_EMPTY) {
+  } else if (!param_empty_tags
+	     && elm_list[ELM_ID(elm)].contenttype[doctype] != CONTTYPE_EMPTY) {
     len += write_end_tag(elm);
-    }
   }
 
   /* deactivate "xml:space preserve" if activated */
@@ -2425,6 +2416,7 @@ static int write_start_tag(tree_node_t* nodo)
   char *elm_name;
   int elm_name_len;
   int printed;
+  
 
   elm_name = elm_list[ELM_ID(nodo)].name;
   elm_name_len = strlen(elm_name);
