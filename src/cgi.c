@@ -328,6 +328,9 @@ static int set_param(const char *name, size_t name_len,
     if (!strncmp(name, "no-protect-cdata", 16)) {
       if (value_len == 1 && value[0] == '1')
 	param_protect_cdata = 0;
+    } else if (!strncmp(name, "generate-snippet", 16)) {
+      if (value_len == 1 && value[0] == '1')
+	param_generate_snippet = 1;
     }
   } else if (name_len == 21) {
     if (!strncmp(name, "empty-elm-tags-always", 21)) {
