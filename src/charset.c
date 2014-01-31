@@ -44,7 +44,7 @@ static iconv_t cd;
 static FILE *file;
 static char buffer[CHARSET_BUFFER_SIZE];
 static char *bufferpos;
-static int avail;
+static size_t avail;
 static enum {closed, finished, eof, input, output, preload} state = closed;
 
 static void read_block(void);
@@ -188,7 +188,6 @@ int charset_read(char *outbuf, size_t num, int interactive)
       else
 	read_interactive();
     }
-
     /* convert the input into de internal charset */
     if (avail > 0) {
       nconv = iconv(cd, &bufferpos, &avail, &outbuf, &outbuf_max);
