@@ -6,7 +6,7 @@ dtdquery_SOURCES = dtdquery.c tree.c dtd.c dtd_names.c dtd_util.c xchar.c \
 	mensajes.c
 
 # set the include path found by configure
-INCLUDES= $(all_includes)
+AM_CPPFLAGS= $(all_includes)
 
 # the library search path.
 html2xhtml_LDFLAGS = $(all_libraries) 

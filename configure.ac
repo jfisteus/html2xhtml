@@ -1,10 +1,11 @@
 AC_PREREQ(2.61)
 
-AC_INIT
-AC_CONFIG_SRCDIR([configure.in])
+AC_INIT([html2xhtml], [1.1.2-2])
+AC_CONFIG_SRCDIR([configure.ac])
+AM_INIT_AUTOMAKE
+AC_CONFIG_MACRO_DIR([m4])
 
 AC_CONFIG_HEADERS([config.h])
-AM_INIT_AUTOMAKE(html2xhtml, 1.1.2-2)
 
 AC_LANG([C])
 AC_PROG_CC

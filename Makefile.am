@@ -4,3 +4,4 @@
 
 SUBDIRS = src doc dtdcoder charset_coder tests
 EXTRA_DIST = LICENSE-snprintf.txt
+ACLOCAL_AMFLAGS = -I m4
