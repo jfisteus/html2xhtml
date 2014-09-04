@@ -8,6 +8,9 @@ dtdquery_SOURCES = dtdquery.c tree.c dtd.c dtd_names.c dtd_util.c xchar.c \
 # set the include path found by configure
 AM_CPPFLAGS= $(all_includes)
 
+# Set the following flag in order to compile html2xhtml as a CGI
+##AM_CFLAGS = -DWITH_CGI
+
 # the library search path.
 html2xhtml_LDFLAGS = $(all_libraries) 
 html2xhtml_LDADD = @LIBICONV@
