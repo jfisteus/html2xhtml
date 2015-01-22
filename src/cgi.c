@@ -484,8 +484,8 @@ static void cgi_write_footer()
       <div id='footer'>\n\
         <img src='../html2xhtml/h2x.png' alt='html2xhtml logo' />\n\
         <i>html2xhtml %s</i>, copyright 2001-2010 <a href=\
-'http://www.it.uc3m.es/jaf/index.html'>Jesús Arias Fisteus</a>; \
-2001 Rebeca Díaz Redondo, Ana Fernández Vilas\n\
+'http://www.it.uc3m.es/jaf/index.html'>Jes&uacute;s Arias Fisteus</a>; \
+2001 Rebeca D&iacute;az Redondo, Ana Fern&aacute;ndez Vilas\n\
       </div>\n\
     </div>\n", VERSION);
 

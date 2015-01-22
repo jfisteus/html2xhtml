@@ -263,7 +263,7 @@ size_t charset_write(char *buf, size_t num)
   EPRINTF1("    write %d bytes\n", num);
 
   if (state != output)
-    return;
+    return 0;
 
   while (convert_again) {
     convert_again = 0;

@@ -210,7 +210,7 @@ class AttDecl {
 
 
 /**
- * esta clase guarda los datos asociados a la declaración de un elemento
+ * Store data regarding an element declaration.
  *
  */
 class ElmDecl {
@@ -223,7 +223,7 @@ class ElmDecl {
 
 
     /**
-     * valores de constantes para codificación de contenido de elementos
+     * Constants for encoding element content specifications.
      *
      */
     private static final int CSPEC_PAR_O =    1;
@@ -292,7 +292,7 @@ class ElmDecl {
 
         }
 
-        // ¿children or mixed?   NOTE: spaces are already filtered
+        // children or mixed? NOTE: spaces are already filtered
         if (content.charAt(0) != '(')
             throw new SAXException("Incorrect content");
 

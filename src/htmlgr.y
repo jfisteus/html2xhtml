@@ -12,7 +12,7 @@
 /* define to 1 and set variable yydebug to 1 to get debug messages */
 #define YYDEBUG 0
 
-/* lista de atributos del elemento actual */
+/* list of attributes of the current element */
 #define MAX_ELEMENT_ATTRIBUTES  255
 static void setAttributeData(char *data);
 /* static void freeAttributeData(void); */
@@ -21,15 +21,15 @@ static char *element_attributes[MAX_ELEMENT_ATTRIBUTES];
 static int num_element_attributes= 0;
 static char *content= NULL;
 
-/* para establecer modo script en el lexer */
+/* set the lexer in the script mode */
 void lexer_begin_script(char *nombre);
 
-/* control de <PRE> */
+/* control <pre> elements */
 extern int pre_state;
 
 
 #ifdef DEBUG_MEM
-#define free(x)      fprintf(stderr,"==%p  [%s]\n",x,x); free(x)  
+#define free(x)      fprintf(stderr,"==%p  [%s]\n",x,x); free(x)
 #endif
 
 %}
@@ -45,16 +45,16 @@ extern int pre_state;
 %token <cad> TOK_CDATA_SEC TOK_XMLPI_INI
 %token <ent> TOK_STAG_END TOK_EMPTYTAG_END TOK_ATT_EQ TOK_XMLPI_END
 %token <ent> TOK_WHITESPACE
- 
+
 %%
 
 input: html
 ;
 
-html: 
-| html doctype 
+html:
+| html doctype
 | html comment
-| html bad_comment 
+| html bad_comment
 | html stag
 | html etag
 | html cdata
@@ -83,18 +83,18 @@ bad_comment: TOK_BAD_COMMENT {
 }
 ;
 
-stag: TOK_STAG_INI attributes TOK_STAG_END {   
+stag: TOK_STAG_INI attributes TOK_STAG_END {
   //fprintf(stderr,"STAG-: %s\n",$1);
   setAttributeData(NULL);
   saxStartElement($1,(xchar**)element_attributes);
 /*   freeAttributeData(); */
   num_element_attributes = 0;
 
-  /* modo script del lexer (para SCRIPT y STYLE) */
-  if ((!strcasecmp($1,"script")) ||(!strcasecmp($1,"style"))) 
+  /* set the lexer in script mode (for SCRIPT and STYLE) */
+  if ((!strcasecmp($1,"script")) ||(!strcasecmp($1,"style")))
     lexer_begin_script($1);
 
-  if (!strcasecmp($1,"pre")) {DEBUG("inicio de modo PRE");pre_state++;}
+  if (!strcasecmp($1,"pre")) {DEBUG("enter PRE mode");pre_state++;}
 
 /*   free($1); */
 }
@@ -103,13 +103,13 @@ stag: TOK_STAG_INI attributes TOK_STAG_END {
 etag: TOK_ETAG {
   //fprintf(stderr,"ETAG-: %s\n",$1);
   saxEndElement($1);
-  if (!strcasecmp($1,"pre")) {DEBUG("fin de modo PRE");pre_state--;}
+  if (!strcasecmp($1,"pre")) {DEBUG("leaving PRE mode");pre_state--;}
 
 /*   free($1); */
 }
 ;
 
-stag: TOK_STAG_INI attributes TOK_EMPTYTAG_END {   
+stag: TOK_STAG_INI attributes TOK_EMPTYTAG_END {
   //fprintf(stderr,"EMTYTAG-: %s\n",$1);
   setAttributeData(NULL);
   saxStartElement($1,(xchar**)element_attributes);
@@ -152,7 +152,7 @@ xmlpi_end: TOK_XMLPI_END
 | TOK_EMPTYTAG_END
 ;
 
-xmldecl: TOK_XMLPI_INI attributes xmlpi_end {   
+xmldecl: TOK_XMLPI_INI attributes xmlpi_end {
   /*fprintf(stderr,"XMLDECL-: %s\n",$1);*/
   setAttributeData(NULL);
   saxXmlProcessingInstruction($1,(xchar**)element_attributes);
@@ -161,7 +161,7 @@ xmldecl: TOK_XMLPI_INI attributes xmlpi_end {
 ;
 
 
-attributes: 
+attributes:
 | attributes attribute
 | attributes error
 ;
@@ -178,7 +178,7 @@ attribute: TOK_ATT_NAME TOK_ATT_EQ TOK_ATT_VALUE {
                      char *cad= (char*) tree_malloc(1);
                      cad[0]= 0;
                      setAttributeData($1);
-                     setAttributeData(cad);                     
+                     setAttributeData(cad);
 }
 ;
 
@@ -188,24 +188,24 @@ attribute: TOK_ATT_NAME TOK_ATT_EQ TOK_ATT_VALUE {
 /*
  * setAttributeData
  *
- * inserta 'data' en la lista de atributos de elementos
- * (sólo se mete el puntero, los datos deben seguir en memoria
- * hasta que no sean necesarios)
+ * inserts 'data' into the attribute list of the current element.
+ * (only the pointer is inserted; therefore, the data must be kept
+ * in memory by the caller until it is no longer needed)
  *
  */
 static void setAttributeData(char *data)
 {
   char *ptr;
-  
-  /* si data==NULL, se cierra la lista de atributos */ 
+
+  /* if data == NULL, close the attribute list */
   if (!data) {
     element_attributes[num_element_attributes]= NULL;
     return;
   }
 
   if (num_element_attributes == MAX_ELEMENT_ATTRIBUTES-1) {
-    EXIT("máximo de atributos de elemento alcanzado\n");
+    EXIT("maximum number of attributes for one element reached\n");
   }
 
-  element_attributes[num_element_attributes++]= data;  
+  element_attributes[num_element_attributes++]= data;
 }

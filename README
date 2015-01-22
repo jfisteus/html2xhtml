@@ -62,6 +62,8 @@ $ autoheader
 $ automake --add-missing
 $ autoconf
 
+In OS X you need to use the glibtoolize command instead of libtoolize.
+
 After that, you should get the ./configure script and proceed as
 explained above:
 
