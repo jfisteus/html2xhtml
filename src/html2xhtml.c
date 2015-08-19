@@ -265,6 +265,7 @@ static void help(void)
   fprintf(stderr, "           [--preserve-space-comments] [--no-protect-cdata]\n");
   fprintf(stderr, "           [--compact-block-elements] [--empty-elm-tags-always]\n");
   fprintf(stderr, "           [--compact-empty-elm-tags] [--dos-eol]\n");
+  fprintf(stderr, "           [--generate-snippet]\n");
   fprintf(stderr, "\n");
   print_doctypes();
 }

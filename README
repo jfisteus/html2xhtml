@@ -17,8 +17,53 @@ XHTML 1.1, XHTML Basic and XHTML Mobile Profile.
 HOW TO RUN THE PROGRAM
 -----------------------------------------------------------------------
 
-See doc/html2xhtml.txt in the source code distribution, or the
-html2xhtml manpage, for full information about how to run the program.
+For full information about how to run the program
+see doc/html2xhtml.txt in the source code distribution,
+the html2xhtml.txt file in the Windows binaries ZIP file
+or the html2xhtml manpage. Some examples are shown below.
+
+- By default, the program reads the input file from its standard input
+and dumps the output file to its standard output:
+
+cat input.html | html2xhtml
+
+- The input can also be specified as a command line argument:
+
+html2xhtml input.html
+
+- In order to save the output to a file, redirect the standard output:
+
+html2xhtml input.html >output.html
+
+- Alternatively, you can specify the output file name with the -o option:
+
+html2xhtml input.html -o output.html
+
+- Select the document type of the output with -t:
+
+html2xhtml input.html -t 1.1 -o output.html
+
+The available values are:
+
+transitional: XHTML 1.0 Transitional
+frameset: XHTML 1.0 Frameset
+strict: XHTML 1.0 Strict
+1.1: XHTML 1.1
+basic-1.0: XHTML Basic 1.0
+basic-1.1: XHTML Basic 1.1
+mp: XHTML Mobile Profile
+print-1.0: XHTML Print 1.0
+
+Use "transitional" if you just want to tidy up the markup.
+
+- Choose an output character encoding (by default, the program uses
+the character encoding detected in the input):
+
+html2xhtml input.html --ocs utf-8 -o output.html
+
+Get the list of available character sets:
+
+./src/html2xhtml --lcs
 
 
 HOW TO COMPILE AND INSTALL THE PROGRAM FROM THE SOURCE TARBALL
