@@ -35,7 +35,7 @@
 #include "charset_aliases.h"
 
 #define CHARSET_INTERNAL_ENC "UTF-8"
-#define CHARSET_BUFFER_SIZE 32768
+#define CHARSET_BUFFER_SIZE (size_t)32768
 
 /*
  * An alias for a charset, linked to the preferred alias of the
@@ -58,7 +58,7 @@ void charset_init_input(const charset_t *charset_in, FILE *input_file);
 /*
  * Set/reset the initial state of the charset converter for output mode
  */
-void charset_init_output(const charset_t *charset_out, FILE *output_file);
+size_t charset_init_output(const charset_t *charset_out, FILE *output_file);
 
 /*
  * Set/reset preload mode. Loads a data block from input_file

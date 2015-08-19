@@ -86,11 +86,21 @@ void charset_init_input(const charset_t *charset_in, FILE *input_file)
   DEBUG("charset_init_input() executed");
 }
 
-void charset_init_output(const charset_t *charset_out, FILE *output_file)
+size_t charset_init_output(const charset_t *charset_out, FILE *output_file)
 {
+  size_t written = 0;
+
   if (state != closed) {
     WARNING("Charset initialized, closing it now");
     charset_close();
+  }
+
+  if (charset_out == CHARSET_UTF_16) {
+    /* Force UTF16 to be little-endian and write BOM,
+     * because iconv does not write BOM when UTF_16LE or UTF_16BE are set.
+     */
+    charset_out = CHARSET_UTF_16LE;
+    written = fwrite("\xFF\xFE", 1, 2, output_file);
   }
 
   open_iconv(charset_out->iconv_name, CHARSET_INTERNAL_ENC);
@@ -98,6 +108,7 @@ void charset_init_output(const charset_t *charset_out, FILE *output_file)
   state = output;
 
   DEBUG("charset_init_output() executed");
+  return written;
 }
 
 char *charset_init_preload(FILE *input_file, size_t *bytes_read)
@@ -145,7 +156,7 @@ void charset_close()
     if (avail < CHARSET_BUFFER_SIZE) {
       /* write the output */
       wrote = fwrite(buffer, 1, CHARSET_BUFFER_SIZE - avail, file);
-      if (wrote == 0) {
+      if (wrote < CHARSET_BUFFER_SIZE - avail) {
 	perror("fwrite()");
 	EXIT("Error writing a data block to the output");
       }
@@ -310,7 +321,7 @@ Use UTF-8 or UTF-16 output to avoid the problem.");
 
     /* write the output */
     wrote = fwrite(buffer, 1, CHARSET_BUFFER_SIZE - avail, file);
-    if (wrote < 0) {
+    if (wrote < CHARSET_BUFFER_SIZE - avail) {
       perror("fwrite()");
       EXIT("Error writing a data block to the output");
     }
