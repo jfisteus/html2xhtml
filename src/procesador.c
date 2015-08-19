@@ -50,6 +50,7 @@
 
 #include <stdio.h>
 #include <string.h>
+#include <strings.h>
 #include <stdarg.h>
 
 #include "procesador.h"
@@ -2107,9 +2108,7 @@ static void write_document(document_t *doc)
 {
   tree_node_t *p;
   tree_node_t *body;
-  int indent;
 
-  indent = 0;
   xml_space_on = 0;
   inside_cdata_sec = 0;
 
@@ -2128,7 +2127,6 @@ static void write_document(document_t *doc)
           lt, eol, doctype_string[doctype], eol, dtd_string[doctype], gt, eol);
   }
   p = doc->inicio;
-  indent = 0;
   if (!param_generate_snippet) {
     write_node(p);
     cprintf(eol);
@@ -2627,7 +2625,7 @@ static int write_plain_data(xchar* text, int len)
 
 static int write_indent(int len, int new_line)
 {
-  write_indent_internal(len, new_line, 0);
+  return write_indent_internal(len, new_line, 0);
 }
 
 static int write_indent_internal(int len, int new_line, int ignore_xml_space)
@@ -2658,6 +2656,7 @@ static int cprintf_init(charset_t *to_charset, FILE *file)
   cbuffer_pos = 0;
   cbuffer_avail = CBUFFER_SIZE;
   charset_init_output(to_charset, file);
+  return 0;
 }
 
 static int cprintf_close()
@@ -2668,6 +2667,7 @@ static int cprintf_close()
 
   /* close the charset converter */
   charset_close();
+  return 0;
 }
 
 static int cprintf(char *format, ...)
@@ -2736,6 +2736,7 @@ static int cputc(int c)
     cflush();
   cbuffer[cbuffer_pos++] = (char) c;
   cbuffer_avail--;
+  return 1;
 }
 
 static void cflush()

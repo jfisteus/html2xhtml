@@ -62,10 +62,6 @@ static int makeXmlId(xchar *value);
 static int makeXmlNmtoken(xchar *value);
 static int makeXmlNames(xchar *value, int atttype);
 
-/* función recursiva que pasa a la cadena el contentspec del buffer */
-char *contentspecToString(unsigned char *buff, char *str, 
-			  contentType_t conttype,int *len_buff);
-
 
 /*
  * devuelve el índice (número) del dtd cuya clave (key)
@@ -391,7 +387,7 @@ char *dtd_elm_read_buffer(int buff_ptr)
   if (buff_ptr < 0) return NULL;
   if (buff_ptr > elm_buffer_num) return NULL;
   
-  return &elm_buffer[buff_ptr];
+  return (char*) &elm_buffer[buff_ptr];
 }
 
 
@@ -405,7 +401,7 @@ char *dtd_att_read_buffer(int buff_ptr)
   if (buff_ptr < 0) return NULL;
   if (buff_ptr > att_buffer_num) return NULL;
   
-  return &att_buffer[buff_ptr];
+  return (char*) &att_buffer[buff_ptr];
 }
 
 
@@ -550,7 +546,7 @@ static int is_child_valid(int *rule_ptr, int elements[], int num)
   data= elm_buffer[rule];
 
   if (!CSPEC_ISPAR(data) || (!(data & CSPEC_PAR_O)))
-    EXIT("dtd_is_child_valid ¡la regla no empieza con '('!");
+    EXIT("dtd_is_child_valid: the rule must begin with '('");
 
   is_choice= CSPEC_ISCHOICE(data);
   repeat= CSPEC_NUM(data);
@@ -639,7 +635,7 @@ static int is_child_valid(int *rule_ptr, int elements[], int num)
 	  continue;
 	}
       }
-    } else EXIT("is_child_valid ¡regla incorrecta!");
+    } else EXIT("is_child_valid: incorrect rule");
 
 
 
@@ -933,9 +929,9 @@ static int isXmlLetter(xchar ch)
 {
   if (((ch>=0x41)&&(ch<=0x5A)) ||
       ((ch>=0x61)&&(ch<=0x7A)) ||
-      ((ch>=0xC0)&&(ch<=0xD6)) ||
-      ((ch>=0xD8)&&(ch<=0xF6)) ||
-      ((ch>=0xF8) /*&&(ch<=0xFF)*/ )) 
+      ((ch>=(char)0xC0)&&(ch<=(char)0xD6)) ||
+      ((ch>=(char)0xD8)&&(ch<=(char)0xF6)) ||
+      ((ch>=(char)0xF8) /*&&(ch<=0xFF)*/ )) 
                     /* comentado porque con char es siempre cierto */
     return 1;
   else return 0;
@@ -952,12 +948,12 @@ static int isXmlNameChar(xchar ch)
 {
   if (((ch>=0x41)&&(ch<=0x5A)) || /* Letter */
       ((ch>=0x61)&&(ch<=0x7A)) ||
-      ((ch>=0xC0)&&(ch<=0xD6)) ||
-      ((ch>=0xD8)&&(ch<=0xF6)) ||
-      ((ch>=0xF8)/*&&(ch<=0xFF)*/) ||
-      ((ch>=0xF8)/*&&(ch<=0xFF)*/) ||
+      ((ch>=(char)0xC0)&&(ch<=(char)0xD6)) ||
+      ((ch>=(char)0xD8)&&(ch<=(char)0xF6)) ||
+      ((ch>=(char)0xF8)/*&&(ch<=0xFF)*/) ||
+      ((ch>=(char)0xF8)/*&&(ch<=0xFF)*/) ||
       ((ch>=0x30)&&(ch<=0x39)) || /* Digit */
-      (ch==0xB7)               || /* Extender */
+      (ch==(char)0xB7)               || /* Extender */
       (ch=='.') || (ch=='-')   ||
       (ch==':') || (ch=='_'))
     return 1;
@@ -969,7 +965,7 @@ static int isXmlNameChar(xchar ch)
 
 
 /* función recursiva que pasa a la cadena el contentspec del buffer */
-char *contentspecToString(unsigned char *buff, char *str, contentType_t conttype,int *len_buff)
+char *contentspecToString(char *buff, char *str, contentType_t conttype,int *len_buff)
 {
   unsigned char v;
   int i;

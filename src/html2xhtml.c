@@ -54,7 +54,6 @@ void parser_set_input(FILE *input);  /* in html.l */
 
 void print_version(void);
 
-static void set_default_parameters(void);
 static void process_parameters(int argc,char **argv);
 static void help(void);
 static void print_doctypes(void);
@@ -63,8 +62,11 @@ static void print_doctype_keys(void);
 int main(int argc,char **argv)
 {
   size_t preload_read;
-  const char *preload_buffer;
   int yyparse_result;
+
+#ifdef WITH_CGI
+  const char *preload_buffer;
+#endif
 
   tree_init();
 

@@ -47,7 +47,7 @@
 #include <stdlib.h>
 
 /* en principio, como estaba */
-typedef unsigned char xchar;
+typedef char xchar;
 
 
 /* conversión a minúsculas */

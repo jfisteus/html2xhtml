@@ -1,13 +1,18 @@
 %option noyywrap
 
 %{
+#if defined (__STDC_VERSION__) && __STDC_VERSION__ >= 199901L
+extern int fileno(FILE *file);
+#endif
 
 #include <stdio.h>
 #include <string.h>
+#include <strings.h>
 
 #include "mensajes.h"
 #include "htmlgr.h"
 #include "tree.h"
+#include "charset.h"
 
 int parser_num_bytes=0;
 int parser_num_linea=1;
@@ -248,7 +253,6 @@ char *comm(char *cad)
 char *cdata_sec(char *str)
 {
    char *result;
-   int len;
 
    if (str[0] == '/')
       str = &str[11];

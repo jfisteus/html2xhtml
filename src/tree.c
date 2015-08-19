@@ -60,11 +60,11 @@
 #define BUF_PTR(num,pos)        ((((num)&0x3FFF)<<16)|((pos)&0xFFFF))
 
 
-static unsigned char *data_buffer[NUM_DATA_BUFFERS]; 
+static char *data_buffer[NUM_DATA_BUFFERS];
 static int num_buffer, pos_buffer;
 static int active = 0;
 
-static buff_index_t get_data_buffer(int len, const unsigned char *data);
+static buff_index_t get_data_buffer(int len, const char *data);
 
 
 static void *my_malloc_internal(size_t size);
@@ -551,7 +551,7 @@ void tree_free(void)
  * aborta si se agota completamente la memoria
  *
  */ 
-static buff_index_t get_data_buffer(int len, const unsigned char *data)
+static buff_index_t get_data_buffer(int len, const char *data)
 {
   buff_index_t buff_ptr;
 

@@ -34,6 +34,7 @@
 #include <iconv.h>
 #include <errno.h>
 #include <string.h>
+#include <ctype.h>
 
 #include "charset.h"
 #include "mensajes.h"
@@ -144,7 +145,7 @@ void charset_close()
     if (avail < CHARSET_BUFFER_SIZE) {
       /* write the output */
       wrote = fwrite(buffer, 1, CHARSET_BUFFER_SIZE - avail, file);
-      if (wrote < 0) {
+      if (wrote == 0) {
 	perror("fwrite()");
 	EXIT("Error writing a data block to the output");
       }
@@ -212,9 +213,9 @@ int charset_read(char *outbuf, size_t num, int interactive)
 	    /* Dump the Unicode replacement character U+FFFD, which
 	     * is represented as 0xEF 0xBF 0xBD in UTF-8.
 	     */
-	    outbuf[0] = 0xef;
-	    outbuf[1] = 0xbf;
-	    outbuf[2] = 0xbd;
+	    outbuf[0] = (char) 0xef;
+	    outbuf[1] = (char) 0xbf;
+	    outbuf[2] = (char) 0xbd;
 	    outbuf += 3;
 	    outbuf_max -= 3;
 	    bufferpos++;
@@ -442,7 +443,7 @@ charset_t* guess_charset(size_t begin_pos)
 	  guess = be16;
 	}
       }
-    } else if (buf[0] = 0x3c) {
+    } else if (buf[0] == 0x3c) {
       if (!buf[1] && !buf[3]) {
 	if (!buf[2]) {
 	  guess = le32;
@@ -452,7 +453,7 @@ charset_t* guess_charset(size_t begin_pos)
       } else {
 	guess = ascii_comp;
       }
-    } else if (buf[0] = 0x4c && buf[1] && buf[2] && buf[3]) {
+    } else if (buf[0] == 0x4c && buf[1] && buf[2] && buf[3]) {
       guess = ebcdic;
     } else {
       /* By default, suppose it is ASCII-compatible */
@@ -601,7 +602,6 @@ charset_t* read_charset_decl(int ini, int step, int mode, charset_t* defaults)
        * it is an attribute of meta and parse its value.
        */
       int found = 0;
-      int ini;
       int meta_ini = 0;
       enum {normal, tag_name, tag_attrs, att_val_double,
 	    att_val_simple, script, script_end, comment} scan_state = normal;

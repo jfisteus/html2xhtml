@@ -62,8 +62,6 @@ char *defDeclToString(defaultDecl_t def);
 char *readAttBuffer(int buff_ptr);
 char *readElmBuffer(int buff_ptr);
 
-char *contentspecToString(unsigned char *buff, char *str, contentType_t conttype, int *len_buff);
-
 int dtd_id(char *key);
 
 
@@ -414,7 +412,7 @@ char *readAttBuffer(int buff_ptr)
   if (buff_ptr < 0) return NULL;
   if (buff_ptr > att_buffer_num) return NULL;
 
-  return &att_buffer[buff_ptr];
+  return (char*) &att_buffer[buff_ptr];
 }
 
 char *readElmBuffer(int buff_ptr)
@@ -422,7 +420,7 @@ char *readElmBuffer(int buff_ptr)
   if (buff_ptr < 0) return NULL;
   if (buff_ptr > elm_buffer_num) return NULL;
 
-  return &elm_buffer[buff_ptr];
+  return (char*) &elm_buffer[buff_ptr];
 }
 
 

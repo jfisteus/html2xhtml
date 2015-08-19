@@ -10,15 +10,19 @@ AM_CPPFLAGS= $(all_includes)
 
 # Set the following flag in order to compile html2xhtml as a CGI
 ##AM_CFLAGS = -DWITH_CGI
+AM_CFLAGS = -std=c99
 
 # the library search path.
-html2xhtml_LDFLAGS = $(all_libraries) 
+html2xhtml_LDFLAGS = $(all_libraries)
 html2xhtml_LDADD = @LIBICONV@
 noinst_HEADERS = dtd.h dtd_names.h dtd_types.h dtd_util.h \
 	mensajes.h procesador.h tree.h xchar.h htmlgr.h charset.h cgi.h \
 	params.h charset.h charset_aliases.h snprintf.h
 
 AM_YFLAGS = -d
+
+# Uncomment to compile with clang:
+##CC = clang
 
 ## My version of Flex in MinGW only reads the .l file from stdin
 ##.l.c:

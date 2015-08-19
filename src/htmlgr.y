@@ -3,6 +3,7 @@
 %{
 #include <stdio.h>
 #include <string.h>
+#include <strings.h>
 
 #include "xchar.h"
 #include "mensajes.h"
@@ -19,7 +20,6 @@ static void setAttributeData(char *data);
 
 static char *element_attributes[MAX_ELEMENT_ATTRIBUTES];
 static int num_element_attributes= 0;
-static char *content= NULL;
 
 /* set the lexer in the script mode */
 void lexer_begin_script(char *nombre);
@@ -27,6 +27,8 @@ void lexer_begin_script(char *nombre);
 /* control <pre> elements */
 extern int pre_state;
 
+extern int yylex (void);
+ extern int yyerror(char *e);
 
 #ifdef DEBUG_MEM
 #define free(x)      fprintf(stderr,"==%p  [%s]\n",x,x); free(x)
@@ -195,8 +197,6 @@ attribute: TOK_ATT_NAME TOK_ATT_EQ TOK_ATT_VALUE {
  */
 static void setAttributeData(char *data)
 {
-  char *ptr;
-
   /* if data == NULL, close the attribute list */
   if (!data) {
     element_attributes[num_element_attributes]= NULL;

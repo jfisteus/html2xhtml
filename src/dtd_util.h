@@ -217,6 +217,14 @@ int dtd_can_be_child(int child, int father, int dtd_num);
 int dtd_elm_is_block(int elm);
 
 
+/* 
+ * función recursiva que pasa a la cadena el contentspec del buffer
+ *
+*/
+char *contentspecToString(char *buff, char *str, 
+			  contentType_t conttype,int *len_buff);
+
+
 
 
 #endif
