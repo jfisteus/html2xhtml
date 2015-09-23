@@ -1,6 +1,6 @@
 AC_PREREQ(2.61)
 
-AC_INIT([html2xhtml], [1.1.4])
+AC_INIT([html2xhtml], [1.3])
 AC_CONFIG_SRCDIR([configure.ac])
 AM_INIT_AUTOMAKE
 AC_CONFIG_MACRO_DIR([m4])
