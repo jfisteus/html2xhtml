@@ -88,9 +88,11 @@ $ make install
 
 See ./INSTALL for more information.
 
-The program has been tested to compile on GNU/Linux and Windows (in
-both Cygwin and MinGW). If compiled in Cygwin, the program depends
-on "cygwin1.dll".
+The program has been tested to compile on GNU/Linux and MinGW in Windows.
+In MinGW the actual EXE file to use is the one the compiler creates
+inside src\.libs instead of the one in src\. It depends on the
+libiconv-2.dll file, which is distributed with MinGW
+(inside the bin\ subdirectory of the main MinGW installation directory).
 
 
 HOW TO COMPILE AND INSTALL THE PROGRAM FROM THE GIT SOURCES
