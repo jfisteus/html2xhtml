@@ -141,7 +141,8 @@ static int write_plain_data(xchar* text, int len);
 static int cprintf_init(charset_t *to_charset, FILE *file);
 static int cprintf_close(void);
 static int cprintf(char *format, ...);
-static int cwrite(const char *buf, size_t num);
+static int cwrite(char *buf, size_t num);
+static int cwrite_single(const char *buf, size_t num);
 static int cputc(int c);
 static void cflush(void);
 static size_t ccount_utf8_chars(const char *buf, size_t num_bytes);
@@ -2708,7 +2709,24 @@ static int cprintf(char *format, ...)
   return (int) chars_written;
 }
 
-static int cwrite(const char *buf, size_t num)
+static int cwrite(char *buf, size_t num)
+{
+  int written = 0;
+  char *pos = buf;
+  while (num > 0) {
+    if (num > CBUFFER_SIZE) {
+      written += cwrite_single(pos, CBUFFER_SIZE);
+      pos += CBUFFER_SIZE;
+      num -= CBUFFER_SIZE;
+    } else {
+      written += cwrite_single(pos, num);
+      num = 0;
+    }
+  }
+  return written;
+}
+
+static int cwrite_single(const char *buf, size_t num)
 {
   size_t chars_written;
 
