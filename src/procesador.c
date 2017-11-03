@@ -2713,11 +2713,21 @@ static int cwrite(char *buf, size_t num)
 {
   int written = 0;
   char *pos = buf;
+  size_t to_write;
   while (num > 0) {
     if (num > CBUFFER_SIZE) {
-      written += cwrite_single(pos, CBUFFER_SIZE);
-      pos += CBUFFER_SIZE;
-      num -= CBUFFER_SIZE;
+      to_write = CBUFFER_SIZE;
+      /*
+       * Go backwards until the first byte of a UTF8 character is found;
+       * this avoids breaking a UTF8 character in the middle,
+       * which would make charset conversion fail.
+       */
+      while ((char)(pos[to_write] & 0xC0) == (char)0x80) {
+        to_write--;
+      }
+      written += cwrite_single(pos, to_write);
+      pos += to_write;
+      num -= to_write;
     } else {
       written += cwrite_single(pos, num);
       num = 0;
