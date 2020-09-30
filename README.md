@@ -1,4 +1,4 @@
-# README
+# Html2xhtml
 
 Html2xhtml is a command-line tool that converts HTML files to XHTML
 files. The path of the HTML input file can be provided as a command-
