@@ -231,7 +231,9 @@ void saxEndDocument(void)
 
   if (actual_element)
     for ( ; actual_element; actual_element= actual_element->padre)
-      elm_close(actual_element);
+      if (actual_element->tipo == Node_element) {
+        elm_close(actual_element);
+      }
 
   if (!document->inicio) EXIT("document discarded");
 
@@ -415,7 +417,10 @@ void saxEndElement(const xchar *name)
     tree_node_t *p;
 
     /* se cierran todos los nodos hasta llegar a este */
-    for (p=actual_element; p != nodo; p=p->padre) elm_close(p);
+    for (p=actual_element; p != nodo; p=p->padre)
+      if (p->tipo == Node_element) {
+        elm_close(p);
+      }
 
     /* cierra el nodo y actualiza actual_element */
     elm_close(nodo);
@@ -940,6 +945,12 @@ int insert_element(tree_node_t *nodo)
 static void elm_close(tree_node_t *nodo)
 {
   DEBUG("elm_close()");
+
+  if (nodo->tipo != Node_element) {
+    EXIT("Trying to close a non-element node");
+    return;
+  }
+
   EPRINTF1("cerrando elemento %s\n",ELM_PTR(nodo).name);
 
   if (ELM_PTR(nodo).contenttype[doctype]==CONTTYPE_CHILDREN) {
@@ -1520,7 +1531,9 @@ static int err_child_no_valid(tree_node_t* nodo)
 	|| (ELM_ID(nodo)==ELMID_BODY)
 	|| (ELM_ID(nodo)==ELMID_FRAMESET)) insertado=0;
     else for ( ; actual_element != actual; actual_element= actual_element->padre)
-      elm_close(actual_element);
+      if (actual_element->tipo == Node_element) {
+        elm_close(actual_element);
+      }
   } else {
     /* puede ser un caso de estructura incorrecta */
     insertado= err_html_struct(document, ELM_ID(nodo));
@@ -1827,7 +1840,9 @@ static int err_html_struct(document_t *document, int elm_id)
       elm_close(head);
     }
     for (nodo=actual_element; nodo && (nodo!=html); nodo=nodo->padre)
-      elm_close(nodo);
+      if (nodo->tipo == Node_element) {
+        elm_close(nodo);
+      }
     actual_element= html;
     ok=1;
     DEBUG("err_html_struct()");
@@ -1863,7 +1878,9 @@ static int err_html_struct(document_t *document, int elm_id)
       }
       
       for(nodo=actual_element; nodo && (nodo!=html); nodo=nodo->padre)
-	elm_close(nodo);
+        if (nodo->tipo == Node_element) {
+          elm_close(nodo);
+        }
       actual_element= html;
 
       /* establece un nodo para el elemento body */
@@ -1887,7 +1904,9 @@ static int err_html_struct(document_t *document, int elm_id)
       }
       
       for(nodo=actual_element; nodo && (nodo!=html); nodo=nodo->padre)
-	elm_close(nodo);
+        if (nodo->tipo == Node_element) {
+          elm_close(nodo);
+        }
       actual_element= html;
 
       /* establece un nodo para el elemento body */
