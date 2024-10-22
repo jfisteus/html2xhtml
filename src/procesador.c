@@ -717,9 +717,17 @@ static int doctype_scan(const xchar *data)
   int i;
 
   /* if the document is already XHTML, maintain its doctype
-   * by default 
+   * by default
    */
-  strncpy(buffer, data, 512);
+
+  /* take at most 511 bytes to scan for the doctype;
+   * buffer must be a null-terminated string
+   * (xsearch uses strstr, which does not terminate with NULL
+   * when it truncates).
+   */
+  strncpy(buffer, data, 511);
+  buffer[511] = 0;
+
   for (i = 0; i < DTD_NUM; i++) {
     if (xsearch(buffer, dtd_string[i]))
       return i;
