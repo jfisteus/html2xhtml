@@ -98,10 +98,10 @@ $ cd ..
 ```
 
 If you want to install the program in your system, type then (it may
-require root priviledges):
+require root privileges):
 
 ```
-$ make install 
+$ make install
 ```
 
 > See ./INSTALL for more information.
@@ -136,3 +136,9 @@ explained above:
 $ ./configure
 $ make
 ```
+
+Note:
+in Debian systems,
+you need to have the following packages installed
+for the commands above to work:
+`libtool`, `automake`, `autoconf`, `bison` and `flex`.
