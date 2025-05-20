@@ -136,3 +136,9 @@ explained above:
 $ ./configure
 $ make
 ```
+
+Note:
+in Debian systems,
+you need to have the following packages installed
+for the commands above to work:
+`libtool`, `automake`, `autoconf`, `bison` and `flex`.
