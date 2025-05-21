@@ -1,18 +1,18 @@
 # Html2xhtml
 
 Html2xhtml is a command-line tool that converts HTML files to XHTML
-files. The path of the HTML input file can be provided as a command-
-line argument. If not, it is read from stdin.
+files. The path of the HTML input file can be provided as a
+commandline argument. If not, it is read from stdin.
 
-Xhtml2xhtml tries always to generate valid XHTML files.  It is able to
-correct many common errors in input HTML files without loose of infor‐
-mation.  However, for some errors, html2xhtml may decide to loose some
-information in order to generate a valid XHTML output.  This can be
-avoided with the -e option, which allows html2xhtml to generate non-
-valid output in these cases.
+Html2xhtml tries always to generate valid XHTML files. It is able to
+correct many common errors in input HTML files without loss of
+information. However, for some errors, html2xhtml may decide to loose some
+information in order to generate a valid XHTML output. This can be
+avoided with the -e option, which allows html2xhtml to generate
+non-valid output in these cases.
 
-Html2xhtml can generate the XHTML output compliant to one of the fol‐
-lowing document types: XHTML 1.0 (Transitional, Strict and Frameset),
+Html2xhtml can generate the XHTML output compliant to one of the
+following document types: XHTML 1.0 (Transitional, Strict and Frameset),
 XHTML 1.1, XHTML Basic and XHTML Mobile Profile.
 
 ## HOW TO RUN THE PROGRAM
