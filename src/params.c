@@ -37,6 +37,7 @@ int   param_compact_empty_elm_tags;
 int   param_empty_tags;
 int   param_crlf_eol;
 int   param_generate_snippet;
+char  *param_system_dtd_prefix;
 
 void params_set_defaults()
 {
@@ -57,5 +58,5 @@ void params_set_defaults()
   param_empty_tags = 0;
   param_crlf_eol = 0;
   param_generate_snippet = 0;
+  param_system_dtd_prefix = NULL;
 }
-

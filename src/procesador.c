@@ -126,6 +126,7 @@ static xchar* check_and_fix_att_value(xchar* value);
 
 /* new output functions */
 static void write_document(document_t *doc);
+static void write_doctype(void);
 static int write_node(tree_node_t *node);
 static int write_element(tree_node_t *node);
 static int write_chardata(tree_node_t *node);
@@ -2151,8 +2152,7 @@ static void write_document(document_t *doc)
       cprintf("?%s%s%s", gt, eol, eol);
 
       /* write <!DOCTYPE... */
-      cprintf("%s!DOCTYPE html%s   %s%s   \"%s\" %s%s",
-          lt, eol, doctype_string[doctype], eol, dtd_string[doctype], gt, eol);
+      write_doctype();
   }
   p = doc->inicio;
   if (!param_generate_snippet) {
@@ -2169,6 +2169,25 @@ static void write_document(document_t *doc)
   }
 
   cprintf_close();
+}
+
+static void write_doctype()
+{
+  if (!param_system_dtd_prefix) {
+    cprintf("%s!DOCTYPE html%s   %s%s   \"%s\" %s%s",
+        lt, eol, doctype_string[doctype], eol, dtd_string[doctype], gt, eol);
+  } else {
+    int last_slash = -1;
+    int i;
+    for (i = 0; dtd_string[doctype][i]; i++) {
+      if (dtd_string[doctype][i] == '/')
+        last_slash = i;
+    }
+    // last_slash is guaranteed to be >= 0
+    cprintf("%s!DOCTYPE html%s   SYSTEM \"%s%s\"%s%s",
+        lt, eol, param_system_dtd_prefix,
+        &dtd_string[doctype][last_slash + 1], gt, eol);
+  }
 }
 
 static int write_node(tree_node_t *node)

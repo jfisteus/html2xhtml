@@ -182,6 +182,8 @@ static void process_parameters(int argc, char **argv)
       param_empty_tags = 1;
     } else if (!strcmp(argv[i], "--dos-eol")) {
       param_crlf_eol = 1;
+    } else if (!strcmp(argv[i], "--system-dtd-prefix") && ((i+1) < argc)) {
+      param_system_dtd_prefix = argv[++i];
     } else if (!fich && argv[i][0]!='-') {
       fich = 1;
       param_inputf = fopen(argv[i], "r");
