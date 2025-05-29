@@ -67,7 +67,7 @@ int dtd_id(char *key);
 
 
 #define ERROR(msg)        {fprintf(stderr,"ERROR (%s,%d): %s\n", \
-				   __FILE__,__LINE__,msg);exit(1);}
+                                   __FILE__,__LINE__,msg);exit(1);}
 
 
 /* the messages module needs this variable to be declared here */
@@ -105,7 +105,7 @@ void print_version()
 {
   fprintf(stderr, "dtdquery (part of html2xhtml version %s)\n", VERSION);
   fprintf(stderr, "DTD data based on DTDs as available on %s\n",
-	  DTD_SNAPSHOT_DATE);
+          DTD_SNAPSHOT_DATE);
 }
 
 void error_de_parametros()
@@ -140,14 +140,14 @@ void lee_elm(char *elm_name)
       printf("\n** %s **\n",dtd_name[dtd]);
       printf("   - attlist:\n");
       for (i=0; elm_list[elm_ptr].attlist[dtd][i]>=0; i++)
-	printf("      %3d  %s\n",elm_list[elm_ptr].attlist[dtd][i],
-	       att_list[elm_list[elm_ptr].attlist[dtd][i]].name);
+        printf("      %3d  %s\n",elm_list[elm_ptr].attlist[dtd][i],
+               att_list[elm_list[elm_ptr].attlist[dtd][i]].name);
 
       printf("   - content:\n");
       printf("        %s\n",
-	     contentspecToString(dtd_elm_read_buffer
-				 (elm_list[elm_ptr].contentspec[dtd]),
-				 content,elm_list[elm_ptr].contenttype[dtd],&tmp));
+             contentspecToString(dtd_elm_read_buffer
+                                 (elm_list[elm_ptr].contentspec[dtd]),
+                                 content,elm_list[elm_ptr].contenttype[dtd],&tmp));
     }
   }
 
@@ -170,17 +170,17 @@ void lee_att(char *att_name)
       printf("%3d %s\n",att_ptr,att_list[att_ptr].name);
       printf("      %s\n",envToString(att_list[att_ptr].environment));
       printf("      %s %s %s\n",
-	     attTypeToString(att_list[att_ptr].attType),
-	     defDeclToString(att_list[att_ptr].defaultDecl),
-	     dtd_att_read_buffer(att_list[att_ptr].defaults));
+             attTypeToString(att_list[att_ptr].attType),
+             defDeclToString(att_list[att_ptr].defaultDecl),
+             dtd_att_read_buffer(att_list[att_ptr].defaults));
 
       /* search the elements that contain this attribute */
       for (i=0; i<elm_data_num; i++)
-	for (k=0; k<DTD_NUM; k++) {
-	  if (dtd_att_search_list_id(att_ptr,elm_list[i].attlist[k])>=0)
-	    printf("         %3d %-14s (%s)\n",
-		   i,elm_list[i].name,dtd_name[k]);
-	}
+        for (k=0; k<DTD_NUM; k++) {
+          if (dtd_att_search_list_id(att_ptr,elm_list[i].attlist[k])>=0)
+            printf("         %3d %-14s (%s)\n",
+                   i,elm_list[i].name,dtd_name[k]);
+        }
     }
   }
   while (att_ptr>=0);
@@ -238,14 +238,14 @@ void check_content(char **argv, int argc) {
   }
 
   valid= dtd_is_child_valid(elm_list[elm_ptr].contentspec[doctype],
-			    contenido, num_elm);
+                            contenido, num_elm);
 
   printf("%s\n",
-	 contentspecToString(dtd_elm_read_buffer
-			     (elm_list[elm_ptr].contentspec[doctype]),
-			     content,elm_list[elm_ptr].contenttype[doctype],
-			     &tmp)
-	 );
+         contentspecToString(dtd_elm_read_buffer
+                             (elm_list[elm_ptr].contentspec[doctype]),
+                             content,elm_list[elm_ptr].contenttype[doctype],
+                             &tmp)
+         );
   printf("valid: %d\n", valid);
 
   return;
@@ -273,9 +273,9 @@ void comparar_dtds(char *dtd_key_1, char *dtd_key_2)
     num_listados = 0;
     for (i = 0; i < elm_data_num; i++) {
       if (elm_list[i].contenttype[dtd1]
-	  && !elm_list[i].contenttype[dtd2]) {
-	printf("%s\n", elm_list[i].name);
-	num_listados++;
+          && !elm_list[i].contenttype[dtd2]) {
+        printf("%s\n", elm_list[i].name);
+        num_listados++;
       }
     }
     if (!num_listados) {
@@ -288,9 +288,9 @@ void comparar_dtds(char *dtd_key_1, char *dtd_key_2)
     num_listados = 0;
     for (i = 0; i < elm_data_num; i++) {
       if (elm_list[i].contenttype[dtd2]
-	  && !elm_list[i].contenttype[dtd1]) {
-	printf("%s\n", elm_list[i].name);
-	num_listados++;
+          && !elm_list[i].contenttype[dtd1]) {
+        printf("%s\n", elm_list[i].name);
+        num_listados++;
       }
     }
     if (!num_listados) {
@@ -306,7 +306,7 @@ void comparar_dtds(char *dtd_key_1, char *dtd_key_2)
     for (i = 0; i < elm_data_num; i++) {
       comparar = comparar_elemento(i, dtd1, dtd2);
       if (comparar == 1)
-	num_listados++;
+        num_listados++;
     }
 
     if (num_listados) {
@@ -318,9 +318,9 @@ void comparar_dtds(char *dtd_key_1, char *dtd_key_2)
       fprintf(stderr, "DTDs must be different\n");
     else {
       if (dtd1 == -1)
-	fprintf(stderr, "DTD %s not found\n", dtd_key_1);
+        fprintf(stderr, "DTD %s not found\n", dtd_key_1);
       if (dtd2 == -1)
-	fprintf(stderr, "DTD %s not found\n", dtd_key_2);
+        fprintf(stderr, "DTD %s not found\n", dtd_key_2);
     }
   }
 }
@@ -361,26 +361,26 @@ int comparar_elemento(int elmid, int dtd1, int dtd2)
 
   /* compare attributes */
   atributos_solo_en_uno(elm_list[elmid].attlist[dtd1],
-			elm_list[elmid].attlist[dtd2],
-			solo1);
+                        elm_list[elmid].attlist[dtd2],
+                        solo1);
   atributos_solo_en_uno(elm_list[elmid].attlist[dtd2],
-			elm_list[elmid].attlist[dtd1],
-			solo2);
+                        elm_list[elmid].attlist[dtd1],
+                        solo2);
 
   if (solo1[0] != -1 || solo2[0] != -1) {
     printf("%s\n", elm_list[elmid].name);
     for(i = 0; solo1[i] != -1; i++) {
       printf("\t%d %s\n", solo1[i], att_list[solo1[i]].name);
       for (k = 0; solo2[k] != -1; k++) {
-	if (!strcmp(att_list[solo1[i]].name, att_list[solo2[k]].name)) {
-	  printf("\t\t\t%d %s\n", solo2[k], att_list[solo2[k]].name);
-	  solo2[k] = -2;
-	}
+        if (!strcmp(att_list[solo1[i]].name, att_list[solo2[k]].name)) {
+          printf("\t\t\t%d %s\n", solo2[k], att_list[solo2[k]].name);
+          solo2[k] = -2;
+        }
       }
     }
     for(i = 0; solo2[i] != -1; i++) {
       if (solo2[i] >= 0)
-	printf("\t\t\t%d %s\n", solo2[i], att_list[solo2[i]].name);
+        printf("\t\t\t%d %s\n", solo2[i], att_list[solo2[i]].name);
     }
   }
 
@@ -396,7 +396,7 @@ int atributos_solo_en_uno(int *lista1, int *lista2, int* resultado)
     encontrado = 0;
     for (j = 0; lista2[j] != -1 && !encontrado; j++) {
       if (lista1[i] == lista2[j])
-	encontrado = 1;
+        encontrado = 1;
     }
 
     if (!encontrado)

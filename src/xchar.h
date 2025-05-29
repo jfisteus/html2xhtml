@@ -73,7 +73,7 @@ size_t xstrsize(const xchar *str);
 
 #ifndef HAVE_MEMMEM
 void *memmem (const void *__haystack, size_t __haystacklen,
-	      const void *__needle, size_t __needlelen);
+              const void *__needle, size_t __needlelen);
 #endif
 
 #endif

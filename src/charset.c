@@ -57,7 +57,7 @@ static charset_t* guess_charset(size_t begin_pos);
 #define MODE_ASCII 0
 #define MODE_EBCDIC 1
 static charset_t* read_charset_decl(int ini, int step, int mode,
-				    charset_t* defaults);
+                                    charset_t* defaults);
 
 #ifdef WITH_CGI
 static char *stop_string = NULL;
@@ -157,8 +157,8 @@ void charset_close()
       /* write the output */
       wrote = fwrite(buffer, 1, CHARSET_BUFFER_SIZE - avail, file);
       if (wrote < CHARSET_BUFFER_SIZE - avail) {
-	perror("fwrite()");
-	EXIT("Error writing a data block to the output");
+        perror("fwrite()");
+        EXIT("Error writing a data block to the output");
       }
     }
   }
@@ -196,57 +196,57 @@ int charset_read(char *outbuf, size_t num, int interactive)
     /* read more data from file into the input buffer if needed */
     if (state != eof && bufferpos == buffer && avail < 16) {
       if (!interactive)
-	read_block();
+        read_block();
       else
-	read_interactive();
+        read_interactive();
     }
     /* convert the input into de internal charset */
     if (avail > 0) {
       nconv = iconv(cd, &bufferpos, &avail, &outbuf, &outbuf_max);
       if (nconv == (size_t) -1) {
-	if (errno == EINVAL) {
-	  /* Some bytes in the input were not converted. Move
-	   * them to the beginning of the buffer so that
-	   * they can be used in the next round.
-	   */
-	  if (state != eof) {
-	    memmove (buffer, bufferpos, avail);
-	    bufferpos = buffer;
-	    convert_more = 1;
-	  } else {
-	    WARNING("Some bytes discarded at the end of the input");
-	    avail = 0;
-	  }
-	}
-	else if (errno == EILSEQ) {
-	  /* Invalid byte sequence found in the input */
-	  if (outbuf_max >= 3) {
-	    /* Dump the Unicode replacement character U+FFFD, which
-	     * is represented as 0xEF 0xBF 0xBD in UTF-8.
-	     */
-	    outbuf[0] = (char) 0xef;
-	    outbuf[1] = (char) 0xbf;
-	    outbuf[2] = (char) 0xbd;
-	    outbuf += 3;
-	    outbuf_max -= 3;
-	    bufferpos++;
-	    avail--;
-	    convert_more = 1;
-	  }
-	}
-	else if (errno != E2BIG) {
-	  /* It is a real problem. Stop the conversion. */
-	  perror("inconv");
-	  if (fclose(file) != 0)
-	    perror ("fclose");
-	  EXIT("Error while converting the input into the internal charset");
-	}
+        if (errno == EINVAL) {
+          /* Some bytes in the input were not converted. Move
+           * them to the beginning of the buffer so that
+           * they can be used in the next round.
+           */
+          if (state != eof) {
+            memmove (buffer, bufferpos, avail);
+            bufferpos = buffer;
+            convert_more = 1;
+          } else {
+            WARNING("Some bytes discarded at the end of the input");
+            avail = 0;
+          }
+        }
+        else if (errno == EILSEQ) {
+          /* Invalid byte sequence found in the input */
+          if (outbuf_max >= 3) {
+            /* Dump the Unicode replacement character U+FFFD, which
+             * is represented as 0xEF 0xBF 0xBD in UTF-8.
+             */
+            outbuf[0] = (char) 0xef;
+            outbuf[1] = (char) 0xbf;
+            outbuf[2] = (char) 0xbd;
+            outbuf += 3;
+            outbuf_max -= 3;
+            bufferpos++;
+            avail--;
+            convert_more = 1;
+          }
+        }
+        else if (errno != E2BIG) {
+          /* It is a real problem. Stop the conversion. */
+          perror("inconv");
+          if (fclose(file) != 0)
+            perror ("fclose");
+          EXIT("Error while converting the input into the internal charset");
+        }
       } else {
-	/* coversion OK, no input left; read more now */
-	bufferpos = buffer;
-	avail = 0;
-	if (state != eof)
-	  convert_more = 1;
+        /* coversion OK, no input left; read more now */
+        bufferpos = buffer;
+        avail = 0;
+        if (state != eof)
+          convert_more = 1;
       }
     }
   } while (convert_more && !interactive);
@@ -285,37 +285,37 @@ size_t charset_write(char *buf, size_t num)
     nconv = iconv(cd, &bufpos, &n, &bufferpos, &avail);
     if (nconv == (size_t) -1) {
       if (errno == EINVAL) {
-	/* Some bytes in the input were not converted.
-	 * The caller has to feed them again later.
-	 */
+        /* Some bytes in the input were not converted.
+         * The caller has to feed them again later.
+         */
 
       } 
       else if (errno == E2BIG) {
-	/* The output buffer is full; no problem, just 
-	 * write and convert again
-	 */
-	convert_again = 1;
+        /* The output buffer is full; no problem, just 
+         * write and convert again
+         */
+        convert_again = 1;
       }
       else if (errno == EILSEQ) {
-	/* UTF-8 character that cannot be represented in
-	 * the output charset. Skip the character and continue.
-	 */
-	bufpos++;
-	n--;
-	while (n > 0 && (char)(bufpos[0] & 0xC0) == (char)0x80) {
-	  bufpos++;
-	  n--;
-	}
-	WARNING("Skipped a character: cannot be converted to output charset\n\
+        /* UTF-8 character that cannot be represented in
+         * the output charset. Skip the character and continue.
+         */
+        bufpos++;
+        n--;
+        while (n > 0 && (char)(bufpos[0] & 0xC0) == (char)0x80) {
+          bufpos++;
+          n--;
+        }
+        WARNING("Skipped a character: cannot be converted to output charset\n\
 Use UTF-8 or UTF-16 output to avoid the problem.");
-	convert_again = 1;
+        convert_again = 1;
       }
       else {
-	/* It is a real problem. Stop the conversion. */
-	perror("inconv");
-	if (fclose(file) != 0)
-	  perror ("fclose");
-	EXIT("Error while converting into the output charset");
+        /* It is a real problem. Stop the conversion. */
+        perror("inconv");
+        if (fclose(file) != 0)
+          perror ("fclose");
+        EXIT("Error while converting into the output charset");
       }
     }
 
@@ -351,7 +351,7 @@ void charset_auto_detect(size_t bytes_avail) {
     param_charset_out = param_charset_in;
     /* Put the output in UTF-16 instead of its BE/LE variants */
     if (param_charset_in == CHARSET_UTF_16BE
-	|| param_charset_in == CHARSET_UTF_16LE) {
+        || param_charset_in == CHARSET_UTF_16LE) {
       param_charset_out = CHARSET_UTF_16;
     }
   }
@@ -405,7 +405,7 @@ void charset_dump_aliases(FILE* out)
 charset_t* guess_charset(size_t begin_pos)
 {
   enum {none, be16, le16, be32, le32, u2143, u3412,
-	ebcdic, ascii_comp} guess = none;
+        ebcdic, ascii_comp} guess = none;
   charset_t* charset = NULL;
   unsigned char* buf = (unsigned char*) &buffer[begin_pos];
 
@@ -421,11 +421,11 @@ charset_t* guess_charset(size_t begin_pos)
 
   /* First, look for the byte order mark (BOM) */
   if (!buf[0] && !buf[1] && ((buf[2] == 0xfe && buf[3] == 0xff)
-			     ||(buf[2] == 0xff && buf[3] == 0xfe))) {
+                             ||(buf[2] == 0xff && buf[3] == 0xfe))) {
     /* UCS-4 big-endian (1234) or unusual byte order (2143) */
     charset = CHARSET_UCS_4;
   } else if ((buf[0] == 0xff && buf[1] == 0xfe)
-	     || (buf[0] == 0xfe && buf[1] == 0xff)) {
+             || (buf[0] == 0xfe && buf[1] == 0xff)) {
     if (!buf[2] && !buf[3]) {
       /* UCS-4 little-endian (4321) or unusual order (3412) */
       charset = CHARSET_UCS_4;
@@ -442,27 +442,27 @@ charset_t* guess_charset(size_t begin_pos)
   if (!charset) {
     if (!buf[0]) {
       if (!buf[1]) {
-	if (buf[2] == 0x3c && !buf[3]) {
-	  guess = u2143;
-	} else if (!buf[2] && buf[3] == 0x3c) {
-	  guess = be32;
-	}
+        if (buf[2] == 0x3c && !buf[3]) {
+          guess = u2143;
+        } else if (!buf[2] && buf[3] == 0x3c) {
+          guess = be32;
+        }
       } else if (buf[1] == 0x3c && !buf[2]) {
-	if (!buf[3]) {
-	  guess = u3412;
-	} else {
-	  guess = be16;
-	}
+        if (!buf[3]) {
+          guess = u3412;
+        } else {
+          guess = be16;
+        }
       }
     } else if (buf[0] == 0x3c) {
       if (!buf[1] && !buf[3]) {
-	if (!buf[2]) {
-	  guess = le32;
-	} else {
-	  guess = le16;
-	}
+        if (!buf[2]) {
+          guess = le32;
+        } else {
+          guess = le16;
+        }
       } else {
-	guess = ascii_comp;
+        guess = ascii_comp;
       }
     } else if (buf[0] == 0x4c && buf[1] && buf[2] && buf[3]) {
       guess = ebcdic;
@@ -476,17 +476,17 @@ charset_t* guess_charset(size_t begin_pos)
     case be16:
       charset = read_charset_decl(1, 2, MODE_ASCII, CHARSET_UTF_16BE);
       if (charset == CHARSET_UTF_16) {
-	/* bad declaration in the HTML file; fix it */
-	INFORM("Input charset overridden to utf-16be");
-	charset = CHARSET_UTF_16BE;
+        /* bad declaration in the HTML file; fix it */
+        INFORM("Input charset overridden to utf-16be");
+        charset = CHARSET_UTF_16BE;
       }
       break;
     case le16:
       charset = read_charset_decl(0, 2, MODE_ASCII, CHARSET_UTF_16LE);
       if (charset == CHARSET_UTF_16) {
-	/* bad declaration in the HTML file; fix it */
-	INFORM("Input charset overridden to utf-16le");
-	charset = CHARSET_UTF_16LE;
+        /* bad declaration in the HTML file; fix it */
+        INFORM("Input charset overridden to utf-16le");
+        charset = CHARSET_UTF_16LE;
       }
       break;
     case be32:
@@ -565,43 +565,43 @@ charset_t* read_charset_decl(int ini, int step, int mode, charset_t* defaults)
     while (!charset) {
       for ( ; i < len && IS_SPACE(buf[i]); i++);
       if (i == len) {
-	return NULL;
+        return NULL;
       } else if (buf[i] == '?' && ++i < len && buf[i] == '>') {
-	if (defaults) {
-	  charset = defaults;
-	} else {
-	  charset = CHARSET_UTF_8;
-	}
+        if (defaults) {
+          charset = defaults;
+        } else {
+          charset = CHARSET_UTF_8;
+        }
       } else if (i + 7 < len && !strncmp(&buf[i], "encoding", 8)) {
-	int parse_ok = 0;
-	/* look for = */
-	i += 8;
-	for ( ; i < len && IS_SPACE(buf[i]); i++);
-	if (i < len && buf[i] == '=') {
-	  /* look for " or ' */
-	  for (i++; i < len && IS_SPACE(buf[i]); i++);
-	  if (i < len && (buf[i] == '\'' || buf[i] == '\"')) {
-	    int j = i;
-	    for (i++; i < len && buf[i] != buf[j]; i++);
-	    if (i < len) {
-	      char tmp_char = buf[i];
-	      buf[i] = 0;
-	      parse_ok = 1;
-	      charset = charset_lookup_alias(&buf[j + 1]);
-	      buf[i] = tmp_char;
-	      if (!charset) {
-		EPRINTF1("Autodetected character set: %s\n", &buf[j + 1]);
-		EXIT("Unsupported input character set (autodetected)");
-	      }
-	    }
-	  }
-	}
-	if (!parse_ok) {
-	  return NULL;
-	}
+        int parse_ok = 0;
+        /* look for = */
+        i += 8;
+        for ( ; i < len && IS_SPACE(buf[i]); i++);
+        if (i < len && buf[i] == '=') {
+          /* look for " or ' */
+          for (i++; i < len && IS_SPACE(buf[i]); i++);
+          if (i < len && (buf[i] == '\'' || buf[i] == '\"')) {
+            int j = i;
+            for (i++; i < len && buf[i] != buf[j]; i++);
+            if (i < len) {
+              char tmp_char = buf[i];
+              buf[i] = 0;
+              parse_ok = 1;
+              charset = charset_lookup_alias(&buf[j + 1]);
+              buf[i] = tmp_char;
+              if (!charset) {
+                EPRINTF1("Autodetected character set: %s\n", &buf[j + 1]);
+                EXIT("Unsupported input character set (autodetected)");
+              }
+            }
+          }
+        }
+        if (!parse_ok) {
+          return NULL;
+        }
       } else {
-	/* not the encoding decl.; stop at the next whitespace */
-	for ( ; i < len && !IS_SPACE(buf[i]) && buf[i] != '?'; i++);
+        /* not the encoding decl.; stop at the next whitespace */
+        for ( ; i < len && !IS_SPACE(buf[i]) && buf[i] != '?'; i++);
       }
     }
   } else {
@@ -615,147 +615,147 @@ charset_t* read_charset_decl(int ini, int step, int mode, charset_t* defaults)
       int found = 0;
       int meta_ini = 0;
       enum {normal, tag_name, tag_attrs, att_val_double,
-	    att_val_simple, script, script_end, comment} scan_state = normal;
+            att_val_simple, script, script_end, comment} scan_state = normal;
       i = 0;
       for ( ; i < len && !found; i++) {
-	char c = buf[i];
-	switch (scan_state) {
-	case normal:
-	  if (c == '<') {
-	    if (i + 3 < len && buf[i + 1] == '!' && buf[i + 2] == '-'
-		&& buf[i + 3] == '-') {
-	      scan_state = comment;
-	      i += 3;
-	    } else {
-	      scan_state = tag_name;
-	      ini = i + 1;
-	    }
-	  }
-	  break;
-	case tag_name:
-	  if (IS_SPACE(c)) {
-	    if (i - ini == 4 && !memcmp("meta", &buf[ini], 4)) {
-	      /* now look for the attributes http-equiv and content */
-	      scan_state = tag_attrs;
-	      meta_ini = i;
-	    }
-	  } else if (c == '>') {
-	    scan_state = normal;
-	  }  
-	  if ((IS_SPACE(c) || c == '>')
-	      && i - ini == 6 && !memcmp("script", &buf[ini], 6)) {
-	    /* do nothing until </script> */
-	      scan_state = script;
-	  }
-	  break;
-	case tag_attrs:
-	  if (c == '>') {
-	    scan_state = normal;
-	    if (meta_ini) {
-	      int j;
-	      char* attr;
-	      int attr_len;
-	      
-	      attr = memmem(&buf[meta_ini], i - meta_ini, "http-equiv", 9);
-	      if (attr) {
-		attr_len = len - (attr - buf);
-		for (j = 0; j < attr_len && attr[j] != '\''
-		       && attr[j] != '\"'; j++);
-		if (j < attr_len) {
-		  ini = j + 1;
-		  for (j = ini; j < attr_len && attr[j] != attr[ini - 1]; j++);
-		  if (j < i && j == ini + 12) {
-		    if (!memcmp("content-type", &attr[ini], 12)) {
-		      found = 1;
-		    }
-		  }
-		}
-	      }
+        char c = buf[i];
+        switch (scan_state) {
+        case normal:
+          if (c == '<') {
+            if (i + 3 < len && buf[i + 1] == '!' && buf[i + 2] == '-'
+                && buf[i + 3] == '-') {
+              scan_state = comment;
+              i += 3;
+            } else {
+              scan_state = tag_name;
+              ini = i + 1;
+            }
+          }
+          break;
+        case tag_name:
+          if (IS_SPACE(c)) {
+            if (i - ini == 4 && !memcmp("meta", &buf[ini], 4)) {
+              /* now look for the attributes http-equiv and content */
+              scan_state = tag_attrs;
+              meta_ini = i;
+            }
+          } else if (c == '>') {
+            scan_state = normal;
+          }  
+          if ((IS_SPACE(c) || c == '>')
+              && i - ini == 6 && !memcmp("script", &buf[ini], 6)) {
+            /* do nothing until </script> */
+              scan_state = script;
+          }
+          break;
+        case tag_attrs:
+          if (c == '>') {
+            scan_state = normal;
+            if (meta_ini) {
+              int j;
+              char* attr;
+              int attr_len;
+              
+              attr = memmem(&buf[meta_ini], i - meta_ini, "http-equiv", 9);
+              if (attr) {
+                attr_len = len - (attr - buf);
+                for (j = 0; j < attr_len && attr[j] != '\''
+                       && attr[j] != '\"'; j++);
+                if (j < attr_len) {
+                  ini = j + 1;
+                  for (j = ini; j < attr_len && attr[j] != attr[ini - 1]; j++);
+                  if (j < i && j == ini + 12) {
+                    if (!memcmp("content-type", &attr[ini], 12)) {
+                      found = 1;
+                    }
+                  }
+                }
+              }
 
-	      if (found) {
-		int content_found = 0;
-		attr = &buf[meta_ini];
-		attr_len = len - meta_ini;
-		while (attr && !content_found) {
-		  attr = memmem(attr, attr_len, "content", 7);
-		  if (attr) {
-		    attr_len = len - (attr - buf);
-		    if (attr_len > 7 && (IS_SPACE(attr[7]) || attr[7] == '=')) {
-		      content_found = 1;
-		    } else {
-		      attr += 7;
-		    }
-		  }
-		}
-		if (content_found) {
-		  for (j = 0; j < attr_len && attr[j] != '\''
-			 && attr[j] != '\"'; j++);
-		  if (j < attr_len) {
-		    ini = j + 1;
-		    for (j = ini; j < attr_len && attr[j] != attr[ini - 1];
-			 j++);
-		    if (j < attr_len) {
-		      char *charset_decl;
-		      attr[j] = 0;
-		      charset_decl = strstr(&attr[ini], "charset=");
-		      if (charset_decl) {
-			charset_decl += 8;
-			charset = charset_lookup_alias(charset_decl);
-			if (!charset) {
-			  WARNING("Unknown charset in meta/@ContentType");
-			}
-		      }
-		    }
-		  }
-		}
-	      }
+              if (found) {
+                int content_found = 0;
+                attr = &buf[meta_ini];
+                attr_len = len - meta_ini;
+                while (attr && !content_found) {
+                  attr = memmem(attr, attr_len, "content", 7);
+                  if (attr) {
+                    attr_len = len - (attr - buf);
+                    if (attr_len > 7 && (IS_SPACE(attr[7]) || attr[7] == '=')) {
+                      content_found = 1;
+                    } else {
+                      attr += 7;
+                    }
+                  }
+                }
+                if (content_found) {
+                  for (j = 0; j < attr_len && attr[j] != '\''
+                         && attr[j] != '\"'; j++);
+                  if (j < attr_len) {
+                    ini = j + 1;
+                    for (j = ini; j < attr_len && attr[j] != attr[ini - 1];
+                         j++);
+                    if (j < attr_len) {
+                      char *charset_decl;
+                      attr[j] = 0;
+                      charset_decl = strstr(&attr[ini], "charset=");
+                      if (charset_decl) {
+                        charset_decl += 8;
+                        charset = charset_lookup_alias(charset_decl);
+                        if (!charset) {
+                          WARNING("Unknown charset in meta/@ContentType");
+                        }
+                      }
+                    }
+                  }
+                }
+              }
 
-	      meta_ini = 0;
-	    }
-	  } else if (c == '\'') {
-	    scan_state = att_val_simple;
-	  } else if (c == '\"') {
-	    scan_state = att_val_double;
-	  }
-	  break;
-	case att_val_double:
-	  if (c == '\"') {
-	    scan_state = tag_attrs;
-	  }
-	  break;
-	case att_val_simple:
-	  if (c == '\'') {
-	    scan_state = tag_attrs;
-	  }
-	  break;
-	case script:
-	  if (c == '<' && i + 6 < len && !memcmp("script", &buf[ini], 6)) {
-	    scan_state = script_end;
-	    i += 6;
-	  }	  
-	  break;
-	case script_end:
-	  if (c == '>') {
-	    scan_state = normal;
-	  }
-	  break;
-	case comment:
-	  if (c == '-' && i + 2 < len && buf[i + 1] == '-'
-	      && buf[i + 2] == '>') {
-	    scan_state = normal;
-	    i += 2;
-	  }	  
-	  break;
-	}
+              meta_ini = 0;
+            }
+          } else if (c == '\'') {
+            scan_state = att_val_simple;
+          } else if (c == '\"') {
+            scan_state = att_val_double;
+          }
+          break;
+        case att_val_double:
+          if (c == '\"') {
+            scan_state = tag_attrs;
+          }
+          break;
+        case att_val_simple:
+          if (c == '\'') {
+            scan_state = tag_attrs;
+          }
+          break;
+        case script:
+          if (c == '<' && i + 6 < len && !memcmp("script", &buf[ini], 6)) {
+            scan_state = script_end;
+            i += 6;
+          }       
+          break;
+        case script_end:
+          if (c == '>') {
+            scan_state = normal;
+          }
+          break;
+        case comment:
+          if (c == '-' && i + 2 < len && buf[i + 1] == '-'
+              && buf[i + 2] == '>') {
+            scan_state = normal;
+            i += 2;
+          }       
+          break;
+        }
       }
     }
 
     /* By default, ISO-8859-1 */
     if (!charset) {
       if (!defaults || defaults == CHARSET_UTF_8) {
-	charset = CHARSET_ISO_8859_1;
+        charset = CHARSET_ISO_8859_1;
       } else {
-	charset = defaults;
+        charset = defaults;
       }
     }
   }
@@ -780,13 +780,13 @@ int compare_aliases(const char* alias1, const char* alias2)
     } else if (!alias2[i]) {
       return 1;
     } else if ((alias1[i] == '_' || alias1[i] == '-')
-	       && (alias2[i] == '_' || alias2[i] == '-')) {
+               && (alias2[i] == '_' || alias2[i] == '-')) {
       /* nothing, just continue in the loop */
     } else {
       int c1 = tolower(alias1[i]);
       int c2 = tolower(alias2[i]);
       if (c1 != c2) {
-	  return (c1 < c2 ? -1 : 1);
+          return (c1 < c2 ? -1 : 1);
       }
     }
   }
@@ -813,16 +813,16 @@ static void read_block()
     read_again = 0;
     if (nread == 0) {
       if (ferror(file)) {
-	if (errno != EINTR) {
-	  perror("read");
-	  EXIT("Error reading the input");
-	} else {
-	  /* interrupted: read again */
-	  read_again = 1;
-	}
+        if (errno != EINTR) {
+          perror("read");
+          EXIT("Error reading the input");
+        } else {
+          /* interrupted: read again */
+          read_again = 1;
+        }
       } else {
-	/* End of input file */
-	state = eof;
+        /* End of input file */
+        state = eof;
       }
     }
   }
@@ -835,15 +835,15 @@ static void read_block()
 
       len = stop_len - stop_matched;
       if (len > nread)
-	len = nread;
+        len = nread;
       if (!memcmp(&buffer[avail], &stop_string[stop_matched], len)) {
-	/* stop string found (or still partially) */
-	nread = -stop_matched;
-	stop_matched += len;
-	if (stop_matched == stop_len)
-	  state = eof;
+        /* stop string found (or still partially) */
+        nread = -stop_matched;
+        stop_matched += len;
+        if (stop_matched == stop_len)
+          state = eof;
       } else {
-	stop_matched = 0;
+        stop_matched = 0;
       }
     }
     if (!stop_matched)
@@ -889,7 +889,7 @@ static void open_iconv(const char *to_charset, const char *from_charset)
      */
 /*     if (errno == EINVAL) */
 /*       error(0, 0, "Error: conversion from '%s' to '%s' not available", */
-/* 	    from_charset, to_charset); */
+/*          from_charset, to_charset); */
 /*     else */
 
     perror ("iconv_open");
@@ -946,18 +946,18 @@ static void detect_boundary(const char *buf, size_t *nread)
       k = (pos - stop_step >= 1) ? pos - stop_step : 1;
       for ( ; i > k && buf[i] == '-'; i--);
       if (buf[i - 1] == '\r' && buf[i] == '\n') {
-	/* look forward */
-	ini = i - 1;
-	end = ini + stop_len;
-	end = (end <= *nread) ? end : *nread;
-	if (middle == end - 1 || !memcmp(&buf[middle + 1], 
-					 &stop_string[middle + 1 - ini],
-					 end - middle - 1)) {
-	  stop_matched = end - ini;
-	  *nread = ini;
-	  if (stop_matched == stop_len)
-	    state = eof;
-	}
+        /* look forward */
+        ini = i - 1;
+        end = ini + stop_len;
+        end = (end <= *nread) ? end : *nread;
+        if (middle == end - 1 || !memcmp(&buf[middle + 1], 
+                                         &stop_string[middle + 1 - ini],
+                                         end - middle - 1)) {
+          stop_matched = end - ini;
+          *nread = ini;
+          if (stop_matched == stop_len)
+            state = eof;
+        }
       }
     } else if (buf[i] == '\r') {
       (*nread)--;

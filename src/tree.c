@@ -166,7 +166,7 @@ tree_node_t *new_tree_node(node_type_t tipo)
  *
  */
 void tree_set_node_att(tree_node_t *nodo, int att_id, const xchar *value,
-		       int is_valid)
+                       int is_valid)
 {
   att_node_t *p, *att;
 
@@ -174,8 +174,8 @@ void tree_set_node_att(tree_node_t *nodo, int att_id, const xchar *value,
   /* busca dónde insertar el atributo */
   if (nodo->cont.elemento.attlist) {
     for (p=nodo->cont.elemento.attlist;
-	 p->sig && (p->att_id!=att_id ); 
-	 p= p->sig);
+         p->sig && (p->att_id!=att_id ); 
+         p= p->sig);
     if (p->sig) {
       /* atributo repetido: no lo inserta */
       INFORM("repeated attribute");
@@ -224,7 +224,7 @@ void tree_set_node_data(tree_node_t *nodo, const xchar *data, int len_data)
  * mediante esta función.
  */
 void tree_link_data_node(node_type_t tipo, tree_node_t *actual_element,
-			 const xchar *data, int len_data)
+                         const xchar *data, int len_data)
 {
   int node_size;
   int saved = 0;

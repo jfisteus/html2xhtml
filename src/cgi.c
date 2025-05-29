@@ -48,7 +48,7 @@ static int mult_param_name_len(const char *input, size_t avail);
 static int mult_skip_double_eol(const char **input, size_t *input_len);
 static int mult_param_value_len(const char *input, size_t avail);
 static int set_param(const char *name, size_t name_len,
-		     const char *value, size_t value_len);
+                     const char *value, size_t value_len);
 static void cgi_write_header(void);
 static void cgi_write_footer();
 static charset_t* lookup_charset(const char* alias, size_t alias_len);
@@ -84,9 +84,9 @@ int cgi_check_request()
       boundary_len = strlen(boundary);
       cgi_status = CGI_ST_MULTIPART;
     } else if ((!strncmp(type, MIME_TYPE_HTML, MIME_TYPE_HTML_LEN)
-		&& !type[MIME_TYPE_HTML_LEN])
-	       || !strncmp(type, MIME_TYPE_XHTML, MIME_TYPE_XHTML_LEN)
-		&& !type[MIME_TYPE_XHTML_LEN])
+                && !type[MIME_TYPE_HTML_LEN])
+               || !strncmp(type, MIME_TYPE_XHTML, MIME_TYPE_XHTML_LEN)
+                && !type[MIME_TYPE_XHTML_LEN])
       cgi_status = CGI_ST_DIRECT;
     else
       cgi_status = CGI_ERR_OTHER;
@@ -140,11 +140,11 @@ void cgi_write_output()
 {
   if (param_cgi_html_output) {
     fprintf(stdout, "Content-Type:%s; charset=%s\n\n", MIME_TYPE_HTML,
-	    param_charset_out->preferred_name);
+            param_charset_out->preferred_name);
     cgi_write_header();
   } else {
     fprintf(stdout, "Content-Type:%s; charset=%s\n\n", MIME_TYPE_XHTML,
-	    param_charset_out->preferred_name);
+            param_charset_out->preferred_name);
   }
 
   /* write the XHTML output */
@@ -204,7 +204,7 @@ static int process_params_multipart(const char **input, size_t *input_len)
       html_found = 1;
     } else {
       if ((param_value_len = mult_param_value_len(*input, *input_len)) < 0)
-	return CGI_ERR_PARAMS;
+        return CGI_ERR_PARAMS;
       set_param(param_name, param_name_len, *input, param_value_len);
       *input += param_value_len + 2;
       *input_len -= param_value_len + 2;
@@ -233,13 +233,13 @@ static int process_params_query_string()
       name_pos = pos;
       for (pos = pos + 1; pos < len && query_str[pos] != '='; pos++);
       if (pos == len)
-	return CGI_ERR_PARAMS;
+        return CGI_ERR_PARAMS;
       eq_pos = pos;
       for (pos = pos + 1; pos < len && query_str[pos] != '&'; pos++);
 
       /* process this parameter */
       set_param(&query_str[name_pos], eq_pos - name_pos,
-		&query_str[eq_pos + 1], pos - eq_pos - 1);
+                &query_str[eq_pos + 1], pos - eq_pos - 1);
 
       /* advance to the next parameter */
       pos++;
@@ -250,7 +250,7 @@ static int process_params_query_string()
 }
 
 static int set_param(const char *name, size_t name_len,
-		     const char *value, size_t value_len)
+                     const char *value, size_t value_len)
 {
   int tmpnum;
 
@@ -259,26 +259,26 @@ static int set_param(const char *name, size_t name_len,
     if (!strncmp(name, "type", 4) || !strncmp(name, "tipo", 4)) {
       tmpnum = dtd_get_dtd_index_n(value, value_len);
       if (tmpnum >= 0) {
-	param_doctype = tmpnum;
-	return 1;
+        param_doctype = tmpnum;
+        return 1;
       }
     }
   } else if (name_len == 6) {
     /* param "output"/"salida" */
     if ((!strncmp(name, "output", 6) || !strncmp(name, "salida", 6))) {
       if (value_len == 5 && !strncmp(value, "plain", 5)) {
-	param_cgi_html_output = 0;
-	return 1;
+        param_cgi_html_output = 0;
+        return 1;
       } else if (value_len == 4 && !strncmp(value, "html", 4)) {
-	param_cgi_html_output = 1;
-	return 1;
+        param_cgi_html_output = 1;
+        return 1;
       }
     }
   } else if (name_len == 7) {
     /* param "dos-eol" */
     if (!strncmp(name, "dos-eol", 7)) {
       if (value_len == 1 && value[0] == '1')
-	param_crlf_eol = 1;
+        param_crlf_eol = 1;
     }
   } else if (name_len == 9) {
     /* param "tablength" */
@@ -288,8 +288,8 @@ static int set_param(const char *name, size_t name_len,
       num[value_len] = 0;
       tmpnum= atoi(value);
       if (tmpnum >= 0 && tmpnum <= 16) {
-	param_tab_len= tmpnum;
-	return 1;
+        param_tab_len= tmpnum;
+        return 1;
       }
     }
   } else if (name_len == 10) {
@@ -300,56 +300,56 @@ static int set_param(const char *name, size_t name_len,
       num[value_len] = 0;
       tmpnum= atoi(value);
       if (tmpnum >= 40) {
-	param_chars_per_line= tmpnum;
-	return 1;
+        param_chars_per_line= tmpnum;
+        return 1;
       }
     }
   } else if (name_len == 13) {
     if (!strncmp(name, "input-charset", 13)) {
       if (value_len == 4 && !strncmp(value, "auto", 4)) {
-	/* input charset auto-detection; explicited for cases
-	 * when this parameter is received from a Web form
-	 * (there needs to be an "auto" option in the form).
-	 */
-	param_charset_in = NULL;
+        /* input charset auto-detection; explicited for cases
+         * when this parameter is received from a Web form
+         * (there needs to be an "auto" option in the form).
+         */
+        param_charset_in = NULL;
       } else {
-	param_charset_in = lookup_charset(value, value_len);
+        param_charset_in = lookup_charset(value, value_len);
       }
     }
   } else if (name_len == 14) {
     if (!strncmp(name, "output-charset", 14)) {
       if (value_len == 4 && !strncmp(value, "auto", 4)) {
-	/* output charset: same as input */
-	param_charset_out = NULL;
+        /* output charset: same as input */
+        param_charset_out = NULL;
       } else {
-	param_charset_out = lookup_charset(value, value_len);
+        param_charset_out = lookup_charset(value, value_len);
       }
     }
   } else if (name_len == 16) {
     if (!strncmp(name, "no-protect-cdata", 16)) {
       if (value_len == 1 && value[0] == '1')
-	param_protect_cdata = 0;
+        param_protect_cdata = 0;
     } else if (!strncmp(name, "generate-snippet", 16)) {
       if (value_len == 1 && value[0] == '1')
-	param_generate_snippet = 1;
+        param_generate_snippet = 1;
     }
   } else if (name_len == 21) {
     if (!strncmp(name, "empty-elm-tags-always", 21)) {
       if (value_len == 1 && value[0] == '1')
-	param_empty_tags = 1;
+        param_empty_tags = 1;
     }
   } else if (name_len == 22) {
     if (!strncmp(name, "compact-block-elements", 22)) {
       if (value_len == 1 && value[0] == '1')
-	param_compact_block_elms = 1;
+        param_compact_block_elms = 1;
     }
   } else if (name_len == 23) {
     if (!strncmp(name, "preserve-space-comments", 23)) {
       if (value_len == 1 && value[0] == '1')
-	param_pre_comments = 1;
+        param_pre_comments = 1;
     } else if (!strncmp(name, "compact-empty-elem-tags", 23)) {
       if (value_len == 1 && value[0] == '1')
-	param_compact_empty_elm_tags = 1;
+        param_compact_empty_elm_tags = 1;
     }
   }
 }
@@ -417,7 +417,7 @@ static int mult_skip_double_eol(const char **input, size_t *input_len)
     for ( ; (*input_len) > 0 && **input != '\r'; (*input_len)--, (*input)++);
     if (*input_len >= 4) {
       if ((*input)[1] == '\n' && (*input)[2] == '\r' && (*input)[3] == '\n')
-	skipped = 1;
+        skipped = 1;
       *input_len -= 4;
       *input += 4;
     }
@@ -458,12 +458,12 @@ rel='stylesheet'/>\n\
   fprintf(stdout, "\
       <div id='content-left-aligned'>\n\
         <p>\n\
-	  <a href='../html2xhtml/'>Main page</a> | \n\
-	  <a href='../html2xhtml/download.html'>Download</a> |\n\
-	  <a href='../html2xhtml/advanced.html'>Online conversion</a> |\n\
-	  <a href='../html2xhtml/web-api.html'>Web API</a> |\n\
-	  <a href='../html2xhtml/news.html'>News</a> |\n\
-	  <a href='../xhtmlpedia/'>Xhtmlpedia</a>\n\
+          <a href='../html2xhtml/'>Main page</a> | \n\
+          <a href='../html2xhtml/download.html'>Download</a> |\n\
+          <a href='../html2xhtml/advanced.html'>Online conversion</a> |\n\
+          <a href='../html2xhtml/web-api.html'>Web API</a> |\n\
+          <a href='../html2xhtml/news.html'>News</a> |\n\
+          <a href='../xhtmlpedia/'>Xhtmlpedia</a>\n\
         </p>\n");
 
   fprintf(stdout, "\

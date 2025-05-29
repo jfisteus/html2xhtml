@@ -230,7 +230,7 @@ void link_node( tree_node_t *nodo, tree_node_t *to, int mode);
  * mediante esta función.
  */
 void tree_link_data_node(node_type_t tipo, tree_node_t *actual_element,
-			 const xchar *data, int len_data);
+                         const xchar *data, int len_data);
 
 /**
  * desenlaza el nodo del árbol (no puede ser el nodo raíz)
@@ -245,7 +245,7 @@ void tree_unlink_node(tree_node_t *node);
  *
  */
 void tree_set_node_att(tree_node_t *nodo, int att_id, const xchar *value,
-		       int is_valid);
+                       int is_valid);
 /*
  * establece los datos de un nodo de datos (Node_chardata)
  *

@@ -159,17 +159,17 @@ static void process_parameters(int argc, char **argv)
       /* open the output file */
       param_outputf = fopen(argv[++i], "wb");
       if (!param_outputf) {
-	perror("fopen");
-	EXIT("Could not open the output file for writing");
+        perror("fopen");
+        EXIT("Could not open the output file for writing");
       }
     } else if (!strcmp(argv[i], "-l") && ((i+1) < argc)) {
       tmpnum= atoi(argv[++i]);
       if (tmpnum >= 40)
-	param_chars_per_line = tmpnum; 
+        param_chars_per_line = tmpnum; 
     } else if (!strcmp(argv[i], "-b") && ((i+1) < argc)) {
       tmpnum= atoi(argv[++i]);
       if (tmpnum >= 0 && tmpnum <= 16)
-	param_tab_len = tmpnum; 
+        param_tab_len = tmpnum; 
     } else if (!strcmp(argv[i], "--preserve-space-comments")) {
       param_pre_comments = 1;
     } else if (!strcmp(argv[i], "--no-protect-cdata")) {
@@ -186,8 +186,8 @@ static void process_parameters(int argc, char **argv)
       fich = 1;
       param_inputf = fopen(argv[i], "r");
       if (!param_inputf) {
-	perror("fopen");
-	EXIT("Could not open the input file for reading");
+        perror("fopen");
+        EXIT("Could not open the input file for reading");
       }
     } else if (!strcmp(argv[i], "--help") || !strcmp(argv[i], "-h")) {
       help();
@@ -201,14 +201,14 @@ static void process_parameters(int argc, char **argv)
     } else if (!strcmp(argv[i], "--ics") && ((i+1) < argc)) {
       param_charset_in = charset_lookup_alias(argv[++i]);
       if (!param_charset_in) {
-	EPRINTF1("Trying to set input character set: %s\n", argv[i]);
-	EXIT("Unsupported character set");
+        EPRINTF1("Trying to set input character set: %s\n", argv[i]);
+        EXIT("Unsupported character set");
       }
     } else if (!strcmp(argv[i], "--ocs") && ((i+1) < argc)) {
       param_charset_out = charset_lookup_alias(argv[++i]);
       if (!param_charset_out) {
-	EPRINTF1("Trying to set output character set: %s\n", argv[i]);
-	EXIT("Unsupported character set");
+        EPRINTF1("Trying to set output character set: %s\n", argv[i]);
+        EXIT("Unsupported character set");
       }
     } else if (!strcmp(argv[i], "--lcs")) {
       charset_dump_aliases(stdout);
@@ -240,7 +240,7 @@ void exit_on_error(char *msg)
 
 #ifdef MSG_DEBUG
     fprintf(stderr,"!!%s(%d)[l%d]: %s\n",__FILE__,__LINE__,
-	    parser_num_linea,msg);
+            parser_num_linea,msg);
 #else
     fprintf(stderr,"Error [line %d]: %s\n", parser_num_linea, msg);    
 #endif
@@ -276,7 +276,7 @@ static void print_doctypes(void)
   fprintf(stderr, "Setting output doctype:\n");
   for (i = 0; i < XHTML_NUM_DTDS; i++) {
     fprintf(stderr, "'-t %s': document type %s.\n",
-	    dtd_key[i], dtd_name[i]);
+            dtd_key[i], dtd_name[i]);
   }
 }
 
@@ -296,7 +296,7 @@ void print_version(void)
   fprintf(stderr, "html2xhtml version %s [cgi-enabled]\n", VERSION);
 #endif
   fprintf(stderr, "DTD data based on DTDs as available on %s\n\n",
-	  DTD_SNAPSHOT_DATE);
+          DTD_SNAPSHOT_DATE);
 }
 
 

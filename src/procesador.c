@@ -273,7 +273,7 @@ void saxStartElement(const xchar *fullname, xchar **atts)
     for (i = 0;(atts[i] != NULL);i++) {
       EPRINTF1(", %s='", atts[i++]);
       if (atts[i] != NULL)
-	EPRINTF1("%s'", atts[i]);
+        EPRINTF1("%s'", atts[i]);
     }
   }
   EPRINTF(")\n");
@@ -312,15 +312,15 @@ void saxStartElement(const xchar *fullname, xchar **atts)
       elm= NULL;
 
       if (document->inicio) {
-	html= document->inicio;
-	for (elm=html->cont.elemento.hijo; elm && (ELM_ID(elm)!=ELMID_BODY); 
-	     elm=elm->sig);
+        html= document->inicio;
+        for (elm=html->cont.elemento.hijo; elm && (ELM_ID(elm)!=ELMID_BODY); 
+             elm=elm->sig);
       }
       /* si no existe BODY, se sitúa como frameset */
       if (!elm) res= doctype_set(XHTML_FRAMESET,1);
       if (elm || (res==-1)) {
-	INFORM("elemento de tipo frameset no válido en este DTD (descartado)");
-	return;
+        INFORM("elemento de tipo frameset no válido en este DTD (descartado)");
+        return;
       }
     } else {
       INFORM("elemento no válido en este DTD (descartado)\n");
@@ -332,7 +332,7 @@ void saxStartElement(const xchar *fullname, xchar **atts)
   if (!actual_element) {
     if (elm_ptr != ELMID_HTML)
       if (!err_html_struct(document, elm_ptr))
-	EXIT("Does not begin with 'html'! Incorrect structure\n");
+        EXIT("Does not begin with 'html'! Incorrect structure\n");
   }
 
 
@@ -451,9 +451,9 @@ void saxReference(const xchar *name)
   if (name[1]!='#') 
     if (dtd_ent_search(name)==-1) {
       if (!strcmp(name, "&percnt;")) {
-	 insert_chardata("%", 1, Node_chardata);
+         insert_chardata("%", 1, Node_chardata);
       } else
-	INFORM("referencia a entidad desconocida");
+        INFORM("referencia a entidad desconocida");
       return;
     }
 
@@ -595,7 +595,7 @@ void saxXmlProcessingInstruction(const xchar *fullname, xchar **atts)
     for (k = 0;(atts[k] != NULL);k++) {
       EPRINTF1(", %s='", atts[k++]);
       if (atts[k] != NULL)
-	EPRINTF1("%s'", atts[k]);
+        EPRINTF1("%s'", atts[k]);
     }
   }
   EPRINTF(")\n");
@@ -611,25 +611,25 @@ void saxXmlProcessingInstruction(const xchar *fullname, xchar **atts)
 /*     /\* <?xml ... ?> Look for encoding *\/ */
 /*     if (atts) { */
 /*       for (i=0; atts[i]; i+=2) { */
-/* 	xtolower(att_name, atts[i], ATT_NAME_LEN); */
-/* 	if (!strncmp("encoding", att_name, 9)) { */
-/* 	  if (!document->encoding[0] && xstrnlen(atts[i+1], 33) < 32) { */
-/* 	    /\* convert encoding to uppercase *\/ */
-/* 	    for (j=0; atts[i+1][j]; j++) { */
-/* 	      if ((atts[i+1][j]>='a')&&(atts[i+1][j]<='z')) */
-/* 		document->encoding[j]= atts[i+1][j] - 0x20; */
-/* 	      else  */
-/* 		document->encoding[j]= atts[i+1][j]; */
-/* 	    } */
-/* 	    document->encoding[j]= 0; */
-/* 	    encoding_set = 1; */
-/* 	    DEBUG("saxXmlProcessingInstruction()"); */
-/* 	    EPRINTF1("   encoding=%s\n",document->encoding); */
-/* 	  } else { */
-/* 	    INFORM("Discarded encoding in saxXmlProcessingInstruction()"); */
-/* 	    EPRINTF1("   encoding=%s\n", atts[i+1]);	     */
-/* 	  } */
-/* 	} */
+/*      xtolower(att_name, atts[i], ATT_NAME_LEN); */
+/*      if (!strncmp("encoding", att_name, 9)) { */
+/*        if (!document->encoding[0] && xstrnlen(atts[i+1], 33) < 32) { */
+/*          /\* convert encoding to uppercase *\/ */
+/*          for (j=0; atts[i+1][j]; j++) { */
+/*            if ((atts[i+1][j]>='a')&&(atts[i+1][j]<='z')) */
+/*              document->encoding[j]= atts[i+1][j] - 0x20; */
+/*            else  */
+/*              document->encoding[j]= atts[i+1][j]; */
+/*          } */
+/*          document->encoding[j]= 0; */
+/*          encoding_set = 1; */
+/*          DEBUG("saxXmlProcessingInstruction()"); */
+/*          EPRINTF1("   encoding=%s\n",document->encoding); */
+/*        } else { */
+/*          INFORM("Discarded encoding in saxXmlProcessingInstruction()"); */
+/*          EPRINTF1("   encoding=%s\n", atts[i+1]);         */
+/*        } */
+/*      } */
 /*       } /\* for *\/ */
 /*     } /\* if (atts) *\/ */
 /*     if (!encoding_set) { */
@@ -802,39 +802,39 @@ static void set_attributes(tree_node_t *elm, xchar **atts)
     for (i=0; atts[i]; i+=2) {
       xtolower(att_name,atts[i],ATT_NAME_LEN);
       if ((att_ptr=
-	   dtd_att_search_list(att_name,elm_list[elm_ptr].attlist[doctype])
-	   )<0) {
-	INFORM("");
-	EPRINTF1("\"%s\" atributo no encontrado en este DTD\n",att_name);
+           dtd_att_search_list(att_name,elm_list[elm_ptr].attlist[doctype])
+           )<0) {
+        INFORM("");
+        EPRINTF1("\"%s\" atributo no encontrado en este DTD\n",att_name);
       }
       else {
-	/* check that att is not already in the element */
-	if (!tree_node_search_att(elm, att_ptr)) {
+        /* check that att is not already in the element */
+        if (!tree_node_search_att(elm, att_ptr)) {
 
-	  /* se comprueba si el valor está bien formado, y se corrige si no */
-	  atts[i+1] = check_and_fix_att_value(atts[i+1]);
-	  
-	  /* atributo válido ¡¡comprobar valor y tipo!! */
-	  switch (dtd_att_is_valid(att_ptr, atts[i+1])) {
-	  case 1: /* ok */
-	    set_node_att(elm, att_ptr, atts[i+1], 1);
-	    break;
-	  case 2: /* ok, pero en minúsculas */
-	    {
-	      xchar lowercase[128];
-	      xtolower(lowercase, atts[i+1], 128);
-	      set_node_att(elm, att_ptr, lowercase, 1);
-	    }
-	    break;
-	  case 0:
-	    /* valor incorrecto, se intenta arreglar */
-	    if (!err_att_value(elm, att_ptr, atts[i+1])) {
-	      INFORM("");
-	      EPRINTF1("\"%s\" atributo con valor incorrecto\n",att_name);
-	    }
-	    break;
-	  }
-	}
+          /* se comprueba si el valor está bien formado, y se corrige si no */
+          atts[i+1] = check_and_fix_att_value(atts[i+1]);
+          
+          /* atributo válido ¡¡comprobar valor y tipo!! */
+          switch (dtd_att_is_valid(att_ptr, atts[i+1])) {
+          case 1: /* ok */
+            set_node_att(elm, att_ptr, atts[i+1], 1);
+            break;
+          case 2: /* ok, pero en minúsculas */
+            {
+              xchar lowercase[128];
+              xtolower(lowercase, atts[i+1], 128);
+              set_node_att(elm, att_ptr, lowercase, 1);
+            }
+            break;
+          case 0:
+            /* valor incorrecto, se intenta arreglar */
+            if (!err_att_value(elm, att_ptr, atts[i+1])) {
+              INFORM("");
+              EPRINTF1("\"%s\" atributo con valor incorrecto\n",att_name);
+            }
+            break;
+          }
+        }
       } /* else */
     } /* for i */
   }
@@ -851,11 +851,11 @@ static void set_attributes(tree_node_t *elm, xchar **atts)
     
     if (att_list[att_ptr].defaultDecl== DEFDECL_REQUIRED) {
       if (!tree_node_search_att(elm, att_ptr)) {
-	/* intenta arreglarlo */
-	if (!err_att_req(elm, att_ptr,atts)) {
-	  WARNING("atributo obligatorio no especificado");
-	  EPRINTF1("      \"%s\"\n",att_list[att_ptr].name);
-	}
+        /* intenta arreglarlo */
+        if (!err_att_req(elm, att_ptr,atts)) {
+          WARNING("atributo obligatorio no especificado");
+          EPRINTF1("      \"%s\"\n",att_list[att_ptr].name);
+        }
       }
     } /* if REQUIRED */
   } /* for */ 
@@ -903,8 +903,8 @@ int insert_element(tree_node_t *nodo)
     if (dtd_can_be_child(elm_ptr,ELM_ID(actual_element),doctype)) {
       /* comprueba las prohibiciones de elementos de XHTML */
       if (!elm_check_prohibitions(elm_ptr)) {
-	DEBUG("elemento descartado: no cumple las excepciones de XHTML");
-	insertado= 0;
+        DEBUG("elemento descartado: no cumple las excepciones de XHTML");
+        insertado= 0;
       
       } else insertado= 1;
     }
@@ -935,7 +935,7 @@ int insert_element(tree_node_t *nodo)
   /* si es html se inserta xmlns */
   if (insertado && elm_ptr== ELMID_HTML) {
     set_node_att(nodo, ATTID_XMLNS, 
-		      dtd_att_read_buffer(att_list[ATTID_XMLNS].defaults), 1);
+                      dtd_att_read_buffer(att_list[ATTID_XMLNS].defaults), 1);
   }
 
   if (insertado) return 0;
@@ -968,8 +968,8 @@ static void elm_close(tree_node_t *nodo)
     tree_node_t *elm;
 
     for (i=0, num=0, elm= nodo->cont.elemento.hijo;
-	 (i<16384) && elm;
-	 i++, elm= elm->sig)
+         (i<16384) && elm;
+         i++, elm= elm->sig)
       if (elm->tipo==Node_element) content[num++]= ELM_ID(elm);
 
     
@@ -977,7 +977,7 @@ static void elm_close(tree_node_t *nodo)
     if (dtd_is_child_valid(ELM_PTR(nodo).contentspec[doctype],content,num)!=1) {
       /* children no válido: a intentar corregirlo */
       if (!err_content_invalid(nodo,content,num))
-	WARNING("invalid element content");
+        WARNING("invalid element content");
     }
     else DEBUG("child válido");
   }
@@ -1010,10 +1010,10 @@ static void insert_chardata(const xchar *ch, int len, node_type_t type)
       DEBUG("[ERR] insertado elemento <p> para contener PCDATA");
     } else 
       /* si el padre es <ul> o <ol>, se inserta <li> */ 
-	if((ELM_ID(actual_element)==ELMID_UL)
-	   ||(ELM_ID(actual_element)==ELMID_OL)) {
-	actual_element= err_aux_insert_elm(ELMID_LI,NULL,0);
-	DEBUG("[ERR] insertado elemento li");
+        if((ELM_ID(actual_element)==ELMID_UL)
+           ||(ELM_ID(actual_element)==ELMID_OL)) {
+        actual_element= err_aux_insert_elm(ELMID_LI,NULL,0);
+        DEBUG("[ERR] insertado elemento li");
     } else {
       INFORM("intento de introducir datos en tipo no mixed");
       return;
@@ -1081,27 +1081,27 @@ static int text_contains_special_chars(const xchar *ch, int len)
 
 /*     attval= tree_index_to_ptr(att->valor); */
 /*     if (attval && !strcasecmp(attval,"Content-Type")  */
-/* 	&& ((content=tree_node_search_att(meta,ATTID_CONTENT)))){ */
+/*      && ((content=tree_node_search_att(meta,ATTID_CONTENT)))){ */
      
 /*       attval= tree_index_to_ptr(content->valor); */
 /*       if (attval && ((cad=strstr(attval,"charset=")))) { */
-/* 	for ( ; *cad!='='; cad++); */
-/* 	if (!document->encoding[0] && (xstrnlen(cad, 33)<32)) { */
-/* 	  int i; */
-/* 	  cad++; */
-/* 	  /\* pasa a mayúsculas *\/ */
-/* 	  for (i=0; cad[i]; i++) */
-/* 	    if ((cad[i]>='a')&&(cad[i]<='z')) */
-/* 	      document->encoding[i]= cad[i] - 0x20; */
-/* 	    else document->encoding[i]= cad[i]; */
-/* 	  document->encoding[i]= 0; */
+/*      for ( ; *cad!='='; cad++); */
+/*      if (!document->encoding[0] && (xstrnlen(cad, 33)<32)) { */
+/*        int i; */
+/*        cad++; */
+/*        /\* pasa a mayúsculas *\/ */
+/*        for (i=0; cad[i]; i++) */
+/*          if ((cad[i]>='a')&&(cad[i]<='z')) */
+/*            document->encoding[i]= cad[i] - 0x20; */
+/*          else document->encoding[i]= cad[i]; */
+/*        document->encoding[i]= 0; */
 
-/* 	  DEBUG("elm_meta_scan()"); */
-/* 	  EPRINTF1("   encoding=%s\n",document->encoding); */
-/* 	} else { */
-/* 	  INFORM("elm_meta_scan()"); */
-/* 	  EPRINTF1("   se descarta encoding=%s\n",cad); */
-/* 	} */
+/*        DEBUG("elm_meta_scan()"); */
+/*        EPRINTF1("   encoding=%s\n",document->encoding); */
+/*      } else { */
+/*        INFORM("elm_meta_scan()"); */
+/*        EPRINTF1("   se descarta encoding=%s\n",cad); */
+/*      } */
 /*       } */
 /*     } */
 /*   } /\* if http-equiv *\/ */
@@ -1165,10 +1165,10 @@ static int elm_check_prohibitions(int elmid)
     return !elm_is_father(ELMID_BUTTON,actual_element);
   case ELMID_LABEL:
     return ((!elm_is_father(ELMID_LABEL,actual_element))
-	    &&(!elm_is_father(ELMID_BUTTON,actual_element)));
+            &&(!elm_is_father(ELMID_BUTTON,actual_element)));
   case ELMID_FORM:
     return ((!elm_is_father(ELMID_BUTTON,actual_element))
-	    &&(!elm_is_father(ELMID_FORM,actual_element)));
+            &&(!elm_is_father(ELMID_FORM,actual_element)));
   default:
       return 1;
   }
@@ -1294,39 +1294,39 @@ static int err_content_invalid(tree_node_t* nodo, int hijos[], int num_hijos)
   switch (ELM_ID(nodo)) {
   case ELMID_HTML:
       {
-	int in_body;
-	
-	in_body= ELMID_PRE;
-	if (doctype==XHTML_FRAMESET) in_body= ELMID_FRAME;
-	
-	/* si está mal HTML, intenta arreglarlo */
-	if (!num_hijos) {
-	  /* faltan HEAD y BODY */
-	  actual_element= nodo;
-	  corregido= err_html_struct(document,in_body);;
-	}
-	else if ((num_hijos==1)&&(hijos[0]==ELMID_HEAD)) {
-	  /* falta BODY */
-	  actual_element= nodo->cont.elemento.hijo;
-	  corregido= err_html_struct(document,in_body);
-	}
-	else if ((num_hijos==1)&&
-		 ((hijos[0]==ELMID_BODY)||(hijos[0]==ELMID_FRAMESET))) {
-	  /* falta HEAD */
-	  tree_node_t *body;
-	  if (!(body= tree_search_elm_child(nodo,ELMID_BODY)))
-	    body= tree_search_elm_child(nodo,ELMID_FRAMESET);
-	  if (body) {
-	    tree_unlink_node(body);
-	    actual_element= nodo;
-	    corregido= err_html_struct(document,ELMID_BODY);
-	    link_node(body,nodo,LINK_MODE_CHILD);
-	  }
-	}
-	
+        int in_body;
+        
+        in_body= ELMID_PRE;
+        if (doctype==XHTML_FRAMESET) in_body= ELMID_FRAME;
+        
+        /* si está mal HTML, intenta arreglarlo */
+        if (!num_hijos) {
+          /* faltan HEAD y BODY */
+          actual_element= nodo;
+          corregido= err_html_struct(document,in_body);;
+        }
+        else if ((num_hijos==1)&&(hijos[0]==ELMID_HEAD)) {
+          /* falta BODY */
+          actual_element= nodo->cont.elemento.hijo;
+          corregido= err_html_struct(document,in_body);
+        }
+        else if ((num_hijos==1)&&
+                 ((hijos[0]==ELMID_BODY)||(hijos[0]==ELMID_FRAMESET))) {
+          /* falta HEAD */
+          tree_node_t *body;
+          if (!(body= tree_search_elm_child(nodo,ELMID_BODY)))
+            body= tree_search_elm_child(nodo,ELMID_FRAMESET);
+          if (body) {
+            tree_unlink_node(body);
+            actual_element= nodo;
+            corregido= err_html_struct(document,ELMID_BODY);
+            link_node(body,nodo,LINK_MODE_CHILD);
+          }
+        }
+        
 
-	actual_element= actual_bak;
-	break;
+        actual_element= actual_bak;
+        break;
       }
 
   case ELMID_HEAD:
@@ -1338,37 +1338,37 @@ static int err_content_invalid(tree_node_t* nodo, int hijos[], int num_hijos)
 
       /* Count the number of title and base elements */
       for (i = 0; i < num_hijos; i++) {
-	if (hijos[i] == ELMID_TITLE)
-	  num_title++;
-	else if (hijos[i] == ELMID_BASE) {
-	  num_base++;
-	}
+        if (hijos[i] == ELMID_TITLE)
+          num_title++;
+        else if (hijos[i] == ELMID_BASE) {
+          num_base++;
+        }
       }
 
       if (num_title == 0) {
-	/* Element title missing */
-	h= tree_malloc((num_hijos + 1)*sizeof(int));
-	for (i = 0; i < num_hijos; i++)
-	  h[i + 1] = hijos[i];
-	h[0]= ELMID_TITLE;
-	if (dtd_is_child_valid(ELM_PTR(nodo).contentspec[doctype],
-			       h, num_hijos + 1) == 1) {
-	  tree_node_t* title;
-	  title = new_tree_node(Node_element);
-	  title->cont.elemento.elm_id = ELMID_TITLE;
-	  link_node(title, nodo, LINK_MODE_FIRST_CHILD);
-	  corregido = 1;
-	}
+        /* Element title missing */
+        h= tree_malloc((num_hijos + 1)*sizeof(int));
+        for (i = 0; i < num_hijos; i++)
+          h[i + 1] = hijos[i];
+        h[0]= ELMID_TITLE;
+        if (dtd_is_child_valid(ELM_PTR(nodo).contentspec[doctype],
+                               h, num_hijos + 1) == 1) {
+          tree_node_t* title;
+          title = new_tree_node(Node_element);
+          title->cont.elemento.elm_id = ELMID_TITLE;
+          link_node(title, nodo, LINK_MODE_FIRST_CHILD);
+          corregido = 1;
+        }
       } else if (num_title > 1) {
-	/* More than one title, keep only the first one */
-	num_hijos -= remove_duplicate_elm(ELMID_TITLE, nodo, hijos);
-	check_again = 1;
+        /* More than one title, keep only the first one */
+        num_hijos -= remove_duplicate_elm(ELMID_TITLE, nodo, hijos);
+        check_again = 1;
       }
 
       if (num_base > 1) {
-	/* More than one base, keep only the first one */
-	num_hijos -= remove_duplicate_elm(ELMID_BASE, nodo, hijos);
-	check_again = 1;
+        /* More than one base, keep only the first one */
+        num_hijos -= remove_duplicate_elm(ELMID_BASE, nodo, hijos);
+        check_again = 1;
       }
       break;
     }
@@ -1407,24 +1407,24 @@ static int err_content_invalid(tree_node_t* nodo, int hijos[], int num_hijos)
       tree_node_t *tr,*td;
       
       if (!num_hijos) {
-	tree_unlink_node(nodo);
-	corregido= 1;
-	INFORM("[ERR] descartado el elemento");
+        tree_unlink_node(nodo);
+        corregido= 1;
+        INFORM("[ERR] descartado el elemento");
       } else {
-	memcpy(hijos2,hijos,num_hijos*sizeof(int));
-	hijos2[num_hijos]= ELMID_TR;
-	if (dtd_is_child_valid(ELM_PTR(nodo).contentspec[doctype],
-			       hijos2,num_hijos+1)==1) {
-	  /* OK, se inserta */
-	  tr= new_tree_node(Node_element);
-	  tr->cont.elemento.elm_id= ELMID_TR;
-	  link_node(tr,nodo,LINK_MODE_CHILD);
-	  td= new_tree_node(Node_element);
-	  td->cont.elemento.elm_id= ELMID_TD;
-	  link_node(td,tr,LINK_MODE_CHILD);
-	  corregido= 1;
-	  INFORM("[ERR] insertados <TR><TD></TD></TR>");
-	}
+        memcpy(hijos2,hijos,num_hijos*sizeof(int));
+        hijos2[num_hijos]= ELMID_TR;
+        if (dtd_is_child_valid(ELM_PTR(nodo).contentspec[doctype],
+                               hijos2,num_hijos+1)==1) {
+          /* OK, se inserta */
+          tr= new_tree_node(Node_element);
+          tr->cont.elemento.elm_id= ELMID_TR;
+          link_node(tr,nodo,LINK_MODE_CHILD);
+          td= new_tree_node(Node_element);
+          td->cont.elemento.elm_id= ELMID_TD;
+          link_node(td,tr,LINK_MODE_CHILD);
+          corregido= 1;
+          INFORM("[ERR] insertados <TR><TD></TD></TR>");
+        }
       }
 
 /*       free(hijos2); */
@@ -1434,7 +1434,7 @@ static int err_content_invalid(tree_node_t* nodo, int hijos[], int num_hijos)
 
   if (!corregido && check_again) {
     corregido = dtd_is_child_valid(ELM_PTR(nodo).contentspec[doctype],
-				   hijos, num_hijos);
+                                   hijos, num_hijos);
   }
 
   if (!corregido && param_strict) {
@@ -1462,10 +1462,10 @@ static int remove_duplicate_elm(int elmid, tree_node_t* parent, int hijos[])
     next = p->sig;
     if (p->tipo == Node_element && ELM_ID(p) == elmid) {
       if (!keep_node) {
-	tree_unlink_node(p);
-	removed++;
+        tree_unlink_node(p);
+        removed++;
       } else {
-	keep_node = 0;
+        keep_node = 0;
       }
     } else {
       hijos[i - removed] = hijos[i];
@@ -1536,8 +1536,8 @@ static int err_child_no_valid(tree_node_t* nodo)
   if (insertado) {
     /* control de estructura */
     if ((ELM_ID(nodo)==ELMID_HEAD)
-	|| (ELM_ID(nodo)==ELMID_BODY)
-	|| (ELM_ID(nodo)==ELMID_FRAMESET)) insertado=0;
+        || (ELM_ID(nodo)==ELMID_BODY)
+        || (ELM_ID(nodo)==ELMID_FRAMESET)) insertado=0;
     else for ( ; actual_element != actual; actual_element= actual_element->padre)
       if (actual_element->tipo == Node_element) {
         elm_close(actual_element);
@@ -1546,8 +1546,8 @@ static int err_child_no_valid(tree_node_t* nodo)
     /* puede ser un caso de estructura incorrecta */
     insertado= err_html_struct(document, ELM_ID(nodo));
     if (!insertado && actual_element && 
-	dtd_can_be_child(ELM_ID(nodo),ELMID_P,doctype) &&
-	dtd_can_be_child(ELMID_P,ELM_ID(actual_element),doctype)) {
+        dtd_can_be_child(ELM_ID(nodo),ELMID_P,doctype) &&
+        dtd_can_be_child(ELMID_P,ELM_ID(actual_element),doctype)) {
       /* se inserta en <p> */
       tree_node_t *p;
       
@@ -1558,21 +1558,21 @@ static int err_child_no_valid(tree_node_t* nodo)
       insertado= 1;
       DEBUG("[ERR] insertado elemento p como padre");
     } else if (ELM_ID(actual_element) == ELMID_HTML
-	       && (actual = tree_search_elm_child(actual_element, ELMID_BODY))) {
+               && (actual = tree_search_elm_child(actual_element, ELMID_BODY))) {
       if (dtd_can_be_child(ELM_ID(nodo), ELMID_BODY, doctype)) {
-	/* Insert the new element inside the body element */
-	actual_element = actual;
-	insertado = 1;
+        /* Insert the new element inside the body element */
+        actual_element = actual;
+        insertado = 1;
       } else if (dtd_can_be_child(ELM_ID(nodo), ELMID_P, doctype)) {
-	/* Insert the new element inside a new p element inside the
-	 * body element.
-	 */
-	tree_node_t *p;
-	p= new_tree_node(Node_element);
-	p->cont.elemento.elm_id= ELMID_P;
-	link_node(p, actual, LINK_MODE_CHILD);
-	actual_element = p;
-	insertado = 1;
+        /* Insert the new element inside a new p element inside the
+         * body element.
+         */
+        tree_node_t *p;
+        p= new_tree_node(Node_element);
+        p->cont.elemento.elm_id= ELMID_P;
+        link_node(p, actual, LINK_MODE_CHILD);
+        actual_element = p;
+        insertado = 1;
       }
     }
   }
@@ -1620,25 +1620,25 @@ static int err_att_value(tree_node_t *elm, int att_id, const xchar *value)
     correcto= tree_strdup(value);
     while ((pos=dtd_att_val_search_errors(correcto))!=-1) {
       if (correcto[pos]=='&') {
-	tmp= tree_malloc(strlen(correcto)+1+4);
-	memcpy(tmp,correcto,pos);
-	tmp[pos]= 0;
-	strcat(tmp,"&amp;");
-	strcat(tmp,&correcto[pos+1]);
-/* 	free(correcto); */
-	correcto= tmp;
+        tmp= tree_malloc(strlen(correcto)+1+4);
+        memcpy(tmp,correcto,pos);
+        tmp[pos]= 0;
+        strcat(tmp,"&amp;");
+        strcat(tmp,&correcto[pos+1]);
+/*      free(correcto); */
+        correcto= tmp;
       } else if (correcto[pos]=='<') {
-	tmp= tree_malloc(strlen(correcto)+1+3);
-	memcpy(tmp,correcto,pos);
-	tmp[pos]= 0;
-	strcat(tmp,"&lt;");
-	strcat(tmp,&correcto[pos+1]);
-/* 	free(correcto); */
-	correcto= tmp;
+        tmp= tree_malloc(strlen(correcto)+1+3);
+        memcpy(tmp,correcto,pos);
+        tmp[pos]= 0;
+        strcat(tmp,"&lt;");
+        strcat(tmp,&correcto[pos+1]);
+/*      free(correcto); */
+        correcto= tmp;
       } else {
-/* 	free(correcto); */
-	correcto= NULL;
-	break;
+/*      free(correcto); */
+        correcto= NULL;
+        break;
       }
     }
   }
@@ -1648,7 +1648,7 @@ static int err_att_value(tree_node_t *elm, int att_id, const xchar *value)
     set_node_att(elm, att_id, correcto, 1);
     DEBUG("err_att_value");
     EPRINTF3("   [ERR] valor atributo %s cambiado de '%s' a '%s'\n",
-	    att_list[att_id].name, value, correcto);
+            att_list[att_id].name, value, correcto);
 /*     free(correcto); */
     return 1;
   }
@@ -1683,8 +1683,8 @@ static int err_att_req(tree_node_t *elm, int att_id, xchar **atts)
     for (i=0; atts[i] && strcasecmp(atts[i],"language"); i+=2);
     if (atts[i]) {
       if ((xsearch(atts[i+1],"javascript"))||(xsearch(atts[i+1],"Javascript"))||
-	  (xsearch(atts[i+1],"JavaScript")))
-	valor= tree_strdup("text/javascript");
+          (xsearch(atts[i+1],"JavaScript")))
+        valor= tree_strdup("text/javascript");
       else valor= tree_strdup(atts[i+1]);
     } 
     else valor= tree_strdup("text/javascript"); 
@@ -1722,7 +1722,7 @@ static int err_att_req(tree_node_t *elm, int att_id, xchar **atts)
     set_node_att(elm, att_id, valor, 1);
     DEBUG("err_att_req");
     EPRINTF2("   [ERR] atributo obligatorio '%s' incluído con valor '%s'\n",
-	    att_list[att_id].name, valor);
+            att_list[att_id].name, valor);
 /*     free(valor); */
     return 1;
   }
@@ -1757,21 +1757,21 @@ static void err_att_default(tree_node_t *elm, xchar **atts)
       int att_ptr;
 
       if (atts) {
-	for (i=0; atts[i]; i+=2)  
-	  if (!strcmp(atts[i],"name")) {
-	    att_ptr= dtd_att_search_list("id",ELM_PTR(elm).attlist[doctype]);
-	    if ((att_ptr != -1) && (!tree_node_search_att(elm,att_ptr))) {
-	      if (dtd_att_is_valid(att_ptr,atts[i+1])) {
-		set_node_att(elm, att_ptr, atts[i+1], 1);
-		DEBUG("");
-		EPRINTF1("   [ERR] insertado atributo 'id' con valor '%s'\n",
-			 atts[i+1]);
-	      }
-	      else INFORM("se descarta atributo ID con valor incorrecto");
-	      break;
-	    }
-	  }
-	break;
+        for (i=0; atts[i]; i+=2)  
+          if (!strcmp(atts[i],"name")) {
+            att_ptr= dtd_att_search_list("id",ELM_PTR(elm).attlist[doctype]);
+            if ((att_ptr != -1) && (!tree_node_search_att(elm,att_ptr))) {
+              if (dtd_att_is_valid(att_ptr,atts[i+1])) {
+                set_node_att(elm, att_ptr, atts[i+1], 1);
+                DEBUG("");
+                EPRINTF1("   [ERR] insertado atributo 'id' con valor '%s'\n",
+                         atts[i+1]);
+              }
+              else INFORM("se descarta atributo ID con valor incorrecto");
+              break;
+            }
+          }
+        break;
       } /* if atts */
       break;
     }
@@ -1779,8 +1779,8 @@ static void err_att_default(tree_node_t *elm, xchar **atts)
   case ELMID_SCRIPT:
   case ELMID_STYLE:
     if (!tree_node_search_att(elm, ATTID_XML_SPACE)
-	&& dtd_att_search_list_id(ATTID_XML_SPACE, 
-				  ELM_PTR(elm).attlist[doctype]) >= 0) {
+        && dtd_att_search_list_id(ATTID_XML_SPACE, 
+                                  ELM_PTR(elm).attlist[doctype]) >= 0) {
       set_node_att(elm,ATTID_XML_SPACE, "preserve", 1); 
     }
     break;
@@ -1836,7 +1836,7 @@ static int err_html_struct(document_t *document, int elm_id)
   case ELMID_FRAMESET:
     if (html && head) break;
     /* establece un nodo para el elemento html */
-    if (!html) html= err_aux_insert_elm(ELMID_HTML,NULL,0);	
+    if (!html) html= err_aux_insert_elm(ELMID_HTML,NULL,0);     
     /* establece un nodo para el elemento head */
     if (!head) {
       actual_element= html;
@@ -1863,7 +1863,7 @@ static int err_html_struct(document_t *document, int elm_id)
     if (!head && !body && dtd_can_be_child(elm_id,ELMID_HEAD,doctype)) {
       /* se abre <html><head> */
       /* establece un nodo para el elemento html */
-      if (!html) html= err_aux_insert_elm(ELMID_HTML,NULL,0);	
+      if (!html) html= err_aux_insert_elm(ELMID_HTML,NULL,0);   
       /* establece un nodo para el elemento head */
       head= err_aux_insert_elm(ELMID_HEAD,NULL,0);
       ok=1;
@@ -1872,17 +1872,17 @@ static int err_html_struct(document_t *document, int elm_id)
    
       /* elemento de BODY */
     } else if (!body && (doctype!=XHTML_FRAMESET) && 
-	       dtd_can_be_child(elm_id,ELMID_BODY,doctype)) {
+               dtd_can_be_child(elm_id,ELMID_BODY,doctype)) {
       /* establece un nodo para el elemento html */
-      if (!html) html= err_aux_insert_elm(ELMID_HTML,NULL,0);	
+      if (!html) html= err_aux_insert_elm(ELMID_HTML,NULL,0);   
       /* establece un nodo para el elemento head */
       if (!head) {
-	head= err_aux_insert_elm(ELMID_HEAD,NULL,0);
-	/* establece un nodo para el elemento title */
-	nodo= err_aux_insert_elm(ELMID_TITLE,"****",4);
-	/* cierra title y head */
-	elm_close(nodo);
-	elm_close(head);
+        head= err_aux_insert_elm(ELMID_HEAD,NULL,0);
+        /* establece un nodo para el elemento title */
+        nodo= err_aux_insert_elm(ELMID_TITLE,"****",4);
+        /* cierra title y head */
+        elm_close(nodo);
+        elm_close(head);
       }
       
       for(nodo=actual_element; nodo && (nodo!=html); nodo=nodo->padre)
@@ -1896,19 +1896,19 @@ static int err_html_struct(document_t *document, int elm_id)
       ok=1;
       DEBUG("err_html_struct()");
       EPRINTF("   [ERR] introducido <html> <head> <title> </title> </head> <body>\n");
-	
+        
     } else if (!body && (doctype==XHTML_FRAMESET) && 
-	       dtd_can_be_child(elm_id,ELMID_FRAMESET,doctype)) {
+               dtd_can_be_child(elm_id,ELMID_FRAMESET,doctype)) {
       /* establece un nodo para el elemento html */
-      if (!html) html= err_aux_insert_elm(ELMID_HTML,NULL,0);	
+      if (!html) html= err_aux_insert_elm(ELMID_HTML,NULL,0);   
       /* establece un nodo para el elemento head */
       if (!head) {
-	head= err_aux_insert_elm(ELMID_HEAD,NULL,0);
-	/* establece un nodo para el elemento title */
-	nodo= err_aux_insert_elm(ELMID_TITLE,"****",4);
-	/* cierra title y head */
-	elm_close(nodo);
-	elm_close(head);
+        head= err_aux_insert_elm(ELMID_HEAD,NULL,0);
+        /* establece un nodo para el elemento title */
+        nodo= err_aux_insert_elm(ELMID_TITLE,"****",4);
+        /* cierra title y head */
+        elm_close(nodo);
+        elm_close(head);
       }
       
       for(nodo=actual_element; nodo && (nodo!=html); nodo=nodo->padre)
@@ -2017,59 +2017,59 @@ xchar* check_and_fix_att_value(xchar* value)
     if (value[i] == '&' && value[i+1] == '#' && value[i+2] == 'x') {
       /* character reference (hexadecimal) */
       for (k = i + 3; 
-	   (value[k] >= '0' && value[k] <= '9')
-	     || (value[k] >= 'a' && value[k] <= 'f') 
-	     || (value[k] >= 'A' && value[k] <= 'F'); 
-	   k++);
+           (value[k] >= '0' && value[k] <= '9')
+             || (value[k] >= 'a' && value[k] <= 'f') 
+             || (value[k] >= 'A' && value[k] <= 'F'); 
+           k++);
       if (value[k] != ';') {
-	/* needs to be fixed insert "amp;" */
-	size_inc += 4;
-	value[i] = 2;
-	i = k - 1; /* next iteration at index k */
+        /* needs to be fixed insert "amp;" */
+        size_inc += 4;
+        value[i] = 2;
+        i = k - 1; /* next iteration at index k */
       } else {
-	i = k; /* next iteration at index k + 1 */
+        i = k; /* next iteration at index k + 1 */
       }
       
     } else if (value[i] == '&' && value[i+1] == '#') {
       /* character reference */
       for (k = i + 2; value[k] >= '0' && value[k] <= '9'; k++);
       if (value[k] != ';') {
-	/* needs to be fixed insert "amp;" */
-	size_inc += 4;
-	value[i] = 2;
-	i = k - 1; /* next iteration at index k */
+        /* needs to be fixed insert "amp;" */
+        size_inc += 4;
+        value[i] = 2;
+        i = k - 1; /* next iteration at index k */
       } else {
-	i = k; /* next iteration at index k + 1 */
+        i = k; /* next iteration at index k + 1 */
       }
       
     } else if (value[i] == '&') {
       /* entity reference */
       /* LETTER     ([\x41-\x5a]|[\x61-\x7a]|[\xc0-\xd6]|[\xd8-\xf6]|[\xf8-\xff]) */
       for (k = i + 1;
-	   (value[k] >= 0x41 && value[k] <= 0x5a)
-	   || (value[k] >= 0x61 && value[k] <= 0x7a)
-	   || ((unsigned)value[k] >= 0xc0 && (unsigned)value[k] <= 0xd6)
-	   || ((unsigned)value[k] >= 0xd8 && (unsigned)value[k] <= 0xf6)
-	   || ((unsigned)value[k] >= 0xf8);
-	   k++);
+           (value[k] >= 0x41 && value[k] <= 0x5a)
+           || (value[k] >= 0x61 && value[k] <= 0x7a)
+           || ((unsigned)value[k] >= 0xc0 && (unsigned)value[k] <= 0xd6)
+           || ((unsigned)value[k] >= 0xd8 && (unsigned)value[k] <= 0xf6)
+           || ((unsigned)value[k] >= 0xf8);
+           k++);
       if (value[k] != ';') {
-	/* needs to be fixed insert "amp;" */
-	size_inc += 4;
-	value[i] = 2;
-	i = k - 1; /* next iteration at index k */
+        /* needs to be fixed insert "amp;" */
+        size_inc += 4;
+        value[i] = 2;
+        i = k - 1; /* next iteration at index k */
       } else {
-	/* check the entity name */
-	tmpchar = value[k+1];
-	value[k+1] = 0;
-	if (dtd_ent_search(&value[i]) == -1) {
-	  /* needs to be fixed insert "amp;" */
-	  size_inc += 4;
-	  value[i] = 2;
-	  i = k - 1; /* next iteration at index k */
-	} else {
-	  i = k; /* next iteration at index k + 1 */
-	}
-	value[k+1] = tmpchar;
+        /* check the entity name */
+        tmpchar = value[k+1];
+        value[k+1] = 0;
+        if (dtd_ent_search(&value[i]) == -1) {
+          /* needs to be fixed insert "amp;" */
+          size_inc += 4;
+          value[i] = 2;
+          i = k - 1; /* next iteration at index k */
+        } else {
+          i = k; /* next iteration at index k + 1 */
+        }
+        value[k+1] = tmpchar;
       }
     } else if (value[i] == '<') {
       size_inc += 3;
@@ -2084,20 +2084,20 @@ xchar* check_and_fix_att_value(xchar* value)
     for (i = 0, k = 0; value[i]; i++, k++) {
       /* copy the value and replace marked characters */
       if (value[i] == 1) {
-	fixed[k    ] = '&';
-	fixed[k + 1] = 'l';
-	fixed[k + 2] = 't';
-	fixed[k + 3] = ';';
-	k += 3;
+        fixed[k    ] = '&';
+        fixed[k + 1] = 'l';
+        fixed[k + 2] = 't';
+        fixed[k + 3] = ';';
+        k += 3;
       } else if (value[i] == 2) {
-	fixed[k    ] = '&';
-	fixed[k + 1] = 'a';
-	fixed[k + 2] = 'm';
-	fixed[k + 3] = 'p';
-	fixed[k + 4] = ';';
-	k += 4;
+        fixed[k    ] = '&';
+        fixed[k + 1] = 'a';
+        fixed[k + 2] = 'm';
+        fixed[k + 3] = 'p';
+        fixed[k + 4] = ';';
+        k += 4;
       } else {
-	fixed[k] = value[i];
+        fixed[k] = value[i];
       }
     }
     fixed[k] = 0;
@@ -2209,8 +2209,8 @@ static int write_element(tree_node_t *elm)
   /* activate "xml:space preserve" if necessary */
   if (!xml_space_on 
       && (tree_node_search_att(elm, ATTID_XML_SPACE)
-	  || ELM_ID(elm) == ELMID_SCRIPT
-	  || ELM_ID(elm) == ELMID_STYLE)) {
+          || ELM_ID(elm) == ELMID_SCRIPT
+          || ELM_ID(elm) == ELMID_STYLE)) {
     if (ELM_ID(elm) == ELMID_STYLE)
       len += write_indent(indent, 1);
     else if (ELM_ID(elm) != ELMID_SCRIPT && is_block)
@@ -2230,7 +2230,7 @@ static int write_element(tree_node_t *elm)
       inline_on = 1;
       whitespace_needed = 0;
       if (!param_compact_block_elms)
-	len += write_indent(indent, 1);
+        len += write_indent(indent, 1);
     }
   }
   len += write_start_tag(elm);
@@ -2250,16 +2250,16 @@ static int write_element(tree_node_t *elm)
   if (elm->cont.elemento.hijo) {
     if (is_block) {
       if (inline_on) {
-	inline_on = 0;
-	if (!param_compact_block_elms)
-	  len += write_indent(indent, 1);
+        inline_on = 0;
+        if (!param_compact_block_elms)
+          len += write_indent(indent, 1);
       } else {
-	len += write_indent(indent, 1);
+        len += write_indent(indent, 1);
       }
     }
     len += write_end_tag(elm);
   } else if (!param_empty_tags
-	     && elm_list[ELM_ID(elm)].contenttype[doctype] != CONTTYPE_EMPTY) {
+             && elm_list[ELM_ID(elm)].contenttype[doctype] != CONTTYPE_EMPTY) {
     len += write_end_tag(elm);
   }
 
@@ -2291,16 +2291,16 @@ static int write_chardata(tree_node_t *node)
   while (pos < data_len) {
     /* filter blanks at the beginning of this data block */
     for (i = pos; 
-	 i < data_len
-	   && (data[i] == 0x0a || data[i] == 0x0d 
-	       || data[i] == ' ' || data[i] == '\t'); 
-	 i++);
+         i < data_len
+           && (data[i] == 0x0a || data[i] == 0x0d 
+               || data[i] == ' ' || data[i] == '\t'); 
+         i++);
 
     if (!inline_on && pos == 0 && i < data_len) {
       inline_on = 1;
       whitespace_needed = 0;
       if (!param_compact_block_elms)
-	num += write_indent(indent, 1);
+        num += write_indent(indent, 1);
     }
 
     /* put one whitespace instead, but only if no new line is printed */
@@ -2312,11 +2312,11 @@ static int write_chardata(tree_node_t *node)
     chars_to_print = 0;
     bytes_to_print = 0;
     for ( ; 
-	  i < data_len && data[i] != 0x0a && data[i] != 0x0d 
-	    && data[i] != ' ' && data[i] != '\t';
-	  i++, bytes_to_print++) {
+          i < data_len && data[i] != 0x0a && data[i] != 0x0d 
+            && data[i] != ' ' && data[i] != '\t';
+          i++, bytes_to_print++) {
       if ((char)(data[i] & 0xC0) != (char) 0x80)
-	chars_to_print++;
+        chars_to_print++;
     }
     
     if (bytes_to_print) {
@@ -2466,13 +2466,13 @@ static int write_start_tag(tree_node_t* nodo)
 
       /* does this attribute fit in this line? */
       if (inline_on 
-	  && (3 + strlen(att_list[att->att_id].name) 
-	      + strlen(value) + chars_in_line) > param_chars_per_line) {
-	num += write_indent_internal(indent, 1, 1);
+          && (3 + strlen(att_list[att->att_id].name) 
+              + strlen(value) + chars_in_line) > param_chars_per_line) {
+        num += write_indent_internal(indent, 1, 1);
       } else {
-	cputc(' ');
-	num++;
-	chars_in_line++;
+        cputc(' ');
+        num++;
+        chars_in_line++;
       }
 
       /* write name=(single|double)quote */
@@ -2483,45 +2483,45 @@ static int write_start_tag(tree_node_t* nodo)
       chars_to_print = strlen(value);
       text = value;
       while (chars_to_print > 0) {
-	if (text[0] == '&') {
-	  num += cprintf("%s", amp);
-	  chars_in_line++;
-	  text++;
-	  chars_to_print--;
-	} else if (text[0] == '<') {
-	  num += cprintf("%s", lt);
-	  chars_in_line++;
-	  text++;
-	  chars_to_print--;
-	} else if (text[0] == 0x0a) {
-	  num += cprintf(" ");
-	  chars_in_line++;
-	  text++;
-	  chars_to_print--;
-	} else if (text[0] == 0x0d) {
-	  num += cprintf(" ");
-	  chars_in_line++;
-	  if (chars_to_print > 1 && text[1] == 0x0a) {
-	    text += 2;
-	    chars_to_print -= 2;
-	  } else {
-	    text++;
-	    chars_to_print--;
-	  }
-	}
-	
-	for (i=0; i < chars_to_print; i++)
-	  if (text[i] == '&' || text[i] == '<' 
-	      || text[i] == 0x0a || text[i] == 0x0d) {
-	    break;
-	  }
-	
-	/* print this fragment of text */
-	printed = cwrite(text, i);
-	num += printed;
-	chars_in_line += printed;
-	text += i;
-	chars_to_print -= i;
+        if (text[0] == '&') {
+          num += cprintf("%s", amp);
+          chars_in_line++;
+          text++;
+          chars_to_print--;
+        } else if (text[0] == '<') {
+          num += cprintf("%s", lt);
+          chars_in_line++;
+          text++;
+          chars_to_print--;
+        } else if (text[0] == 0x0a) {
+          num += cprintf(" ");
+          chars_in_line++;
+          text++;
+          chars_to_print--;
+        } else if (text[0] == 0x0d) {
+          num += cprintf(" ");
+          chars_in_line++;
+          if (chars_to_print > 1 && text[1] == 0x0a) {
+            text += 2;
+            chars_to_print -= 2;
+          } else {
+            text++;
+            chars_to_print--;
+          }
+        }
+        
+        for (i=0; i < chars_to_print; i++)
+          if (text[i] == '&' || text[i] == '<' 
+              || text[i] == 0x0a || text[i] == 0x0d) {
+            break;
+          }
+        
+        /* print this fragment of text */
+        printed = cwrite(text, i);
+        num += printed;
+        chars_in_line += printed;
+        text += i;
+        chars_to_print -= i;
       }
       
       num += cprintf("%c", limit);
@@ -2561,7 +2561,7 @@ static int write_end_tag(tree_node_t* nodo)
   num += write_whitespace_or_newline_if_needed(3 + elm_name_len);
 
   printed = cprintf("%s/%s%s",lt,
-		    elm_list[nodo->cont.elemento.elm_id].name, gt);
+                    elm_list[nodo->cont.elemento.elm_id].name, gt);
   num += printed;
   chars_in_line += printed;
 
@@ -2626,17 +2626,17 @@ static int write_plain_data(xchar* text, int len)
       num++;
       chars_in_line = 0;
       if (i + 1 < len && text[i + 1] == 0x0a) {
-	i += 2;
+        i += 2;
       } else { 
-	i++;
+        i++;
       }
     }
 
     pos = i;
     for ( ; i < len; i++) {
       if (text[i] == '&' || text[i] == '<' 
-	  || text[i] == 0x0d || text[i] == 0x0a) {
-	break;
+          || text[i] == 0x0d || text[i] == 0x0a) {
+        break;
       }
     }
       

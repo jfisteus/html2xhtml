@@ -39,7 +39,7 @@ extern unsigned int tree_allocated_memory();
 void write_end_messages(void)
 {
   EPRINTF3("!!TOTAL: warnings(%d) informs(%d) memory(%d B)\n",
-	   num_warning, num_inform, tree_allocated_memory());
+           num_warning, num_inform, tree_allocated_memory());
 
   if (num_warning) 
     fprintf(stderr, "WARNING: output file might not be valid XHTML or content might have been lost from the input\n");

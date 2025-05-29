@@ -96,7 +96,7 @@ int dtd_get_dtd_index_n(const char *key, size_t key_length)
 
   for (i=0; i<DTD_NUM; i++) {
     if (key_length == strlen(dtd_key[i])
-	&& !strncmp(key, dtd_key[i], key_length)) {
+        && !strncmp(key, dtd_key[i], key_length)) {
       dtd = i;
       break;
     }
@@ -236,11 +236,11 @@ int  dtd_att_is_valid(int att_id, xchar *value)
 
   att = &att_list[att_id];
   return dtd_att_is_valid_by_type(att->attType, att->defaultDecl,
-				  att->defaults, value);
+                                  att->defaults, value);
 }
 
 int  dtd_att_is_valid_by_type(int att_type, defaultDecl_t default_decl,
-			      int defaults, xchar *value)
+                              int defaults, xchar *value)
 {
   char *valores;
   char str[256];
@@ -261,21 +261,21 @@ int  dtd_att_is_valid_by_type(int att_type, defaultDecl_t default_decl,
     valid=0;
     while (valores[i]) {
       for (k=0; (valores[i]!='|') && (valores[i]!=')'); i++,k++) 
-	str[k]= valores[i];
+        str[k]= valores[i];
       str[k]= 0; /* termina la cadena */
       i++; /* salta el '|'o ')'*/
 
       /* comprueba este valor */
       if (!strcmp(str,value)) {
-	valid=1;
-	break;
+        valid=1;
+        break;
       } else {
-	xchar lowercase[128];
-	xtolower(lowercase,value,128);
-	if (!strcmp(str,lowercase)) {
-	  valid=2;
-	  break;
-	}
+        xchar lowercase[128];
+        xtolower(lowercase,value,128);
+        if (!strcmp(str,lowercase)) {
+          valid=2;
+          break;
+        }
       }
     } /* while */
     
@@ -357,15 +357,15 @@ int dtd_att_val_search_errors(const xchar *value)
     else if (v[i]=='&') {
       int k;
       for (k=i+1; v[k]; k++)
-	if (v[k]==';') {
-	  xchar tmp= v[k+1];
-	  v[k+1]= 0;
-	  if (!dtd_ref_is_valid(&v[i])) {/*free(v);*/return i;}
-	  else {
-	    v[k+1]= tmp;
-	    break;
-	  }
-	}
+        if (v[k]==';') {
+          xchar tmp= v[k+1];
+          v[k+1]= 0;
+          if (!dtd_ref_is_valid(&v[i])) {/*free(v);*/return i;}
+          else {
+            v[k+1]= tmp;
+            break;
+          }
+        }
       if (!v[k]) {/*free(v);*/return i;}
     }
   } /* for */
@@ -465,7 +465,7 @@ int dtd_can_be_child(int child, int father, int dtd_num)
   /* es children o mixed */
   for (i= elm_list[father].contentspec[dtd_num];elm_buffer[i]; i++)
     if ((elm_buffer[i] & CSPEC_ELM_MASK)&&
-	((elm_buffer[i]& ~CSPEC_ELM_MASK)==child))
+        ((elm_buffer[i]& ~CSPEC_ELM_MASK)==child))
       return 1;
 
   return 0;
@@ -533,7 +533,7 @@ static int is_child_valid(int *rule_ptr, int elements[], int num)
 #ifdef CHILD_DEBUG
   EPRINTF2("    rule: %d; num: %d;\n", *rule_ptr, num);
   EPRINTF1("    %s\n", contentspecToString(&elm_buffer[*rule_ptr], str, 
-					 CONTTYPE_CHILDREN, &len_buff));
+                                         CONTTYPE_CHILDREN, &len_buff));
   EPRINTF("    :: ");  
   for (i=0; i<num; i++)
     EPRINTF1("%s ", elm_list[elements[i]].name);
@@ -594,11 +594,11 @@ static int is_child_valid(int *rule_ptr, int elements[], int num)
       valid= is_child_valid(&rule, elements+elm, num-elm);
 #ifdef CHILD_DEBUG
       EPRINTF3("    <<   [%d:%d] %s\n",rule,valid,
-	       contentspecToString(&elm_buffer[rule0], str, 
-				   CONTTYPE_CHILDREN, &len_buff));
+               contentspecToString(&elm_buffer[rule0], str, 
+                                   CONTTYPE_CHILDREN, &len_buff));
       EPRINTF1("         -> %s\n",
-	       contentspecToString(&elm_buffer[rule+1], str, 
-				   CONTTYPE_CHILDREN, &len_buff));
+               contentspecToString(&elm_buffer[rule+1], str, 
+                                   CONTTYPE_CHILDREN, &len_buff));
 #endif
    
     } else if (data & CSPEC_PAR_C) {
@@ -606,34 +606,34 @@ static int is_child_valid(int *rule_ptr, int elements[], int num)
 
 #ifdef CHILD_DEBUG
       EPRINTF2("    ))   coincide_choice:%d; elm_matched:%d\n",
-	       coincide_choice, elm_matched);
+               coincide_choice, elm_matched);
 #endif
 
       if (is_choice) {
-	/* error si no hubo coincidencias en iteraciones anteriores
+        /* error si no hubo coincidencias en iteraciones anteriores
          * y el tipo no permite 0 coincidencias
-	 */
-	*rule_ptr= rule;
-	if ((coincide_choice)||(elm_matched>0)
-	    ||(repeat==CSPEC_INT)||(repeat==CSPEC_AST)) 
-	  return elm_matched;
-	else return error_code;	
+         */
+        *rule_ptr= rule;
+        if ((coincide_choice)||(elm_matched>0)
+            ||(repeat==CSPEC_INT)||(repeat==CSPEC_AST)) 
+          return elm_matched;
+        else return error_code; 
       } else {
-	/* si no es choice, se cumple */
-	elm_matched= elm;
-	
-	/* retorna si sólo permite una coincidenecia */
-	if ((repeat==CSPEC_INT)||(repeat==0)) {
-	  *rule_ptr= rule;
-	  return elm_matched;
-	} else {
-	  /* vuelve a verificar */
-	  rule= *rule_ptr;
+        /* si no es choice, se cumple */
+        elm_matched= elm;
+        
+        /* retorna si sólo permite una coincidenecia */
+        if ((repeat==CSPEC_INT)||(repeat==0)) {
+          *rule_ptr= rule;
+          return elm_matched;
+        } else {
+          /* vuelve a verificar */
+          rule= *rule_ptr;
 #ifdef CHILD_DEBUG
       EPRINTF("    --R--\n");
 #endif
-	  continue;
-	}
+          continue;
+        }
       }
     } else EXIT("is_child_valid: incorrect rule");
 
@@ -651,20 +651,20 @@ static int is_child_valid(int *rule_ptr, int elements[], int num)
 
       /* si es choice, busca el fin y retorna */
       if (is_choice) {
-	elm_matched= elm;
-	coincide_choice= 1;
+        elm_matched= elm;
+        coincide_choice= 1;
 
-	/* si no se emparejó ninguno, 
-	 * aunque sea válido, se continúa con el siguiente */
-	if (elm_matched) {
-	  /* si es '*' o '+', o continúa el bucle */
-	  if ((!repeat)||(repeat==CSPEC_INT)) {
-	    rule= search_par_close(rule+1);
-	    *rule_ptr= rule;
-	    return elm;
-	  }
-	  else rule= *rule_ptr;
-	}
+        /* si no se emparejó ninguno, 
+         * aunque sea válido, se continúa con el siguiente */
+        if (elm_matched) {
+          /* si es '*' o '+', o continúa el bucle */
+          if ((!repeat)||(repeat==CSPEC_INT)) {
+            rule= search_par_close(rule+1);
+            *rule_ptr= rule;
+            return elm;
+          }
+          else rule= *rule_ptr;
+        }
       }
       
       /* no es choice,
@@ -681,15 +681,15 @@ static int is_child_valid(int *rule_ptr, int elements[], int num)
 #endif
 
       if (!is_choice) {
-	rule= search_par_close(rule+1);
-	*rule_ptr= rule;
+        rule= search_par_close(rule+1);
+        *rule_ptr= rule;
 
-	/* error si no hubo coincidencias en iteraciones anteriores
+        /* error si no hubo coincidencias en iteraciones anteriores
          * y el tipo no permite 0 coincidencias
-	 */
-	if ((elm_matched>0)||(repeat==CSPEC_INT)||(repeat==CSPEC_AST)) 
-	  return elm_matched;    /* no hay error */
-	else return valid;       /* hay error */
+         */
+        if ((elm_matched>0)||(repeat==CSPEC_INT)||(repeat==CSPEC_AST)) 
+          return elm_matched;    /* no hay error */
+        else return valid;       /* hay error */
       }
 
       /* es choice, se sigue probando */
@@ -756,10 +756,10 @@ static int dtd_ref_is_valid(xchar *ref)
 
     for (i= hexa+2; ref[i]!=';'; i++) {
       if (((ref[i]<'0')||(ref[i]>'9')) && 
-	  (!hexa || (
-		     ((ref[i]<'a')||(ref[i]>'f'))
-		     && ((ref[i]<'A')||(ref[i]>'F')))))
-	return 0;
+          (!hexa || (
+                     ((ref[i]<'a')||(ref[i]>'f'))
+                     && ((ref[i]<'A')||(ref[i]>'F')))))
+        return 0;
     }
   } else /* referencia a entidad */
     if (dtd_ent_search(ref) == -1) return 0;
@@ -867,9 +867,9 @@ static int makeXmlNames(xchar *value, int atttype)
 
   while (1) {
     for ( ;
-	 (*fin) && (*fin!=0x20) && (*fin!=0x09) 
-	   && (*fin!=0x0a) && (*fin!=0x0d);
-	 fin++);
+         (*fin) && (*fin!=0x20) && (*fin!=0x09) 
+           && (*fin!=0x0a) && (*fin!=0x0d);
+         fin++);
     tmp= *fin;
     *fin= 0;
 
@@ -888,9 +888,9 @@ static int makeXmlNames(xchar *value, int atttype)
     *fin= tmp;
 
     for ( ;
-	 (*fin) && ((*fin==0x20) || (*fin==0x09) 
-	   || (*fin==0x0a) || (*fin==0x0d));
-	 fin++);
+         (*fin) && ((*fin==0x20) || (*fin==0x09) 
+           || (*fin==0x0a) || (*fin==0x0d));
+         fin++);
     ini= fin;
     if (!*fin) break;
   }
@@ -987,8 +987,8 @@ char *contentspecToString(char *buff, char *str, contentType_t conttype,int *len
     {
       strcpy(str,"(#PCDATA");
       for (i=0; buff[i]; i++) {
-	strcat(str,"|");
-	strcat(str,elm_list[buff[i]&(~CSPEC_ELM_MASK)].name);
+        strcat(str,"|");
+        strcat(str,elm_list[buff[i]&(~CSPEC_ELM_MASK)].name);
       }
 
       strcat(str,")");
@@ -1006,8 +1006,8 @@ char *contentspecToString(char *buff, char *str, contentType_t conttype,int *len
 
       v= buff[i++];
       if (!(v&CSPEC_ELM_MASK)&&((v&CSPEC_PAR_MASK)!=CSPEC_PAR_O)) {
-	strcpy(str,"<error>");
-	break;
+        strcpy(str,"<error>");
+        break;
       }
 
       if (v&CSPEC_CHOICE) strcpy(separador,"|"); /* choice */
@@ -1016,41 +1016,41 @@ char *contentspecToString(char *buff, char *str, contentType_t conttype,int *len
       strcpy(str,"(");
 
       while ((((v=buff[i++])&CSPEC_PAR_MASK)!=CSPEC_PAR_C)
-	     || (v&CSPEC_ELM_MASK)) {
-	if (num_items) strcat(str,separador);
-	num_items++;
+             || (v&CSPEC_ELM_MASK)) {
+        if (num_items) strcat(str,separador);
+        num_items++;
 
-	if (!(v&CSPEC_ELM_MASK)&&((v&CSPEC_PAR_MASK)==CSPEC_PAR_O)) {
-	  /* recursion */
-	  contentspecToString(&buff[i-1],str+strlen(str),conttype,&avance);
-	  /* busca donde acaba */
-	  /*
-	  for ( ; ((buff[i]&CSPEC_PAR_MASK)!=CSPEC_PAR_C)
-		  ||(buff[i]&CSPEC_ELM_MASK); i++);
-	  i++;
-	  */
-	  i+= avance-1;
-	} else {
-	  /* elemento aislado */
-	  if (!(v&CSPEC_ELM_MASK)) {
-	    strcat(str,"<error>");
-	    break;
-	  }
-	  strcat(str,elm_list[v&(~CSPEC_ELM_MASK)].name);
-	}
+        if (!(v&CSPEC_ELM_MASK)&&((v&CSPEC_PAR_MASK)==CSPEC_PAR_O)) {
+          /* recursion */
+          contentspecToString(&buff[i-1],str+strlen(str),conttype,&avance);
+          /* busca donde acaba */
+          /*
+          for ( ; ((buff[i]&CSPEC_PAR_MASK)!=CSPEC_PAR_C)
+                  ||(buff[i]&CSPEC_ELM_MASK); i++);
+          i++;
+          */
+          i+= avance-1;
+        } else {
+          /* elemento aislado */
+          if (!(v&CSPEC_ELM_MASK)) {
+            strcat(str,"<error>");
+            break;
+          }
+          strcat(str,elm_list[v&(~CSPEC_ELM_MASK)].name);
+        }
       }
       
       strcat(str,")");
       switch (buff[0]& CSPEC_NUM_MASK) {
       case CSPEC_AST:
-	strcat(str,"*");
-	break;
+        strcat(str,"*");
+        break;
       case CSPEC_INT:
-	strcat(str,"?");
-	break;
+        strcat(str,"?");
+        break;
       case CSPEC_MAS:
-	strcat(str,"+");
-	break;
+        strcat(str,"+");
+        break;
       }
       
       *len_buff= i;
