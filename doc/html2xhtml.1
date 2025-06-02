@@ -140,6 +140,11 @@ Treat the input as an HTML fragment instead of
 a full document.
 The output will also be a snippet and will not contain either the XML
 and doctype declarations or the html, head and body elements.
+.IP \fB--system-dtd-prefix\ \fIprefix\fR 20
+Use a SYSTEM doctype declaration instead of the PUBLIC default one.
+The system location is created by concatenating the provided prefix
+and the name of the DTD file.
+Prefix values can be relative local paths or URIs.
 .IP \fB--help\fR 20
 Show a brief help message and exit.
 .IP \fB--version\fR 20

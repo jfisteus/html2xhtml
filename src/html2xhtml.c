@@ -268,6 +268,7 @@ static void help(void)
   fprintf(stderr, "           [--compact-block-elements] [--empty-elm-tags-always]\n");
   fprintf(stderr, "           [--compact-empty-elm-tags] [--dos-eol]\n");
   fprintf(stderr, "           [--generate-snippet]\n");
+  fprintf(stderr, "           [--system-dtd-prefix <dtd_location_prefix>]\n");
   fprintf(stderr, "\n");
   print_doctypes();
 }
